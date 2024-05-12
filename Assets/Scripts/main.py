@@ -1,4 +1,5 @@
 import arcade
+import arcade.gui
 from Player.Player import Player
 import Maps.maps as Maps
 
@@ -30,7 +31,38 @@ class Game(arcade.Window):
         self.lamp = arcade.load_texture("Assets/Sprites/Terrain/OakWood/oak_woods_v1.0/decorations/lamp.png")
         
         
+    def questionsMenu(self):
         
+        guiMenu = arcade.gui.UIManager()
+        
+        principalBox = arcade.gui.UIBoxLayout()
+        
+        bgBox = arcade.gui.UIBorder()
+        questionBox = arcade.gui.UITextArea(text="Pregunta",font_name="Minecraftia",font_size=12)
+        principalBox.add(questionBox)
+        
+        responsesBoxOne = arcade.gui.UIBoxLayout(vertical=False)
+        
+        responsesOne = arcade.gui.UIFlatButton(text="Respuesta Uno")
+        responsesBoxOne.add(responsesOne)
+        
+        responsesTwo = arcade.gui.UIFlatButton(text="Respuesta Dos")
+        responsesBoxOne.add(responsesTwo)
+        
+        principalBox.add(responsesBoxOne)
+        
+        responsesBoxTwo = arcade.gui.UIBoxLayout(vertical=False)
+        
+        responsesTrhee = arcade.gui.UIFlatButton(text="Respuesta Tres")
+        responsesBoxTwo.add(responsesTrhee)
+        
+        responsesFour = arcade.gui.UIFlatButton(text="Respuesta Cuatro")
+        responsesBoxTwo.add(responsesFour)
+        
+        principalBox.add(responsesBoxTwo)
+        
+        guiMenu.add(arcade.gui.UIAnchorWidget(child=principalBox, anchor_x="center_x",anchor_y="center_y"))
+        return guiMenu
     def setup(self):
         
         self.scene = arcade.Scene.from_tilemap(Maps.initalMap)
@@ -51,6 +83,8 @@ class Game(arcade.Window):
         arcade.draw_lrwh_rectangle_textured(0,0,7200,7200,self.bg1)
         self.scene.draw()
         self.playerCamera.use()
+        if arcade.check_for_collision_with_list(self.player, self.scene["Llave"]):
+            self.questionsMenu().draw()
         
        
         
@@ -78,6 +112,9 @@ class Game(arcade.Window):
             self.setup()
         if self.player.left < 0:
             self.player.change_x = 0
+        
+        if arcade.check_for_collision_with_list(self.player, self.scene["Llave"]):
+            print("Hola")
         
 if __name__ == '__main__':
     window = Game()
