@@ -20,7 +20,8 @@ class Game(arcade.Window):
         
         cords = [cordX, cordY]
         self.playerCamera.move_to(cords,.1)
-    
+
+        
     
     def __init__(self):
         super().__init__(width=1280,height=720,title="LiteraryGame")
@@ -28,27 +29,32 @@ class Game(arcade.Window):
         self.jump = 25
         self.lamp = arcade.load_texture("Assets/Sprites/Terrain/OakWood/oak_woods_v1.0/decorations/lamp.png")
         
+        
+        
     def setup(self):
         
         self.scene = arcade.Scene.from_tilemap(Maps.initalMap)
         self.playerCamera = arcade.Camera(1280,720)
         
+        self.bg1 = arcade.load_texture("Assets/BGs/map1_bg.png")
+
         
-    
         self.player = Player(120,350,4)
         self.scene.add_sprite_list("Player")
         self.scene.add_sprite("Player", self.player)
-        arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
+        arcade.set_background_color(arcade.csscolor.DIM_GREY)
         self.PhysycsEngine = arcade.PhysicsEnginePlatformer(player_sprite=self.player, walls=self.scene["Terrain"],gravity_constant=1)
 
     def on_draw(self):
         arcade.start_render()
         self.clear()
-       
+        arcade.draw_lrwh_rectangle_textured(0,0,7200,7200,self.bg1)
         self.scene.draw()
         self.playerCamera.use()
-        self.putDecoration(self.lamp,400,245, 100,200)
-        self.scene.get_sprite_list("Player").draw()
+        
+       
+        
+        
     def on_key_press(self, key: int, modifiers: int):
         if key == arcade.key.A:
             self.player.change_x = -self.speed

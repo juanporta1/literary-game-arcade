@@ -16,7 +16,7 @@ class Player(arcade.Sprite):
             self.time = 0
     
     def __init__(self,x,y,scale):
-        super().__init__(filename="Assets/Sprites/Player/Individual Sprites/adventurer-idle-2-00.png",center_x= x, center_y=y,scale= scale)
+        super().__init__(filename="Assets/Sprites/Player/Individual Sprites/adventurer-idle-2-00.png",center_x= x, center_y=y,scale= scale,hit_box_detail=1)
         self.indexAnimation = 0
         self.animationIdleList = functions.createAnimationList("Assets/Sprites/Player/Individual Sprites/adventurer-idle-2-0",2)
         self.animationWalkList = functions.createAnimationList("Assets/Sprites/Player/Individual Sprites/adventurer-run-0",2)
