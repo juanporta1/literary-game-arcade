@@ -1,4 +1,5 @@
 import arcade
+import arcade.color
 import arcade.gui
 from Player.Player import Player
 import Maps.maps as Maps
@@ -34,37 +35,50 @@ class Game(arcade.Window):
     def questionsMenu(self):
         
         guiMenu = arcade.gui.UIManager()
-        
+
         principalBox = arcade.gui.UIBoxLayout()
         
-        bgBox = arcade.gui.UIBorder()
-        questionBox = arcade.gui.UITextArea(text="Pregunta",font_name="Minecraftia",font_size=12)
-        principalBox.add(questionBox)
+        questionStyle = {
+            "font_name": "Minecraftia",
+            "bg_color": None,
+            "bg_color_pressed": None,
+            "border_color": None,
+            "border_color_pressed" : None,
+            "font_color_pressed": arcade.color.WHITE
+        }
+        questionBox = arcade.gui.UIFlatButton(text="Pregunta PreguntaPr    egunt  aPr egu nta PrPreguntaPregunta e  untaPr egunta PreguntaP  reguntaPreguntaPreg untaPPreguntaPregunta re guPreguntaPreguntanta ",width=1230,height=300,style=questionStyle)
+        
+        bgBox = arcade.gui.UIBorder(child=questionBox)
+        
+        
+        principalBox.add(bgBox)
         
         responsesBoxOne = arcade.gui.UIBoxLayout(vertical=False)
         
-        responsesOne = arcade.gui.UIFlatButton(text="Respuesta Uno")
-        responsesBoxOne.add(responsesOne)
+        self.responsesOne = arcade.gui.UIFlatButton(text="Respuesta Uno",width=600,height=160)
+        responsesBoxOne.add(self.responsesOne.with_space_around(10,20,10,20))
         
-        responsesTwo = arcade.gui.UIFlatButton(text="Respuesta Dos")
-        responsesBoxOne.add(responsesTwo)
+        self.responsesTwo = arcade.gui.UIFlatButton(text="Respuesta Dos",width=600,height=160)
+        responsesBoxOne.add(self.responsesTwo.with_space_around(10,20,10,20))
         
-        principalBox.add(responsesBoxOne)
+        
+        principalBox.add(responsesBoxOne.with_space_around(10,20,10,20))
         
         responsesBoxTwo = arcade.gui.UIBoxLayout(vertical=False)
         
-        responsesTrhee = arcade.gui.UIFlatButton(text="Respuesta Tres")
-        responsesBoxTwo.add(responsesTrhee)
+        self.responsesTrhee = arcade.gui.UIFlatButton(text="Respuesta Tres",width=600,height=160)
+        responsesBoxTwo.add(self.responsesTrhee.with_space_around(10,20,10,20))
         
-        responsesFour = arcade.gui.UIFlatButton(text="Respuesta Cuatro")
-        responsesBoxTwo.add(responsesFour)
+        self.responsesFour = arcade.gui.UIFlatButton(text="Respuesta Cuatro",width=600,height=160)
+        responsesBoxTwo.add(self.responsesFour.with_space_around(10,20,10,20))
         
-        principalBox.add(responsesBoxTwo)
+        principalBox.add(responsesBoxTwo.with_space_around(10,20,10,20))
         
         guiMenu.add(arcade.gui.UIAnchorWidget(child=principalBox, anchor_x="center_x",anchor_y="center_y"))
         return guiMenu
     def setup(self):
-        
+        self.question = self.questionsMenu()
+        self.question.enable()
         self.scene = arcade.Scene.from_tilemap(Maps.initalMap)
         self.playerCamera = arcade.Camera(1280,720)
         
@@ -80,12 +94,17 @@ class Game(arcade.Window):
     def on_draw(self):
         arcade.start_render()
         self.clear()
-        arcade.draw_lrwh_rectangle_textured(0,0,7200,7200,self.bg1)
-        self.scene.draw()
-        self.playerCamera.use()
-        if arcade.check_for_collision_with_list(self.player, self.scene["Llave"]):
-            self.questionsMenu().draw()
         
+            
+        if True:
+            
+            
+            self.question.draw()
+        else:
+            arcade.draw_lrwh_rectangle_textured(0,0,7200,7200,self.bg1)
+            self.scene.draw()
+            self.playerCamera.use()
+
        
         
         
@@ -115,6 +134,10 @@ class Game(arcade.Window):
         
         if arcade.check_for_collision_with_list(self.player, self.scene["Llave"]):
             print("Hola")
+        
+        if self.responsesOne.pressed == True:
+            print("Genial")
+        
         
 if __name__ == '__main__':
     window = Game()
