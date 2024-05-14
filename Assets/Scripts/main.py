@@ -1,5 +1,6 @@
 import arcade
 import arcade.color
+import arcade.color
 import arcade.gui
 from Player.Player import Player
 import Maps.maps as Maps
@@ -30,9 +31,13 @@ class Game(arcade.Window):
         self.speed = 5
         self.jump = 25
         self.lamp = arcade.load_texture("Assets/Sprites/Terrain/OakWood/oak_woods_v1.0/decorations/lamp.png")
+        self.isInMenu = False
+        self.isInQuestion = False
         
+    def questionsMenu(self,true):
         
-    def questionsMenu(self):
+        self.true = true
+        
         
         guiMenu = arcade.gui.UIManager()
 
@@ -55,37 +60,40 @@ class Game(arcade.Window):
         
         responsesBoxOne = arcade.gui.UIBoxLayout(vertical=False)
         
-        self.responsesOne = arcade.gui.UIFlatButton(text="Respuesta Uno",width=600,height=160)
-        responsesBoxOne.add(self.responsesOne.with_space_around(10,20,10,20))
+        self.responseOne = arcade.gui.UIFlatButton(text="Respuesta Uno",width=600,height=160)
+        responsesBoxOne.add(self.responseOne.with_space_around(10,20,10,20))
         
-        self.responsesTwo = arcade.gui.UIFlatButton(text="Respuesta Dos",width=600,height=160)
-        responsesBoxOne.add(self.responsesTwo.with_space_around(10,20,10,20))
+        self.responseTwo = arcade.gui.UIFlatButton(text="Respuesta Dos",width=600,height=160)
+        responsesBoxOne.add(self.responseTwo.with_space_around(10,20,10,20))
         
         
         principalBox.add(responsesBoxOne.with_space_around(10,20,10,20))
         
         responsesBoxTwo = arcade.gui.UIBoxLayout(vertical=False)
         
-        self.responsesTrhee = arcade.gui.UIFlatButton(text="Respuesta Tres",width=600,height=160)
-        responsesBoxTwo.add(self.responsesTrhee.with_space_around(10,20,10,20))
+        self.responseThree = arcade.gui.UIFlatButton(text="Respuesta Tres",width=600,height=160)
+        responsesBoxTwo.add(self.responseThree.with_space_around(10,20,10,20))
         
-        self.responsesFour = arcade.gui.UIFlatButton(text="Respuesta Cuatro",width=600,height=160)
-        responsesBoxTwo.add(self.responsesFour.with_space_around(10,20,10,20))
+        self.responseFour = arcade.gui.UIFlatButton(text="Respuesta Cuatro",width=600,height=160)
+        responsesBoxTwo.add(self.responseFour.with_space_around(10,20,10,20))
         
         principalBox.add(responsesBoxTwo.with_space_around(10,20,10,20))
         
         guiMenu.add(arcade.gui.UIAnchorWidget(child=principalBox, anchor_x="center_x",anchor_y="center_y"))
+        self.responsesList = [self.responseOne,self.responseTwo,self.responseThree,self.responseFour]
         return guiMenu
+        
     def setup(self):
-        self.question = self.questionsMenu()
-        self.question.enable()
+        
+        
         self.scene = arcade.Scene.from_tilemap(Maps.initalMap)
         self.playerCamera = arcade.Camera(1280,720)
+        self.guiCamera = arcade.Camera(1280,720)
         
         self.bg1 = arcade.load_texture("Assets/BGs/map1_bg.png")
 
         
-        self.player = Player(120,350,4)
+        self.player = Player(3800,350,4)
         self.scene.add_sprite_list("Player")
         self.scene.add_sprite("Player", self.player)
         arcade.set_background_color(arcade.csscolor.DIM_GREY)
@@ -96,33 +104,42 @@ class Game(arcade.Window):
         self.clear()
         
             
-        if True:
-            
-            
+        if self.isInQuestion:
             self.question.draw()
         else:
+            
+            self.playerCamera.use()
             arcade.draw_lrwh_rectangle_textured(0,0,7200,7200,self.bg1)
             self.scene.draw()
-            self.playerCamera.use()
+            self.guiCamera.use()
+            if arcade.check_for_collision_with_list(self.player, self.scene["Llave"]):
+                arcade.draw_text("Presiona E",600,100,arcade.color.WHITE,24,font_name="Pixel-Art")
 
-       
-        
         
     def on_key_press(self, key: int, modifiers: int):
-        if key == arcade.key.A:
-            self.player.change_x = -self.speed
-        if key == arcade.key.D:
-            self.player.change_x = self.speed
-        if key == arcade.key.SPACE and self.PhysycsEngine.can_jump():
-            self.player.change_y = self.jump
-        
+        if not self.isInMenu and not self.isInQuestion:    
+            if key == arcade.key.A:
+                self.player.change_x = -self.speed
+            if key == arcade.key.D:
+                self.player.change_x = self.speed
+            if key == arcade.key.SPACE and self.PhysycsEngine.can_jump():
+                self.player.change_y = self.jump
+
+            if arcade.check_for_collision_with_list(self.player,self.scene["Llave"]) and key == arcade.key.E:
+                self.question = self.questionsMenu(1)
+                self.question.enable()
+                self.isInQuestion = True
     
     def on_key_release(self, key: int, modifiers: int):
         if key == arcade.key.A or key == arcade.key.D:
             self.player.change_x = 0
         if key == arcade.key.SPACE:
             self.player.change_y = 0
-        
+    
+    def quesitonMenuController(self):
+        if self.responsesList[self.true].pressed:
+            self.isInQuestion = False
+       
     def on_update(self, delta_time: float):
         self.centerCameraFromPlayer()
         self.PhysycsEngine.update()
@@ -132,11 +149,10 @@ class Game(arcade.Window):
         if self.player.left < 0:
             self.player.change_x = 0
         
-        if arcade.check_for_collision_with_list(self.player, self.scene["Llave"]):
-            print("Hola")
+        if self.isInQuestion:
+            self.quesitonMenuController()
         
-        if self.responsesOne.pressed == True:
-            print("Genial")
+        
         
         
 if __name__ == '__main__':
