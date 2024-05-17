@@ -33,6 +33,7 @@ class Game(arcade.Window):
         self.lamp = arcade.load_texture("Assets/Sprites/Terrain/OakWood/oak_woods_v1.0/decorations/lamp.png")
         self.isInMenu = False
         self.isInQuestion = False
+        self.usedQuestions = []
         
     def questionsMenu(self,true):
         
