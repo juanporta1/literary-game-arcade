@@ -2,8 +2,10 @@ import arcade
 import arcade.color
 import arcade.color
 import arcade.gui
-from Player.Player import Player
-import Maps.maps as Maps
+from Assets.Scripts.Player import Player
+import Assets.Scripts.maps as Maps
+import questions
+import random
 
 class Game(arcade.Window):
     
@@ -31,13 +33,58 @@ class Game(arcade.Window):
         self.speed = 5
         self.jump = 25
         self.lamp = arcade.load_texture("Assets/Sprites/Terrain/OakWood/oak_woods_v1.0/decorations/lamp.png")
-        self.isInMenu = False
+        self.isInMenu = True
+        self.isPaused = False
         self.isInQuestion = False
         self.usedQuestions = []
+        self.correct = 0
         
-    def questionsMenu(self,true):
+    
+    def principalMenu(self,isPaused):
+        principalManager = arcade.gui.UIManager()
         
-        self.true = true
+        vBox = arcade.gui.UIBoxLayout()
+        text = arcade.gui.UILabel(text="Habia una vez...",font_name="Retro Gaming",font_size=30)
+        vBox.add(text.with_space_around(0,0,20,0))
+        
+        if isPaused:
+            playText = "Continuar"
+        else:
+            playText = "Jugar"
+        
+        buttonStyle = {
+            "font_name": "Retro Gaming",
+        }
+        
+        self.play = arcade.gui.UIFlatButton(text=playText,style=buttonStyle,width=300,height=50)
+        vBox.add(self.play.with_space_around(10,0,10,0))
+        self.exit = arcade.gui.UIFlatButton(text="Salir",style=buttonStyle,width=300,height=50)
+        vBox.add(self.exit.with_space_around(10,0,10,0))
+        
+        principalManager.add(
+            arcade.gui.UIAnchorWidget(
+                anchor_x="center_x",
+                anchor_y="center_y",
+                child=vBox
+            )
+        )
+        
+        return principalManager
+        
+        
+        
+    def questionsMenu(self,questions):
+        
+        randomNumber = random.randint(0,len(questions)-1)
+        while self.usedQuestions.count(randomNumber) != 0:
+            randomNumber = random.randint(0,len(questions))
+            
+        question = questions[randomNumber]["question"]
+        responses = questions[randomNumber]["responses"]
+        correct = responses[0]
+        random.shuffle(responses)
+        self.correct = responses.index(correct)
+        self.usedQuestions.append(randomNumber)
         
         
         guiMenu = arcade.gui.UIManager()
@@ -45,14 +92,17 @@ class Game(arcade.Window):
         principalBox = arcade.gui.UIBoxLayout()
         
         questionStyle = {
-            "font_name": "Minecraftia",
+            "font_name": "Retro Gaming",
             "bg_color": None,
             "bg_color_pressed": None,
             "border_color": None,
             "border_color_pressed" : None,
             "font_color_pressed": arcade.color.WHITE
         }
-        questionBox = arcade.gui.UIFlatButton(text="Pregunta PreguntaPr    egunt  aPr egu nta PrPreguntaPregunta e  untaPr egunta PreguntaP  reguntaPreguntaPreg untaPPreguntaPregunta re guPreguntaPreguntanta ",width=1230,height=300,style=questionStyle)
+        responsesStyle = {
+            "font_name": "Retro Gaming"
+        }
+        questionBox = arcade.gui.UIFlatButton(text=question,width=1230,height=300,style=questionStyle)
         
         bgBox = arcade.gui.UIBorder(child=questionBox)
         
@@ -61,10 +111,10 @@ class Game(arcade.Window):
         
         responsesBoxOne = arcade.gui.UIBoxLayout(vertical=False)
         
-        self.responseOne = arcade.gui.UIFlatButton(text="Respuesta Uno",width=600,height=160)
+        self.responseOne = arcade.gui.UIFlatButton(text=responses[0],width=600,height=160,style=responsesStyle)
         responsesBoxOne.add(self.responseOne.with_space_around(10,20,10,20))
         
-        self.responseTwo = arcade.gui.UIFlatButton(text="Respuesta Dos",width=600,height=160)
+        self.responseTwo = arcade.gui.UIFlatButton(text=responses[1],width=600,height=160,style=responsesStyle)
         responsesBoxOne.add(self.responseTwo.with_space_around(10,20,10,20))
         
         
@@ -72,10 +122,10 @@ class Game(arcade.Window):
         
         responsesBoxTwo = arcade.gui.UIBoxLayout(vertical=False)
         
-        self.responseThree = arcade.gui.UIFlatButton(text="Respuesta Tres",width=600,height=160)
+        self.responseThree = arcade.gui.UIFlatButton(text=responses[2],width=600,height=160,style=responsesStyle)
         responsesBoxTwo.add(self.responseThree.with_space_around(10,20,10,20))
         
-        self.responseFour = arcade.gui.UIFlatButton(text="Respuesta Cuatro",width=600,height=160)
+        self.responseFour = arcade.gui.UIFlatButton(text=responses[3],width=600,height=160,style=responsesStyle)
         responsesBoxTwo.add(self.responseFour.with_space_around(10,20,10,20))
         
         principalBox.add(responsesBoxTwo.with_space_around(10,20,10,20))
@@ -86,6 +136,10 @@ class Game(arcade.Window):
         
     def setup(self):
         
+        self.menu = self.principalMenu(False)
+        self.menu.enable()
+        self.paused = self.principalMenu(True)
+        self.paused.enable()
         
         self.scene = arcade.Scene.from_tilemap(Maps.initalMap)
         self.playerCamera = arcade.Camera(1280,720)
@@ -103,18 +157,20 @@ class Game(arcade.Window):
     def on_draw(self):
         arcade.start_render()
         self.clear()
-        
-            
-        if self.isInQuestion:
-            self.question.draw()
-        else:
-            
-            self.playerCamera.use()
-            arcade.draw_lrwh_rectangle_textured(0,0,7200,7200,self.bg1)
-            self.scene.draw()
-            self.guiCamera.use()
-            if arcade.check_for_collision_with_list(self.player, self.scene["Llave"]):
-                arcade.draw_text("Presiona E",600,100,arcade.color.WHITE,24,font_name="Pixel-Art")
+        if self.isInMenu and not self.isPaused:
+            self.menu.draw()
+        elif self.isPaused:
+            self.paused.draw()
+        else:   
+            if self.isInQuestion:
+                self.question.draw()
+            else:
+                
+                self.playerCamera.use()
+                self.scene.draw()
+                self.guiCamera.use()
+                if arcade.check_for_collision_with_list(self.player, self.scene["Llave"]):
+                    arcade.draw_text("Presiona E",600,100,arcade.color.WHITE,24,font_name="Retro Gaming")
 
 
     def update_player_velocity(self):
@@ -137,7 +193,7 @@ class Game(arcade.Window):
                 self.player.change_y = self.jump
 
             if arcade.check_for_collision_with_list(self.player,self.scene["Llave"]) and key == arcade.key.E:
-                self.question = self.questionsMenu(1)
+                self.question = self.questionsMenu(questions.levelOne)
                 self.question.enable()
                 self.isInQuestion = True
     
@@ -148,22 +204,24 @@ class Game(arcade.Window):
             self.player.moveRight = False
     
     def quesitonMenuController(self):
-        if self.responsesList[self.true].pressed:
+        if self.responsesList[self.correct].pressed:
             self.isInQuestion = False
        
     def on_update(self, delta_time: float):
         
-        self.update_player_velocity()
-        self.centerCameraFromPlayer()
-        self.PhysycsEngine.update()
-        self.scene.get_sprite_list("Player").update_animation()
-        if self.player.center_y < 0:
-            self.setup()
-        if self.player.left < 0:
-            self.player.change_x = 0
         
-        if self.isInQuestion:
-            self.quesitonMenuController()
+        if False:   
+            self.update_player_velocity()
+            self.centerCameraFromPlayer()
+            self.PhysycsEngine.update()
+            self.scene.get_sprite_list("Player").update_animation()
+            if self.player.center_y < 0:
+                self.setup()
+            if self.player.left < 0:
+                self.player.change_x = 0
+            
+            if self.isInQuestion:
+                self.quesitonMenuController()
         
         
         
