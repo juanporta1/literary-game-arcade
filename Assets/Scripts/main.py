@@ -2,8 +2,8 @@ import arcade
 import arcade.color
 import arcade.color
 import arcade.gui
-from Assets.Scripts.Player import Player
-import Assets.Scripts.maps as Maps
+from Player import Player
+import maps as Maps
 import questions
 import random
 
@@ -25,14 +25,14 @@ class Game(arcade.Window):
         
         cords = [cordX, cordY]
         self.playerCamera.move_to(cords,.1)
-
+        
         
     
     def __init__(self):
         super().__init__(width=1280,height=720,title="LiteraryGame")
         self.speed = 5
         self.jump = 25
-        self.lamp = arcade.load_texture("Assets/Sprites/Terrain/OakWood/oak_woods_v1.0/decorations/lamp.png")
+        
         self.isInMenu = True
         self.isPaused = False
         self.isInQuestion = False
@@ -56,11 +56,12 @@ class Game(arcade.Window):
             "font_name": "Retro Gaming",
         }
         
-        self.play = arcade.gui.UIFlatButton(text=playText,style=buttonStyle,width=300,height=50)
-        vBox.add(self.play.with_space_around(10,0,10,0))
-        self.exit = arcade.gui.UIFlatButton(text="Salir",style=buttonStyle,width=300,height=50)
-        vBox.add(self.exit.with_space_around(10,0,10,0))
+        play = arcade.gui.UIFlatButton(text=playText,style=buttonStyle,width=300,height=50)
+        vBox.add(play.with_space_around(10,0,10,0))
+        exit = arcade.gui.UIFlatButton(text="Salir",style=buttonStyle,width=300,height=50)
+        vBox.add(exit.with_space_around(10,0,10,0))
         
+        self.menuButtons = [play,exit]
         principalManager.add(
             arcade.gui.UIAnchorWidget(
                 anchor_x="center_x",
@@ -138,29 +139,24 @@ class Game(arcade.Window):
         
         self.menu = self.principalMenu(False)
         self.menu.enable()
-        self.paused = self.principalMenu(True)
-        self.paused.enable()
         
         self.scene = arcade.Scene.from_tilemap(Maps.initalMap)
         self.playerCamera = arcade.Camera(1280,720)
         self.guiCamera = arcade.Camera(1280,720)
-        
-        self.bg1 = arcade.load_texture("Assets/BGs/map1_bg.png")
 
         
-        self.player = Player(3800,350,4)
+        self.player = Player(100,350,4)
         self.scene.add_sprite_list("Player")
         self.scene.add_sprite("Player", self.player)
         arcade.set_background_color(arcade.csscolor.DIM_GREY)
-        self.PhysycsEngine = arcade.PhysicsEnginePlatformer(player_sprite=self.player, walls=self.scene["Terrain"],gravity_constant=1)
+        self.PhysicsEngine = arcade.PhysicsEnginePlatformer(player_sprite=self.player, walls=self.scene["Floor"],gravity_constant=1)
 
     def on_draw(self):
         arcade.start_render()
         self.clear()
-        if self.isInMenu and not self.isPaused:
+        if self.isInMenu and not self.isPaused and False:
             self.menu.draw()
-        elif self.isPaused:
-            self.paused.draw()
+        
         else:   
             if self.isInQuestion:
                 self.question.draw()
@@ -169,7 +165,8 @@ class Game(arcade.Window):
                 self.playerCamera.use()
                 self.scene.draw()
                 self.guiCamera.use()
-                if arcade.check_for_collision_with_list(self.player, self.scene["Llave"]):
+               
+                if arcade.check_for_collision_with_list(self.player, self.scene["Key"]):
                     arcade.draw_text("Presiona E",600,100,arcade.color.WHITE,24,font_name="Retro Gaming")
 
 
@@ -189,10 +186,10 @@ class Game(arcade.Window):
                 self.player.moveLeft = True
             if key == arcade.key.D:
                 self.player.moveRight = True
-            if key == arcade.key.SPACE and self.PhysycsEngine.can_jump():
+            if key == arcade.key.SPACE and self.PhysicsEngine.can_jump():
                 self.player.change_y = self.jump
 
-            if arcade.check_for_collision_with_list(self.player,self.scene["Llave"]) and key == arcade.key.E:
+            if arcade.check_for_collision_with_list(self.player,self.scene["Key"]) and key == arcade.key.E:
                 self.question = self.questionsMenu(questions.levelOne)
                 self.question.enable()
                 self.isInQuestion = True
@@ -206,14 +203,19 @@ class Game(arcade.Window):
     def quesitonMenuController(self):
         if self.responsesList[self.correct].pressed:
             self.isInQuestion = False
-       
+    
+            
     def on_update(self, delta_time: float):
         
-        
-        if False:   
+        if self.isInMenu and False:
+            
+            self.menuController()
+            
+                
+        else:   
             self.update_player_velocity()
             self.centerCameraFromPlayer()
-            self.PhysycsEngine.update()
+            self.PhysicsEngine.update()
             self.scene.get_sprite_list("Player").update_animation()
             if self.player.center_y < 0:
                 self.setup()
