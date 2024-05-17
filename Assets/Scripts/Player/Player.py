@@ -24,6 +24,8 @@ class Player(arcade.Sprite):
         
         self.isSeeRight = True
         self.time = 0
+        self.moveRight = False
+        self.moveLeft = False
         
     def update_animation(self, delta_time: float = 1 / 60):
         

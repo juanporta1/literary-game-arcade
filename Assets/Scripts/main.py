@@ -115,13 +115,23 @@ class Game(arcade.Window):
             if arcade.check_for_collision_with_list(self.player, self.scene["Llave"]):
                 arcade.draw_text("Presiona E",600,100,arcade.color.WHITE,24,font_name="Pixel-Art")
 
-        
+
+    def update_player_velocity(self):
+        if self.player.moveLeft and not self.player.moveRight:
+            self.player.change_x = -self.speed
+        if self.player.moveRight and not self.player.moveLeft:
+            self.player.change_x = self.speed
+        if not self.player.moveLeft and not self.player.moveRight:
+            self.player.change_x = 0
+        if self.player.moveLeft and self.player.moveRight:
+            self.player.change_x = 0
+    
     def on_key_press(self, key: int, modifiers: int):
         if not self.isInMenu and not self.isInQuestion:    
             if key == arcade.key.A:
-                self.player.change_x = -self.speed
+                self.player.moveLeft = True
             if key == arcade.key.D:
-                self.player.change_x = self.speed
+                self.player.moveRight = True
             if key == arcade.key.SPACE and self.PhysycsEngine.can_jump():
                 self.player.change_y = self.jump
 
@@ -131,16 +141,18 @@ class Game(arcade.Window):
                 self.isInQuestion = True
     
     def on_key_release(self, key: int, modifiers: int):
-        if key == arcade.key.A or key == arcade.key.D:
-            self.player.change_x = 0
-        if key == arcade.key.SPACE:
-            self.player.change_y = 0
+        if key == arcade.key.A:
+            self.player.moveLeft = False
+        if key == arcade.key.D:
+            self.player.moveRight = False
     
     def quesitonMenuController(self):
         if self.responsesList[self.true].pressed:
             self.isInQuestion = False
        
     def on_update(self, delta_time: float):
+        
+        self.update_player_velocity()
         self.centerCameraFromPlayer()
         self.PhysycsEngine.update()
         self.scene.get_sprite_list("Player").update_animation()
