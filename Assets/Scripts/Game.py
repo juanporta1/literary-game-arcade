@@ -9,7 +9,7 @@ import questions
 import random
 from questionsMenu import QuestionMenu
 from room import Room
-import globals
+
 
 class Game(arcade.View):
     def __init__(self,window,menu):
@@ -21,12 +21,9 @@ class Game(arcade.View):
         
         
     def on_update(self, delta_time: float):
-        if self.player.lives > 0:
+        if True:
             self.window.show_view(self.currentRoom)
-        else:
-            self.actualLevel = 1
-            self.currentRoom = self.rooms[self.actualLevel]
-            self.window.show_view(self.currentRoom)
+        
 
     
     
