@@ -30,7 +30,7 @@ class MenuView(arcade.View):
         play = arcade.gui.UIFlatButton(text="Jugar",style=buttonStyle,width=300,height=75)
         vBox.add(play.with_space_around(10,0,10,0))
         play.on_click = self.inPressPlay
-        exit = arcade.gui.UIFlatButton(text="Volver al Menu Principal",style=buttonStyle,width=300,height=75)
+        exit = arcade.gui.UIFlatButton(text="Salir",style=buttonStyle,width=300,height=75)
         vBox.add(exit.with_space_around(10,0,10,0))
         exit.on_click = self.inPressExit
         principalManager.add(

@@ -5,32 +5,46 @@ import maps as Maps
 from pauseMenu import PauseMenu
 from questionsMenu import QuestionMenu
 import questions as q
+import globalVars
 class Room(arcade.View):
-    
-    def __init__(self,window,tilemap,x,y,scale,menu,questions,player:Player,game):
+    global globalVars
+    def __init__(self,window,tilemap,x,y,scale,menu,questions,game,):
         super().__init__(window)
         
         self.speed = 5
         self.jump = 25
         self.game = game
+        self.player = Player(x,y,scale)
         self.scene = arcade.Scene.from_tilemap(Maps.initalMap)
-        self.player = player
-        self.playerCamera = arcade.Camera(1280,720)
-        self.guiCamera = arcade.Camera(1280,720)
-        self.pause = PauseMenu(self.window,self,menu)
-        self.questionMenu = QuestionMenu(self.window,questions,self,menu,self.player)
-        
-        self.player.center_x = x
-        self.player.center_y = y
-        self.lastX = self.player.center_x
-        self.lastY = self.player.center_y
-        self.player.scale = scale
         self.scene.add_sprite_list("Player")
         self.scene.add_sprite("Player", self.player)
+        
+        self.x = x
+        self.y = y
+        self.playerCamera = arcade.Camera(1280,720)
+        self.guiCamera = arcade.Camera(1280,720)
+       
+        self.pause = PauseMenu(self.window,self,menu)
+        self.questionMenu = QuestionMenu(self.window,questions,self,menu,3,3)
         arcade.set_background_color(arcade.csscolor.DIM_GREY)
         self.physicsEngine = arcade.PhysicsEnginePlatformer(player_sprite=self.player, walls=self.scene["Floor"],gravity_constant=1)
         
         
+        self.player.center_x = self.x
+        self.player.center_y = self.y
+        self.lastX = self.player.center_x
+        self.lastY = self.player.center_y
+        
+        
+    def roomSetup(self):
+        self.scene = arcade.Scene.from_tilemap(Maps.initalMap)
+        
+        self.player.center_x = self.x
+        self.player.center_y = self.y
+        self.lastX = self.player.center_x
+        self.lastY = self.player.center_y
+        self.scene.add_sprite_list("Player")
+        self.scene.add_sprite("Player", self.player)
     def centerCameraFromPlayer(self):
         
         cordY = self.player.center_y - (self.playerCamera.viewport_height / 2)
@@ -97,7 +111,8 @@ class Room(arcade.View):
             
     def on_update(self, delta_time: float):
         
-    
+        if globalVars.LIFES == 0:
+            self.roomSetup()
         self.update_player_velocity()
         self.centerCameraFromPlayer()
         self.physicsEngine.update()

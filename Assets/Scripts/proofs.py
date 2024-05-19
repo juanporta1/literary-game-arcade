@@ -24,6 +24,7 @@ class MenuView(arcade.View):
         quit_button = arcade.gui.UIFlatButton(text="Salir", width=200)
         self.v_box.add(quit_button.with_space_around(bottom=20))
         quit_button.on_click = self.on_click_quit
+        quit_button.__setattr__("style",{"font_name": "Retro Gaming"})
 
         # Centrar los botones en la pantalla
         self.manager.add(
