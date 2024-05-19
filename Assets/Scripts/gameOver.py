@@ -10,7 +10,7 @@ class GameOverView(arcade.View):
         self.time = 0
     def on_draw(self):
         self.window.clear()
-        arcade.text_pyglet.draw_text("GAME OVER",font_name="Retro Gaming",font_size=100,color=arcade.color.RED_DEVIL,start_x=1280/2 - 400, start_y=720/2-20)
+        arcade.text_pyglet.draw_text("GAME OVER",font_name="Retro Gaming",font_size=100,color=arcade.color.RED_DEVIL,start_x=1280/2 - 440, start_y=720/2-20,bold=True)
         arcade.set_background_color(arcade.color.BLACK)
         
     def on_update(self, delta_time: float):

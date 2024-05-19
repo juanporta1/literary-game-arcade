@@ -191,7 +191,7 @@ class QuestionMenu(arcade.View):
             self.window.show_view(self.gameView)
             globalVars.LIFES -= 1   
             self.currentOportunities = copy(self.oportunities)
-            self.questionIndex = copy(self.quantityQuestions)
+            self.questionIndex = 0
         self.menu = self.questionsMenu(*self.actualQuestion)
         self.menu.enable()
         
