@@ -13,6 +13,7 @@ class MenuView(arcade.View):
     def on_draw(self):
         self.clear()
         self.menu.draw()
+        arcade.set_background_color(arcade.color.BLACK)
         
     def principalMenu(self):
         principalManager = arcade.gui.UIManager()

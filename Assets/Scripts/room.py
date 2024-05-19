@@ -6,6 +6,7 @@ from pauseMenu import PauseMenu
 from questionsMenu import QuestionMenu
 import questions as q
 import globalVars
+from gameOver import GameOverView
 class Room(arcade.View):
     global globalVars
     def __init__(self,window,tilemap,x,y,scale,menu,questions,game,):
@@ -15,6 +16,7 @@ class Room(arcade.View):
         self.jump = 25
         self.game = game
         self.player = Player(x,y,scale)
+        self.gameOverView = GameOverView(self.window,menu)
         self.scene = arcade.Scene.from_tilemap(Maps.initalMap)
         self.scene.add_sprite_list("Player")
         self.scene.add_sprite("Player", self.player)
@@ -34,6 +36,9 @@ class Room(arcade.View):
         self.player.center_y = self.y
         self.lastX = self.player.center_x
         self.lastY = self.player.center_y
+        
+        self.fillHeart = arcade.load_texture("Assets/Sprites/UI/fillHeart.png")
+        self.emptyHeart = arcade.load_texture("Assets/Sprites/UI/emptyHeart.png")
         
         
     def roomSetup(self):
@@ -74,6 +79,16 @@ class Room(arcade.View):
         self.scene.draw()
         self.guiCamera.use()
         
+        x = 10
+        
+        for i in range(globalVars.TOTAL_LIFES):
+            if i <= globalVars.LIFES - 1:
+                arcade.draw_lrwh_rectangle_textured(x,650,64,64,self.fillHeart)
+            else:
+                arcade.draw_lrwh_rectangle_textured(x,650,64,64,self.emptyHeart)
+            x += 64
+                
+        
         if arcade.check_for_collision_with_list(self.player, self.scene["Key"]):
             arcade.draw_text("Presiona E",600,100,arcade.color.WHITE,24,font_name="Retro Gaming")
 
@@ -113,7 +128,7 @@ class Room(arcade.View):
         
         if globalVars.LIFES == 0:
             globalVars.LIFES = 5
-            self.window.show_view(self.menu)
+            self.window.show_view(self.gameOverView)
         self.update_player_velocity()
         self.centerCameraFromPlayer()
         self.physicsEngine.update()
