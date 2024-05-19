@@ -18,7 +18,7 @@ class Room(arcade.View):
         self.scene = arcade.Scene.from_tilemap(Maps.initalMap)
         self.scene.add_sprite_list("Player")
         self.scene.add_sprite("Player", self.player)
-        
+        self.menu = menu
         self.x = x
         self.y = y
         self.playerCamera = arcade.Camera(1280,720)
@@ -112,7 +112,8 @@ class Room(arcade.View):
     def on_update(self, delta_time: float):
         
         if globalVars.LIFES == 0:
-            self.roomSetup()
+            globalVars.LIFES = 5
+            self.window.show_view(self.menu)
         self.update_player_velocity()
         self.centerCameraFromPlayer()
         self.physicsEngine.update()
