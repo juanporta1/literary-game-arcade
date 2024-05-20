@@ -7,10 +7,14 @@ from questionsMenu import QuestionMenu
 import questions as q
 import globalVars
 from gameOver import GameOverView
+import sounds
 class Room(arcade.View):
     global globalVars
-    def __init__(self,window,tilemap,x,y,scale,menu,questions,game,):
+    def __init__(self,window,tilemap,x,y,scale,menu,questions,game,previousRoom = None, nextRoom = None):
         super().__init__(window)
+        
+        self.previousRoom = previousRoom
+        self.nextRoom = nextRoom
         
         self.speed = 5
         self.jump = 25
@@ -40,7 +44,8 @@ class Room(arcade.View):
         self.fillHeart = arcade.load_texture("Assets/Sprites/UI/fillHeart.png")
         self.emptyHeart = arcade.load_texture("Assets/Sprites/UI/emptyHeart.png")
         
-        
+        self.walkChannel = sounds.walk.play()
+        sounds.walk.stop()
     def roomSetup(self):
         self.scene = arcade.Scene.from_tilemap(Maps.initalMap)
         
@@ -125,6 +130,20 @@ class Room(arcade.View):
             self.player.moveRight = False
             
     def on_update(self, delta_time: float):
+        
+        if arcade.check_for_collision_with_list(self.player,self.scene["ExitDoor"]) and self.nextRoom is not None:
+            self.window.show_view(self.nextRoom)
+        if arcade.check_for_collision_with_list(self.player,self.scene["EntryDoor"]) and self.previousRoom is not None:
+            self.window.show_view(self.previousRoom)
+        
+        if self.player.change_x != 0:
+            if self.walkChannel.get_busy():
+                pass
+            else:
+                sounds.walk.play()
+                
+        else:
+            sounds.walk.stop()
         
         if globalVars.LIFES == 0:
             globalVars.LIFES = 5

@@ -15,15 +15,16 @@ class Game(arcade.View):
     global globalVars
     def __init__(self,window,menu):
         super().__init__(window)
-        
-        self.rooms = [Room(self.window,Maps.initalMap,3600,300,4,menu,questions.levelOne,self),Room(self.window,Maps.initalMap,2500,500,4,menu,questions.levelOne,self)]
-        self.actualLevel = 0
-        self.currentRoom = self.rooms[self.actualLevel]
-        
+        self.room1 = Room(self.window,Maps.initalMap,3600,300,4,menu,questions.levelOne,self)
+        self.room2 = Room(self.window,Maps.initalMap,2500,500,4,menu,questions.levelOne,self)       
+        self.room1.previousRoom = self.room2
+        self.room1.nextRoom = self.room2
+        self.room2.previousRoom = self.room1
+        self.room2.nextRoom = self.room1
         
     def on_update(self, delta_time: float):
-        if True:
-            self.window.show_view(self.currentRoom)
+        self.window.show_view(self.room1)
+            
         
         
         

@@ -3,10 +3,15 @@ import arcade
 
 layersInitialMap = {
     "Floor": {
-        "use_spatial_hash" : True,
-        "hit_box_detail": 10
+        "use_spatial_hash" : True
     },
     "Key": {
+        "use_spatial_hash" : True
+    },
+    "EntryDoor":{
+        "use_spatial_hash" : True
+    },
+    "ExitDoor": {
         "use_spatial_hash" : True
     }
 }
