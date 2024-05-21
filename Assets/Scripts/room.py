@@ -1,8 +1,8 @@
 import arcade
-from player import Player
+from Player import Player
 import random
 import maps as Maps
-from pauseMenu import PauseMenu
+from PauseMenu import PauseMenu
 from questionsMenu import QuestionMenu
 import questions as q
 import globalVars

@@ -2,8 +2,8 @@ import arcade
 import arcade.color
 import arcade.color
 import arcade.gui
-from player import Player
-from pauseMenu import PauseMenu
+from Player import Player
+from PauseMenu import PauseMenu
 import maps as Maps
 import questions
 import random

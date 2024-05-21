@@ -1,6 +1,6 @@
 import arcade
 import arcade.gui
-from game import Game
+from Game import Game
 
 class MenuView(arcade.View):
 

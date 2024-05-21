@@ -2,8 +2,8 @@ import arcade
 import arcade.color
 import arcade.gui
 import random
-from pauseMenu import PauseMenu
-from player import Player
+from PauseMenu import PauseMenu
+from Player import Player
 import globalVars
 from copy import copy
 
