@@ -1,11 +1,13 @@
 import arcade
 import arcade.gui
-
+import random
 class TextView(arcade.View):
     def __init__(self, window: arcade.Window, text: str,nextView: arcade.View,style = {
         "font_name": "Retro Gaming",
         "bg_color": None,
-        "bg_color_pressed": None
+        "bg_color_pressed": None,
+        "border_color": arcade.color.WHITE,
+        "font_size": 16
     }):
         super().__init__(window)
         self.canPass = False
@@ -22,15 +24,16 @@ class TextView(arcade.View):
     def on_draw(self):
         self.window.clear()
         self.label.draw()
+        arcade.set_background_color(arcade.color.BLACK)
 
     def makeText(self):
 
         if self.canPass:
             pressKey = arcade.gui.UILabel(text="PRESIONE CUALQUIER TECLA PARA CONTINUAR",font_name="Retro Gaming", font_size=15)
         else: 
-            pressKey = arcade.gui.UILabel()
+            pressKey = arcade.gui.UILabel(text=" ",font_size=15,font_name="Retro Gaming")
 
-
+       
         gui = arcade.gui.UIManager()
         box = arcade.gui.UIBoxLayout()
 
@@ -50,10 +53,11 @@ class TextView(arcade.View):
     def on_update(self, delta_time: float):
         self.currentTime += delta_time
 
-        if self.currentTime >= .1 and self.textsParts:
+        if self.currentTime >=  random.random()/2 and len(self.textsParts) != 0:
             word = self.textsParts.pop(0)
             self.currentText += word + " "
             self.label = self.makeText()
             self.currentTime = 0
-        if not self.textsParts:
+        if len(self.textsParts) == 0 and self.currentTime > 1:
             self.canPass = True
+            self.label = self.makeText()
