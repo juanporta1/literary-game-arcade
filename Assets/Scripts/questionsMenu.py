@@ -9,7 +9,7 @@ from copy import copy
 
 class QuestionMenu(arcade.View):
     global globalVars
-    def __init__(self, window, questions,gameView,menuView,oportunities,quantityQuestions):
+    def __init__(self, window, questions,menuView,oportunities,quantityQuestions,gameView = None):
         super().__init__(window)
         self.usedQuestions = []
         self.questions = questions
@@ -20,6 +20,7 @@ class QuestionMenu(arcade.View):
         self.questionIndex = 0
         self.oportunities = oportunities
         self.currentOportunities = oportunities 
+        self.canPass = False
         self.questionStyle = {
             "bg_color": None,
             "bg_color_pressed": None,
@@ -177,17 +178,21 @@ class QuestionMenu(arcade.View):
     def pressCorrect(self,event):
         self.actualQuestion = self.getQuestion(self.questions)
         self.questionIndex += 1
-        if self.questionIndex < 3:
+        if self.questionIndex < self.quantityQuestions:
             self.menu = self.questionsMenu(*self.actualQuestion)
             self.menu.enable()
         else:
+            print("entro en este if")
+            self.canPass = True
             self.window.show_view(self.gameView)
+            
             
         
         
     def pressIncorrect(self,event):
         self.currentOportunities -= 1
         if self.currentOportunities == -1:
+            print("entro en el if malo")
             self.window.show_view(self.gameView)
             globalVars.LIFES -= 1   
             self.currentOportunities = copy(self.oportunities)
