@@ -79,7 +79,7 @@ class Room(arcade.View):
     def on_draw(self):
         arcade.start_render()
         self.clear()
-        
+        arcade.set_background_color(arcade.color.BLACK)
         self.playerCamera.use()
         self.scene.draw()
         self.guiCamera.use()
