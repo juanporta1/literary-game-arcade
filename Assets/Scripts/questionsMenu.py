@@ -60,7 +60,8 @@ class QuestionMenu(arcade.View):
         }
         self.actualQuestion = self.getQuestion(self.questions)
         self.menu = self.questionsMenu(*self.actualQuestion)
-    
+        self.canPass = False
+        
     def getQuestion(self,questions):
         randomNumber = random.randint(0,len(questions)-1)
         while self.usedQuestions.count(randomNumber) != 0:
@@ -177,10 +178,11 @@ class QuestionMenu(arcade.View):
     def pressCorrect(self,event):
         self.actualQuestion = self.getQuestion(self.questions)
         self.questionIndex += 1
-        if self.questionIndex < 3:
+        if self.questionIndex < self.quantityQuestions:
             self.menu = self.questionsMenu(*self.actualQuestion)
             self.menu.enable()
         else:
+            self.canPass = True
             self.window.show_view(self.gameView)
             
         

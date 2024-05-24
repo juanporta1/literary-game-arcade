@@ -26,6 +26,8 @@ class Player(arcade.Sprite):
         self.time = 0
         self.moveRight = False
         self.moveLeft = False
+        self.moveUp = False
+        self.moveDown = False
         
     def update_animation(self, delta_time: float = 1 / 60):
         

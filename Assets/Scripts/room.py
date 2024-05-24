@@ -8,11 +8,23 @@ import questions as q
 import globalVars
 from gameOver import GameOverView
 import sounds
+
+class Key(arcade.Sprite):
+    def __init__(self, filename: str = None, scale: float = 1, image_x: float = 0, image_y: float = 0, image_width: float = 0, image_height: float = 0, center_x: float = 0, center_y: float = 0, repeat_count_x: int = 1, repeat_count_y: int = 1, flipped_horizontally: bool = False, flipped_vertically: bool = False, flipped_diagonally: bool = False, hit_box_algorithm: str | None = "Simple", hit_box_detail: float = 4.5, texture: arcade.Texture = None, angle: float = 0,questionMenu: QuestionMenu = None):
+        super().__init__(filename, scale, image_x, image_y, image_width, image_height, center_x, center_y, repeat_count_x, repeat_count_y, flipped_horizontally, flipped_vertically, flipped_diagonally, hit_box_algorithm, hit_box_detail, texture, angle)
+        
+        self.canPass = False
+        self.questionMenu = questionMenu
+
+
 class Room(arcade.View):
     global globalVars
-    def __init__(self,window,tilemap,x,y,scale,menu,questions,game,previousRoom = None, nextRoom = None):
+    
+    def __init__(self,window,tilemap,x,y,scale,menu,questions,game,keys,previousRoom = None, nextRoom = None):
         super().__init__(window)
         
+        self.keys = keys
+        self.canPass = False
         self.previousRoom = previousRoom
         self.nextRoom = nextRoom
         
@@ -24,6 +36,14 @@ class Room(arcade.View):
         self.scene = arcade.Scene.from_tilemap(Maps.initalMap)
         self.scene.add_sprite_list("Player")
         self.scene.add_sprite("Player", self.player)
+        self.scene.add_sprite_list("Key")
+        
+        for key in keys:
+            newKey = Key(filename=key["filename"],center_x=key["center_x"], center_y=key["center_y"],questionMenu=key["questionMenu"],scale=key["scale"])
+            newKey.questionMenu.gameView = self
+            
+            self.scene.add_sprite("Key",newKey)
+        
         self.menu = menu
         self.x = x
         self.y = y
@@ -31,9 +51,8 @@ class Room(arcade.View):
         self.guiCamera = arcade.Camera(1280,720)
        
         self.pause = PauseMenu(self.window,self,menu)
-        self.questionMenu = QuestionMenu(self.window,questions,self,menu,3,3)
         arcade.set_background_color(arcade.csscolor.DIM_GREY)
-        self.physicsEngine = arcade.PhysicsEnginePlatformer(player_sprite=self.player, walls=self.scene["Floor"],gravity_constant=1)
+        self.physicsEngine = arcade.PhysicsEnginePlatformer(player_sprite=self.player, walls=self.scene["Floor"],gravity_constant=0)
         
         
         self.player.center_x = self.x
@@ -46,6 +65,7 @@ class Room(arcade.View):
         
         self.walkChannel = sounds.walk.play()
         sounds.walk.stop()
+        
     def roomSetup(self):
         self.scene = arcade.Scene.from_tilemap(Maps.initalMap)
         
@@ -55,6 +75,12 @@ class Room(arcade.View):
         self.lastY = self.player.center_y
         self.scene.add_sprite_list("Player")
         self.scene.add_sprite("Player", self.player)
+        
+        for key in self.keys:
+            newKey = Key(filename=key["filename"],center_x=key["center_x"], center_y=key["center_y"],questionMenu=key["questionMenu"],scale=key["scale"])
+            newKey.questionMenu.gameView = self
+            self.scene.add_sprite("Key",newKey)
+        
     def centerCameraFromPlayer(self):
         
         cordY = self.player.center_y - (self.playerCamera.viewport_height / 2)
@@ -94,46 +120,68 @@ class Room(arcade.View):
             x += 64
                 
         
-        if arcade.check_for_collision_with_list(self.player, self.scene["Key"]):
+        if arcade.check_for_collision_with_list(self.player, self.scene["Key"]) and not self.canPass:
             arcade.draw_text("Presiona E",600,100,arcade.color.WHITE,24,font_name="Retro Gaming")
 
 
     def update_player_velocity(self):
+        if self.player.moveUp and not self.player.moveDown:
+            self.player.change_y = self.speed
+        if self.player.moveDown and not self.player.moveUp:
+            self.player.change_y = -self.speed
+        if (not self.player.moveUp and not self.player.moveDown) or (self.player.moveUp and self.player.moveDown):
+            self.player.change_y = 0
+    
         if self.player.moveLeft and not self.player.moveRight:
             self.player.change_x = -self.speed
         if self.player.moveRight and not self.player.moveLeft:
             self.player.change_x = self.speed
-        if not self.player.moveLeft and not self.player.moveRight:
+        if (not self.player.moveLeft and not self.player.moveRight) or (self.player.moveLeft and self.player.moveRight):
             self.player.change_x = 0
-        if self.player.moveLeft and self.player.moveRight:
-            self.player.change_x = 0
-    
+        
+        
     def on_key_press(self, key: int, modifiers: int):
-           
+        
         if key == arcade.key.A:
             self.player.moveLeft = True
         if key == arcade.key.D:
             self.player.moveRight = True
-        if key == arcade.key.SPACE and self.physicsEngine.can_jump():
-            self.player.change_y = self.jump
-
+        if key == arcade.key.W:
+            self.player.moveUp = True
+        if key == arcade.key.S:
+            self.player.moveDown = True
         if key == arcade.key.ESCAPE:
             self.window.show_view(self.pause)
         
         if arcade.check_for_collision_with_list(self.player,self.scene["Key"]) and key == arcade.key.E:
-            self.window.show_view(self.questionMenu)
-    
+            for key in arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
+                self.window.show_view(key.questionMenu)
+        print(self.player.change_x)
+        print(self.player.change_y)
     def on_key_release(self, key: int, modifiers: int):
         if key == arcade.key.A:
             self.player.moveLeft = False
         if key == arcade.key.D:
             self.player.moveRight = False
-            
+        if key == arcade.key.W:
+            self.player.moveUp = False
+        if key == arcade.key.S:
+            self.player.moveDown = False
+    def checkKeys(self):
+        allPasses = []
+        for i in self.scene.get_sprite_list("Key"):
+            allPasses.append(i.questionMenu.canPass)
+        canPass = all(allPasses)
+        print(allPasses)
+        print(canPass)
+        return canPass
+    
     def on_update(self, delta_time: float):
+        self.canPass = self.checkKeys()
         
-        if arcade.check_for_collision_with_list(self.player,self.scene["ExitDoor"]) and self.nextRoom is not None:
+        if arcade.check_for_collision_with_list(self.player,self.scene["ExitDoor"]) and self.nextRoom is not None and self.canPass:
             self.window.show_view(self.nextRoom)
-        if arcade.check_for_collision_with_list(self.player,self.scene["EntryDoor"]) and self.previousRoom is not None:
+        if arcade.check_for_collision_with_list(self.player,self.scene["EntryDoor"]) and self.previousRoom is not None and self.canPass:
             self.window.show_view(self.previousRoom)
         
         if self.player.change_x != 0:

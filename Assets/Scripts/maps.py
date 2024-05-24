@@ -6,9 +6,6 @@ layersInitialMap = {
     "Floor": {
         "use_spatial_hash" : True
     },
-    "Key": {
-        "use_spatial_hash" : True
-    },
     "EntryDoor":{
         "use_spatial_hash" : True
     },
