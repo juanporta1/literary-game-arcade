@@ -181,7 +181,7 @@ class Room(arcade.View):
         
         if arcade.check_for_collision_with_list(self.player,self.scene["ExitDoor"]) and self.nextRoom is not None and self.canPass:
             self.window.show_view(self.nextRoom)
-        if arcade.check_for_collision_with_list(self.player,self.scene["EntryDoor"]) and self.previousRoom is not None and self.canPass:
+        if arcade.check_for_collision_with_list(self.player,self.scene["EntryDoor"]) and self.previousRoom is not None:
             self.window.show_view(self.previousRoom)
         
         if self.player.change_x != 0:
