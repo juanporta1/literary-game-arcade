@@ -52,7 +52,7 @@ class Room(arcade.View):
        
         self.pause = PauseMenu(self.window,self,menu)
         arcade.set_background_color(arcade.csscolor.DIM_GREY)
-        self.physicsEngine = arcade.PhysicsEnginePlatformer(player_sprite=self.player, walls=self.scene["Floor"],gravity_constant=0)
+        self.physicsEngine = arcade.PhysicsEnginePlatformer(player_sprite=self.player, walls=self.scene["Wall"],gravity_constant=0)
         
         
         self.player.center_x = self.x
@@ -120,7 +120,14 @@ class Room(arcade.View):
             x += 64
                 
         
-        if arcade.check_for_collision_with_list(self.player, self.scene["Key"]) and not self.canPass:
+        for key in arcade.check_for_collision_with_list(self.player, self.scene["Key"]):
+            if not key.questionMenu.canPass:
+                arcade.draw_text("Presiona E",600,100,arcade.color.WHITE,24,font_name="Retro Gaming")
+            
+        if arcade.check_for_collision_with_list(self.player, self.scene["ExitDoor"]) and self.canPass:
+            arcade.draw_text("Presiona E",600,100,arcade.color.WHITE,24,font_name="Retro Gaming")
+        
+        if arcade.check_for_collision_with_list(self.player, self.scene["EntryDoor"]):
             arcade.draw_text("Presiona E",600,100,arcade.color.WHITE,24,font_name="Retro Gaming")
 
 
@@ -153,11 +160,19 @@ class Room(arcade.View):
         if key == arcade.key.ESCAPE:
             self.window.show_view(self.pause)
         
-        if arcade.check_for_collision_with_list(self.player,self.scene["Key"]) and key == arcade.key.E:
+        if arcade.check_for_collision_with_list(self.player,self.scene["Key"]) and key == arcade.key.E and not self.canPass:
             for key in arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
-                self.window.show_view(key.questionMenu)
-        print(self.player.change_x)
-        print(self.player.change_y)
+                if not key.questionMenu.canPass:
+                    self.window.show_view(key.questionMenu)
+            
+        if arcade.check_for_collision_with_list(self.player,self.scene["ExitDoor"]) and key == arcade.key.E and self.canPass:
+            for door in arcade.check_for_collision_with_list(self.player,self.scene["ExitDoor"]):
+                self.window.show_view(self.nextRoom)
+        
+        if arcade.check_for_collision_with_list(self.player,self.scene["EntryDoor"]) and key == arcade.key.E:
+            for door in arcade.check_for_collision_with_list(self.player,self.scene["ExitDoor"]):
+                self.window.show_view(self.previousRoom)
+            
     def on_key_release(self, key: int, modifiers: int):
         if key == arcade.key.A:
             self.player.moveLeft = False
@@ -172,17 +187,10 @@ class Room(arcade.View):
         for i in self.scene.get_sprite_list("Key"):
             allPasses.append(i.questionMenu.canPass)
         canPass = all(allPasses)
-        print(allPasses)
-        print(canPass)
         return canPass
     
     def on_update(self, delta_time: float):
         self.canPass = self.checkKeys()
-        
-        if arcade.check_for_collision_with_list(self.player,self.scene["ExitDoor"]) and self.nextRoom is not None and self.canPass:
-            self.window.show_view(self.nextRoom)
-        if arcade.check_for_collision_with_list(self.player,self.scene["EntryDoor"]) and self.previousRoom is not None:
-            self.window.show_view(self.previousRoom)
         
         if self.player.change_x != 0:
             if self.walkChannel.get_busy():

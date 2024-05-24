@@ -1,4 +1,4 @@
 from copy import copy
 
-LIFES = 5
+LIFES = 3
 TOTAL_LIFES = copy(LIFES)
