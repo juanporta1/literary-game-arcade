@@ -1,4 +1,5 @@
 import arcade
+import arcade.gui
 from Player import Player
 import random
 import maps as Maps
@@ -66,6 +67,8 @@ class Room(arcade.View):
         self.walkChannel = sounds.walk.play()
         sounds.walk.stop()
         
+        self.interface = arcade.gui.UIManager()
+        self.interface.add(arcade.gui.UIFlatButton(50,10,100,50,"Hola",))
     def roomSetup(self):
         self.scene = arcade.Scene.from_tilemap(Maps.initalMap)
         
@@ -81,6 +84,9 @@ class Room(arcade.View):
             newKey.questionMenu.gameView = self
             self.scene.add_sprite("Key",newKey)
         
+
+        
+
     def centerCameraFromPlayer(self):
         
         cordY = self.player.center_y - (self.playerCamera.viewport_height / 2)
@@ -109,7 +115,7 @@ class Room(arcade.View):
         self.playerCamera.use()
         self.scene.draw()
         self.guiCamera.use()
-        
+        self.interface.draw()
         x = 10
         
         for i in range(globalVars.TOTAL_LIFES):

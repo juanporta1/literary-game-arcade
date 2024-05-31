@@ -1,5 +1,6 @@
 import arcade
 import arcade.color
+import arcade.color
 import arcade.gui
 import random
 from PauseMenu import PauseMenu
@@ -47,10 +48,10 @@ class QuestionMenu(arcade.View):
             "border_color_pressed" : arcade.color.ASH_GREY
         }
         self.opportunitiesStyleDefault = {
-            "bg_color": arcade.color.GREEN,
-            "bg_color_pressed": arcade.color.GREEN,
-            "border_color": arcade.color.GREEN,
-            "border_color_pressed" : arcade.color.GREEN
+            "bg_color": None,
+            "bg_color_pressed": None,
+            "border_color": None,
+            "border_color_pressed" : None
         }
         self.opportunitiesStyleEmpty = {
             "bg_color": None,
@@ -61,6 +62,7 @@ class QuestionMenu(arcade.View):
         self.actualQuestion = self.getQuestion(self.questions)
         self.menu = self.questionsMenu(*self.actualQuestion)
         self.canPass = False
+        
         
     def getQuestion(self,questions):
         randomNumber = random.randint(0,len(questions)-1)
@@ -80,21 +82,12 @@ class QuestionMenu(arcade.View):
     
     def questionsMenu(self,question,responses):
         
-        
+        self.fillX = arcade.load_texture("Assets/Sprites/UI/fillX.png")
+        self.emptyX = arcade.load_texture("Assets/Sprites/UI/emptyX.png")
         
         missingBox = arcade.gui.UIBoxLayout(vertical=False)
-        missingLabel = arcade.gui.UILabel(text="Preguntas: ",font_name="Retro Gaming", font_size=18)
-        missingBox.add(missingLabel)
-        
-        for i in range(self.quantityQuestions):
-            if i == self.questionIndex:
-                x = arcade.gui.UIFlatButton(width=32,height=32,style=self.missingQuestionStyleFocus)
-            elif i < self.questionIndex:
-                x = arcade.gui.UIFlatButton(width=32,height=32,style=self.missingQuestionStyleCorrect)
-            else:
-                x = arcade.gui.UIFlatButton(width=32,height=32,style=self.missingQuestionStyleDefault)
-            missingBox.add(x.with_space_around(0,5,0,5))
-            
+        missingLabel = arcade.gui.UILabel(text=f"Preguntas: {self.questionIndex + 1}/{self.quantityQuestions}",font_name="Retro Gaming", font_size=18)
+        missingBox.add(missingLabel)           
          
         
         guiMenu = arcade.gui.UIManager()
@@ -109,7 +102,8 @@ class QuestionMenu(arcade.View):
             "font_name": "Retro Gaming",
             "border_color": None,
             "border_color_focused": None,
-            "bg_color_focused": arcade.color.BLACK
+            "bg_color_focused": arcade.color.BLACK,
+            "border_radius": 100
         }
         secondBox = arcade.gui.UIBoxLayout(vertical=False)
         questionBox = arcade.gui.UIFlatButton(text=question,width=1100,height=200,style=self.questionStyle)
@@ -120,9 +114,9 @@ class QuestionMenu(arcade.View):
 
         for i in range(self.oportunities):
             if i <= self.currentOportunities - 1:
-                x = arcade.gui.UIFlatButton(width=32,height=10,style=self.opportunitiesStyleDefault)
+                x = arcade.gui.UITextureButton(width=32,height=32,style=self.opportunitiesStyleDefault,texture=self.fillX)
             else:
-                x = arcade.gui.UIFlatButton(width=32,height=10,style=self.opportunitiesStyleEmpty)
+                x = arcade.gui.UITextureButton(width=32,height=32,style=self.opportunitiesStyleEmpty,texture=self.emptyX)
                 
             opportunitiesBox.add(x.with_space_around(5,5,0,5))
         
@@ -172,6 +166,7 @@ class QuestionMenu(arcade.View):
     def on_draw(self):
         self.window.clear()
         self.menu.draw()
+        arcade.set_background_color(arcade.color.ASH_GREY)
         
         
                 
