@@ -16,18 +16,18 @@ class Game(arcade.View):
     global globalVars
     def __init__(self,window,menu):
         super().__init__(window)
-        
+        commonQuestion = arcade.load_texture("Assets/Sprites/QuestionMenu/commonQuestion.png")
         keysLevelOne = [{
                 "filename": "Assets/Sprites/UI/fillHeart.png",
                 "center_x": 4415,
                 "center_y": 310,
-                "questionMenu": QuestionMenu(self.window,questions.levelOne,None,menu,5,3),
+                "questionMenu": QuestionMenu(self.window,questions.levelOne,None,menu,5,3,boxTexture=commonQuestion),
                 "scale": 1
             },{
                 "filename": "Assets/Sprites/UI/fillHeart.png",
                 "center_x": 3000,
                 "center_y": 400,
-                "questionMenu": QuestionMenu(self.window,questions.levelOne,None,menu,5,3),
+                "questionMenu": QuestionMenu(self.window,questions.levelOne,None,menu,5,3,boxTexture=commonQuestion),
                 "scale": 1
             }
         ]
@@ -36,13 +36,13 @@ class Game(arcade.View):
                 "filename": "Assets/Sprites/UI/emptyHeart.png",
                 "center_x": 5000,
                 "center_y": 200,
-                "questionMenu": QuestionMenu(self.window,questions.levelOne,None,menu,1,1),
+                "questionMenu": QuestionMenu(self.window,questions.levelOne,None,menu,1,1,boxTexture=commonQuestion),
                 "scale": 1
             },{
                 "filename": "Assets/Sprites/UI/emptyHeart.png",
                 "center_x": 2500,
                 "center_y": 400,
-                "questionMenu": QuestionMenu(self.window,questions.levelOne,None,menu,1,1),
+                "questionMenu": QuestionMenu(self.window,questions.levelOne,None,menu,1,1,boxTexture=commonQuestion),
                 "scale": 1
             }
         ]

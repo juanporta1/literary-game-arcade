@@ -10,7 +10,7 @@ from copy import copy
 
 class QuestionMenu(arcade.View):
     global globalVars
-    def __init__(self, window, questions,gameView,menuView,oportunities,quantityQuestions):
+    def __init__(self, window, questions,gameView,menuView,oportunities,quantityQuestions,boxTexture):
         super().__init__(window)
         self.usedQuestions = []
         self.questions = questions
@@ -26,27 +26,10 @@ class QuestionMenu(arcade.View):
             "bg_color_pressed": None,
             "border_color": arcade.color.BLACK,
             "border_color_pressed" : arcade.color.BLACK,
-            "font_color_pressed": arcade.color.WHITE
-        }
-        self.missingQuestionStyleFocus = {
-            "bg_color": arcade.color.WHITE_SMOKE,
-            "bg_color_pressed": arcade.color.WHITE_SMOKE,
-            "border_color": arcade.color.WHITE_SMOKE,
-            "border_color_pressed" : arcade.color.WHITE_SMOKE
+            "font_color_pressed": arcade.color.WHITE,
+            "font_name": "Retro Gaming"
         }
         
-        self.missingQuestionStyleCorrect = {
-            "bg_color": arcade.color.DARK_GREEN,
-            "bg_color_pressed": arcade.color.DARK_GREEN,
-            "border_color": arcade.color.DARK_GREEN,
-            "border_color_pressed" : arcade.color.DARK_GREEN
-        } 
-        self.missingQuestionStyleDefault = {
-            "bg_color": arcade.color.ASH_GREY,
-            "bg_color_pressed": arcade.color.ASH_GREY,
-            "border_color": arcade.color.ASH_GREY,
-            "border_color_pressed" : arcade.color.ASH_GREY
-        }
         self.opportunitiesStyleDefault = {
             "bg_color": None,
             "bg_color_pressed": None,
@@ -59,6 +42,7 @@ class QuestionMenu(arcade.View):
             "border_color": None,
             "border_color_pressed" : None
         }
+        self.boxTexture = boxTexture
         self.actualQuestion = self.getQuestion(self.questions)
         self.menu = self.questionsMenu(*self.actualQuestion)
         self.canPass = False
@@ -106,7 +90,7 @@ class QuestionMenu(arcade.View):
             "border_radius": 100
         }
         secondBox = arcade.gui.UIBoxLayout(vertical=False)
-        questionBox = arcade.gui.UIFlatButton(text=question,width=1100,height=200,style=self.questionStyle)
+        questionBox = arcade.gui.UITextureButton(text=question,width=1000,height=200,style=self.questionStyle,texture=self.boxTexture,font_name = "Retro Gaming")
         secondBox.add(questionBox.with_space_around(2,2,2,2))
         opportunitiesBox = arcade.gui.UIBoxLayout()
         opportunitiesLabel = arcade.gui.UILabel(text="Oportunidades", font_name="Retro Gaming", font_size=12)
