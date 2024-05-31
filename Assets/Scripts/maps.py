@@ -3,7 +3,7 @@ import arcade
 #El tiled no puede tener ningun sprite en blanco, como espacios vacios de un tilemap, porque genera un error. Tener cuidado al pintar en tiled. Si se quiere hacer un sprite invisible editar el .json del mapa.
 
 layersInitialMap = {
-    "Floor": {
+    "Wall": {
         "use_spatial_hash" : True
     },
     "EntryDoor":{
@@ -16,7 +16,7 @@ layersInitialMap = {
 initalMap = arcade.load_tilemap("Assets/Levels/initial_map.json",1.5,layersInitialMap)
 
 layersInitialMap = {
-    "Floor": {
+    "Wall": {
         "use_spatial_hash" : True,
         "hit_box_detail": 10
     }
