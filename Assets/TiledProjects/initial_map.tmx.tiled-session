@@ -1,0 +1,41 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "initial_map.tmx",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "": {
+            "scaleInDock": 0.75
+        },
+        "initial_map.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 472,
+                "y": 253.3333333333333
+            }
+        },
+        "initial_map.tmx#terrain": {
+            "scaleInDock": 1
+        }
+    },
+    "last.imagePath": "C:/Users/milag/OneDrive/Escritorio/literary-game-arcade/Assets/Sprites/DecoCastle",
+    "map.height": 500,
+    "map.lastUsedFormat": "tmx",
+    "map.width": 1000,
+    "openFiles": [
+        "initial_map.tmx"
+    ],
+    "project": "initial_map.tmx.tiled-project",
+    "recentFiles": [
+        "initial_map.tmx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.tileSize": {
+        "height": 32,
+        "width": 32
+    }
+}

@@ -1,0 +1,43 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "initial_map.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 158,
+                "y": 3134.5
+            }
+        },
+        "initial_map.tmx#books": {
+            "scaleInDock": 1
+        },
+        "initial_map.tmx#terrain": {
+            "scaleInDock": 1
+        },
+        "terrain.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "C:/Users/milag/OneDrive/Escritorio/literary-game-arcade/Assets/Sprites/Books",
+    "map.height": 100,
+    "map.lastUsedFormat": "tmx",
+    "map.width": 100,
+    "openFiles": [
+    ],
+    "project": "initMap.tiled-project",
+    "recentFiles": [
+        "initial_map.tmx",
+        "terrain.tsx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.lastUsedFormat": "tsx"
+}
