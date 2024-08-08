@@ -48,16 +48,10 @@ class Game(arcade.View):
         ]
         
         
-        self.room1 = Room(self.window,Maps.initalMap,3600,300,4,menu,questions.levelOne,self,keysLevelOne)
-        self.room2 = Room(self.window,Maps.initalMap,2500,500,4,menu,questions.levelOne,self,keysLevelTwo)  
-        self.firstText = TextView(self.window,"Hola muy buenas tardes, este es el primer texto de mi view, utilizo este texto para ver si funciona la creacion de estos menues",self.room1)
-        self.room1.previousRoom = self.room2
-        self.room1.nextRoom = self.room2
-        self.room2.previousRoom = self.room1
-        self.room2.nextRoom = self.room1
+        self.textView = TextView(self.window,'Has recorrido el castillo, encontrando los libros ocultos y respondiendo cada pregunta con éxito. Al final del último desafío, un haz de luz ilumina la sala y aparece un mensaje: "Eres digno del conocimiento de Alden. Usa esta sabiduría con honor y responsabilidad." El castillo empieza a desvanecerse, revelando un pergamino antiguo que había estado escondido. En él, encuentras el verdadero propósito del desafío: Alden buscaba un guardián digno de su conocimiento, alguien que pudiera preservar y compartir la sabiduría con el mundo.',menu)
         
     def on_update(self, delta_time: float):
-        self.window.show_view(self.firstText)
+        self.window.show_view(self.textView)
             
         
         
