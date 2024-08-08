@@ -21,12 +21,11 @@ class Key(arcade.Sprite):
 class Room(arcade.View):
     global globalVars
     
-    def __init__(self,window,tilemap,x,y,scale,menu,questions,game,keys,previousRoom = None, nextRoom = None):
+    def __init__(self,window,tilemap,x,y,scale,menu,questions,game,keys, nextRoom = None):
         super().__init__(window)
         
         self.keys = keys
         self.canPass = False
-        self.previousRoom = previousRoom
         self.nextRoom = nextRoom
         
         self.speed = 5
@@ -34,7 +33,8 @@ class Room(arcade.View):
         self.game = game
         self.player = Player(x,y,scale)
         self.gameOverView = GameOverView(self.window,menu)
-        self.scene = arcade.Scene.from_tilemap(Maps.initalMap)
+        self.map = arcade.load_tilemap(tilemap)
+        self.scene = arcade.Scene.from_tilemap(self.map)
         self.scene.add_sprite_list("Player")
         self.scene.add_sprite("Player", self.player)
         self.scene.add_sprite_list("Key")
@@ -68,7 +68,7 @@ class Room(arcade.View):
         sounds.walk.stop()
         
         self.interface = arcade.gui.UIManager()
-        self.interface.add(arcade.gui.UIFlatButton(50,10,100,50,"Hola",))
+        
     def roomSetup(self):
         self.scene = arcade.Scene.from_tilemap(Maps.initalMap)
         
@@ -124,19 +124,10 @@ class Room(arcade.View):
             else:
                 arcade.draw_lrwh_rectangle_textured(x,650,64,64,self.emptyHeart)
             x += 64
+        
+        if arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
+            arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
                 
-        
-        for key in arcade.check_for_collision_with_list(self.player, self.scene["Key"]):
-            if not key.questionMenu.canPass:
-                arcade.draw_text("Presiona E",600,100,arcade.color.WHITE,24,font_name="Retro Gaming")
-            
-        if arcade.check_for_collision_with_list(self.player, self.scene["ExitDoor"]) and self.canPass:
-            arcade.draw_text("Presiona E",600,100,arcade.color.WHITE,24,font_name="Retro Gaming")
-        
-        if arcade.check_for_collision_with_list(self.player, self.scene["EntryDoor"]):
-            arcade.draw_text("Presiona E",600,100,arcade.color.WHITE,24,font_name="Retro Gaming")
-
-
     def update_player_velocity(self):
         if self.player.moveUp and not self.player.moveDown:
             self.player.change_y = self.speed
@@ -166,18 +157,11 @@ class Room(arcade.View):
         if key == arcade.key.ESCAPE:
             self.window.show_view(self.pause)
         
-        if arcade.check_for_collision_with_list(self.player,self.scene["Key"]) and key == arcade.key.E and not self.canPass:
+        if key == arcade.key.E and arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
             for key in arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
                 if not key.questionMenu.canPass:
                     self.window.show_view(key.questionMenu)
             
-        if arcade.check_for_collision_with_list(self.player,self.scene["ExitDoor"]) and key == arcade.key.E and self.canPass:
-            for door in arcade.check_for_collision_with_list(self.player,self.scene["ExitDoor"]):
-                self.window.show_view(self.nextRoom)
-        
-        if arcade.check_for_collision_with_list(self.player,self.scene["EntryDoor"]) and key == arcade.key.E:
-            for door in arcade.check_for_collision_with_list(self.player,self.scene["ExitDoor"]):
-                self.window.show_view(self.previousRoom)
             
     def on_key_release(self, key: int, modifiers: int):
         if key == arcade.key.A:
@@ -197,7 +181,7 @@ class Room(arcade.View):
     
     def on_update(self, delta_time: float):
         self.canPass = self.checkKeys()
-        
+    
         if self.player.change_x != 0:
             if self.walkChannel.get_busy():
                 pass
@@ -214,6 +198,9 @@ class Room(arcade.View):
         self.centerCameraFromPlayer()
         self.physicsEngine.update()
         self.scene.get_sprite_list("Player").update_animation()
+        if self.canPass:
+            
+            self.window.show_view(self.nextRoom)
         if self.player.center_y < 0:
             self.setup()
         if self.player.left < 0:
