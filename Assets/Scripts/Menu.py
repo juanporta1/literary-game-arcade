@@ -6,12 +6,13 @@ class MenuView(arcade.View):
 
     def __init__(self, window,):
         super().__init__(window)
-    
+        self.bg = arcade.load_texture("Assets/Sprites/Backgrounds/mainMenu.jpeg")
         self.menu = self.principalMenu()
         self.menu.enable()
         
     def on_draw(self):
         self.clear()
+        arcade.draw_lrwh_rectangle_textured(0,0,1280,720,self.bg)
         self.menu.draw()
         arcade.set_background_color(arcade.color.BLACK)
         
