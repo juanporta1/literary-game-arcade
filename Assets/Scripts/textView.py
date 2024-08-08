@@ -19,7 +19,7 @@ class TextView(arcade.View):
         self.currentTime = 0
         self.label = self.makeText()
         
-
+        self.touchedKey = False
 
     def on_draw(self):
         self.window.clear()
@@ -48,12 +48,18 @@ class TextView(arcade.View):
         return gui
     
     def on_key_press(self, symbol: int, modifiers: int):
-        self.window.show_view(self.nextView)
+        if not self.touchedKey:
+            self.touchedKey = True
+        else:
+            self.window.show_view(self.nextView)
 
     def on_update(self, delta_time: float):
         self.currentTime += delta_time
-
-        if self.currentTime >=  random.random()/2 and len(self.textsParts) != 0:
+        if self.touchedKey:
+            time = 0
+        else:
+            time = random.random()/2
+        if self.currentTime >= time and len(self.textsParts) != 0:
             word = self.textsParts.pop(0)
             self.currentText += word + " "
             self.label = self.makeText()
