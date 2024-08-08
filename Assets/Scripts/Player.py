@@ -16,10 +16,14 @@ class Player(arcade.Sprite):
             self.time = 0
     
     def __init__(self,x,y,scale):
-        super().__init__(filename="Assets/Sprites/Player/Individual Sprites/adventurer-idle-2-00.png",center_x= x, center_y=y,scale= scale,hit_box_detail=1)
+        super().__init__(filename="Assets/Sprites/Player/PlayerSprites/idle_down/tile000.png",center_x= x, center_y=y,scale= scale,hit_box_detail=1)
         self.indexAnimation = 0
-        self.animationIdleList = functions.createAnimationList("Assets/Sprites/Player/Individual Sprites/adventurer-idle-2-0",2)
-        self.animationWalkList = functions.createAnimationList("Assets/Sprites/Player/Individual Sprites/adventurer-run-0",2)
+        self.idle_down = functions.createAnimationList("Assets/Sprites/idle_down/tile00",8)
+        self.idle_leftdown = functions.createAnimationList("Assets/Sprites/idle_leftdown/tile00",8)
+        self.idle_rightdown = functions.createAnimationList("Assets/Sprites/idle_rightdown/tile00",8)
+        self.idle_up = functions.createAnimationList("Assets/Sprites/idle_up/tile00",8)
+        self.idle_leftup = functions.createAnimationList("Assets/Sprites/idle_leftup/tile00",8)
+        self.idle_rightup = functions.createAnimationList("Assets/Sprites/idle_rightup/tile00",8)
         
         
         self.isSeeRight = True
