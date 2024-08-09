@@ -1,6 +1,7 @@
 import arcade
 import arcade.gui
 import random
+import sounds
 class TextView(arcade.View):
     def __init__(self, window: arcade.Window, text: str,nextView: arcade.View,style = {
         "font_name": "Retro Gaming",
@@ -64,6 +65,11 @@ class TextView(arcade.View):
             self.currentText += word + " "
             self.label = self.makeText()
             self.currentTime = 0
+            sounds.writes[3].play()
+            
         if len(self.textsParts) == 0 and self.currentTime > 1:
             self.canPass = True
             self.label = self.makeText()
+            
+        
+        
