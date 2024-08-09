@@ -9,7 +9,7 @@ class TextView(arcade.View):
         "bg_color_pressed": None,
         "border_color": arcade.color.WHITE,
         "font_size": 16
-    }):
+    }, bg="Assets/Backgrounds/black.jpg"):
         super().__init__(window)
         self.canPass = False
         self.text = text
@@ -19,13 +19,14 @@ class TextView(arcade.View):
         self.currentText = ""
         self.currentTime = 0
         self.label = self.makeText()
-        
+        self.bg = arcade.load_texture(bg)
         self.touchedKey = False
-
+        self.sound = sounds.writes[random.randint(0,3)]
     def on_draw(self):
         self.window.clear()
+        arcade.draw_lrwh_rectangle_textured(0,0,1280,720,self.bg)
         self.label.draw()
-        arcade.set_background_color(arcade.color.BLACK)
+        
 
     def makeText(self):
 
@@ -65,7 +66,7 @@ class TextView(arcade.View):
             self.currentText += word + " "
             self.label = self.makeText()
             self.currentTime = 0
-            sounds.writes[3].play()
+            self.sound.play()
             
         if len(self.textsParts) == 0 and self.currentTime > 1:
             self.canPass = True

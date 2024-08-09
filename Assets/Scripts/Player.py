@@ -1,6 +1,7 @@
 import arcade
 import functions
-
+import sounds
+import random
 class Player(arcade.Sprite):
     
     
@@ -40,7 +41,7 @@ class Player(arcade.Sprite):
         self.moveUp = False
         self.moveDown = False
         self.animationList = self.idle_down
-        
+        self.canPlay = False
     def update_animation(self, delta_time: float = 1 / 60):
         
         self.time += delta_time
@@ -86,9 +87,12 @@ class Player(arcade.Sprite):
                 self.lastMove = 'leftup'
                 
         
-        if self.time >= .1:
+        if self.time >= .125:
             self.updateFrame(self.animationList)
-            
+            self.canPlay = True
+        if (self.indexAnimation == 1 or self.indexAnimation == 5) and (self.change_x != 0 or self.change_y != 0)and self.canPlay:
+            sounds.footsteps[random.randint(0,2)].play()
+            self.canPlay = False
     
                 
     

@@ -9,6 +9,7 @@ import questions as q
 import globalVars
 from gameOver import GameOverView
 import sounds
+import pygame
 
 class Key(arcade.Sprite):
     def __init__(self, filename: str = None, scale: float = 1, image_x: float = 0, image_y: float = 0, image_width: float = 0, image_height: float = 0, center_x: float = 0, center_y: float = 0, repeat_count_x: int = 1, repeat_count_y: int = 1, flipped_horizontally: bool = False, flipped_vertically: bool = False, flipped_diagonally: bool = False, hit_box_algorithm: str | None = "Simple", hit_box_detail: float = 4.5, texture: arcade.Texture = None, angle: float = 0,questionMenu: QuestionMenu = None):
@@ -27,8 +28,7 @@ class Room(arcade.View):
         self.keys = keys
         self.canPass = False
         self.nextRoom = nextRoom
-        
-        self.speed = 5
+        self.speed = 4
         self.jump = 25
         self.game = game
         self.player = Player(x,y,scale)
@@ -38,6 +38,7 @@ class Room(arcade.View):
         self.scene.add_sprite_list("Player")
         self.scene.add_sprite("Player", self.player)
         self.scene.add_sprite_list("Key")
+        
         
         for key in keys:
             newKey = Key(filename=key["filename"],center_x=key["center_x"], center_y=key["center_y"],questionMenu=key["questionMenu"],scale=key["scale"])
@@ -64,13 +65,14 @@ class Room(arcade.View):
         self.fillHeart = arcade.load_texture("Assets/Sprites/UI/fillHeart.png")
         self.emptyHeart = arcade.load_texture("Assets/Sprites/UI/emptyHeart.png")
         
-        self.walkChannel = sounds.walk.play()
-        sounds.walk.stop()
+        
         
         self.interface = arcade.gui.UIManager()
-        
+        self.ambient: pygame.mixer.Sound = sounds.ambient[random.randint(0,2)]
+        self.channel = self.ambient.play()  
+        self.channel.stop()      
     def roomSetup(self):
-        self.scene = arcade.Scene.from_tilemap(Maps.initalMap)
+        self.scene = arcade.Scene.from_tilemap(self.map)
         
         self.player.center_x = self.x
         self.player.center_y = self.y
@@ -103,10 +105,12 @@ class Room(arcade.View):
     def on_hide_view(self):
         self.lastX = self.player.center_x
         self.lastY = self.player.center_y
+        self.channel.stop()
     
     def on_show(self):
         self.player.center_x = self.lastX
         self.player.center_y = self.lastY
+        
     
     def on_draw(self):
         arcade.start_render()
@@ -181,16 +185,10 @@ class Room(arcade.View):
     
     def on_update(self, delta_time: float):
         self.canPass = self.checkKeys()
-    
-        if self.player.change_x != 0:
-            if self.walkChannel.get_busy():
-                pass
-            else:
-                sounds.walk.play()
-                
-        else:
-            sounds.walk.stop()
-        
+        if not self.channel.get_busy() and isinstance(self.window.current_view,self.__class__):
+            self.ambient = sounds.ambient[random.randint(0,2)]
+            self.channel = self.ambient.play()
+            
         if globalVars.LIFES == 0:
             globalVars.LIFES = 5
             self.window.show_view(self.gameOverView)
@@ -202,7 +200,7 @@ class Room(arcade.View):
             
             self.window.show_view(self.nextRoom)
         if self.player.center_y < 0:
-            self.setup()
+            self.roomSetup()
         if self.player.left < 0:
             self.player.change_x = 0
     
