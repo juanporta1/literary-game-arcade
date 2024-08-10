@@ -18,7 +18,7 @@ class Game(arcade.View):
         super().__init__(window)
         commonQuestion = arcade.load_texture("Assets/Sprites/QuestionMenu/commonQuestion.png")
         keysLevelOne = [{
-                "filename": "Assets/Sprites/UI/fillHeart.png",
+                "filename": "Assets/Sprites/Books/tile000.png",
                 "center_x": 300,
                 "center_y": 300,
                 "questionMenu": QuestionMenu(self.window,questions.levelOne,None,menu,5,3,boxTexture=commonQuestion),
@@ -27,7 +27,7 @@ class Game(arcade.View):
         ]
         
         keysLevelTwo = [{
-                "filename": "Assets/Sprites/UI/emptyHeart.png",
+                "filename": "Assets/Sprites/Books/tile000.png",
                 "center_x": 600,
                 "center_y": 200,
                 "questionMenu": QuestionMenu(self.window,questions.levelOne,None,menu,1,1,boxTexture=commonQuestion),
