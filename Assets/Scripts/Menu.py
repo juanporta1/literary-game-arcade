@@ -6,7 +6,7 @@ class MenuView(arcade.View):
 
     def __init__(self, window,):
         super().__init__(window)
-        self.bg = arcade.load_texture("Assets/Sprites/Backgrounds/mainMenu.jpeg")
+        self.bg = arcade.load_texture("Assets/Backgrounds/mainMenu.jpeg")
         self.menu = self.principalMenu()
         self.menu.enable()
         

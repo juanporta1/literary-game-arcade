@@ -42,22 +42,22 @@ class Game(arcade.View):
         
         self.afterFourth = TextView(self.window,'El cuarto libro habla de un artefacto poderoso escondido en el castillo, uno que puede alterar la realidad misma. Encuentras una sala decorada con símbolos mágicos que evocan el poder de una varita que desafió al mal más oscuro. La atmósfera en la sala te recuerda que el poder, cuando se usa sabiamente, puede transformar el mundo. Sientes que el final está cerca.',self.lastTextOne)
         
-        self.fourthLevel = Room(self.window,'Assets/Levels/prueba.tmj',20,20,2.5,menu,questions.levelOne,self,keysLevelOne,self.afterFourth)
+        self.fourthLevel = Room(self.window,'Assets/Levels/level1.tmj',20,20,2.5,menu,questions.levelOne,self,keysLevelOne,self.afterFourth)
         
         self.afterThird = TextView(self.window,'El tercer libro contiene un mapa antiguo del castillo. En una biblioteca oculta, descubres una pintura de un hombre cuya imagen permanece inmutable mientras él envejece en secreto. La imagen te sugiere que la verdadera esencia y el conocimiento permanecen ocultos a simple vista. Con esta reflexión, avanzas hacia la siguiente etapa del enigma.',self.fourthLevel)
         
-        self.thirdLevel = Room(self.window,'Assets/Levels/prueba.tmj',20,20,2.5,menu,questions.levelOne,self,keysLevelOne,self.afterThird)
+        self.thirdLevel = Room(self.window,'Assets/Levels/level1.tmj',20,20,2.5,menu,questions.levelOne,self,keysLevelOne,self.afterThird)
         
         self.afterSecond = TextView(self.window,'El segundo libro revela pistas sobre un antiguo hechizo perdido. Mientras avanzas, encuentras una piedra con una inscripción que alude a un hobbit que enfrentó grandes desafíos y halló coraje en su travesía. La mención de este pequeño héroe te recuerda que a veces, el valor más grande proviene de los lugares más inesperados. Continúas con renovada determinación.',self.thirdLevel)
         
-        self.secondLevel = Room(self.window,'Assets/Levels/prueba.tmj',20,20,2.5,menu,questions.levelOne,self,keysLevelTwo,self.afterSecond)
+        self.secondLevel = Room(self.window,'Assets/Levels/level1.tmj',20,20,2.5,menu,questions.levelOne,self,keysLevelTwo,self.afterSecond)
         
         self.afterFirst = TextView(self.window,'Con el primer libro en tus manos, sientes una presencia extraña en el castillo. Mientras exploras, encuentras una inscripción en una pared que menciona a un caballero valiente con una figura triste, perdido en el tiempo y en busca de aventuras imposibles. La leyenda de este caballero parece inspirar la valentía necesaria para seguir adelante. Sigues tu camino, sabiendo que el próximo libro te espera.',self.secondLevel)
         
-        self.firstLevel = Room(self.window,'Assets/Levels/level1.tmj',80,80,3,menu,questions.levelOne,self,keysLevelOne,self.afterFirst)
+        self.firstLevel = Room(self.window,'Assets/Levels/level1.tmj',80,200,2,menu,questions.levelOne,self,keysLevelOne,self.afterFirst)
         
         self.firstTextTwo = TextView(self.window,'Hace poco, encontraste un mapa antiguo en una librería polvorienta, que indicaba la ubicación del castillo perdido. En el rincón de la librería, te llamó la atención un libro con una ilustración de un caballero de triste figura, un símbolo de alguien que parecía haber sido olvidado por el tiempo. Intrigado por la promesa de conocimiento y misterio, te aventuraste a explorar los antiguos salones del castillo. Sabes que superar este desafío no solo te dará acceso a sabiduría prohibida, sino que también resolverá un enigma que ha perdurado durante siglos.',self.firstLevel)
-        self.firstTextOne = TextView(self.window,'Te encuentras en el Castillo de Arcanum, un lugar antiguo y lleno de misterio. Hace siglos, el mago Alden escondió en este castillo los libros más valiosos de la literatura. Para preservar su conocimiento, creó un desafío: solo quien pudiera encontrar los libros y responder las preguntas literarias podría acceder a su sabiduría.',self.firstTextTwo)
+        self.firstTextOne = TextView(self.window,'Te encuentras en el Castillo de Arcanum, un lugar antiguo y lleno de misterio. Hace siglos, el mago Alden escondió en este castillo los libros más valiosos de la literatura. Para preservar su conocimiento, creó un desafío: solo quien pudiera encontrar los libros y responder las preguntas literarias podría acceder a su sabiduría.',self.firstTextTwo,bg="Assets/Backgrounds/hallway.jpeg")
         
     def on_update(self, delta_time: float):
         self.window.show_view(self.firstTextOne)
