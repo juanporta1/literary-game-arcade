@@ -10,6 +10,7 @@ import globalVars
 from gameOver import GameOverView
 import sounds
 import pygame
+import json
 
 class Key(arcade.Sprite):
     def __init__(self, filename: str = None, scale: float = 1, image_x: float = 0, image_y: float = 0, image_width: float = 0, image_height: float = 0, center_x: float = 0, center_y: float = 0, repeat_count_x: int = 1, repeat_count_y: int = 1, flipped_horizontally: bool = False, flipped_vertically: bool = False, flipped_diagonally: bool = False, hit_box_algorithm: str | None = "Simple", hit_box_detail: float = 4.5, texture: arcade.Texture = None, angle: float = 0,questionMenu: QuestionMenu = None):
@@ -22,18 +23,22 @@ class Key(arcade.Sprite):
 class Room(arcade.View):
     global globalVars
     
-    def __init__(self,window,tilemap,x,y,scale,menu,questions,game,keys, nextRoom = None):
+    def __init__(self,window,menu,game,jsonFile, nextRoom = None):
         super().__init__(window)
         
-        self.keys = keys
+        with open(jsonFile,"r") as file:
+            data = file.read()
+          
+        jsonData = json.loads(data)
+        keys = jsonData["keys"]
         self.canPass = False
         self.nextRoom = nextRoom
         self.speed = 4
         self.jump = 25
         self.game = game
-        self.player = Player(x,y,scale)
+        self.player = Player(jsonData["setup"]["playerX"],jsonData["setup"]["playerY"],jsonData["setup"]["playerScale"])
         self.gameOverView = GameOverView(self.window,menu)
-        self.map = arcade.load_tilemap(tilemap)
+        self.map = arcade.load_tilemap(jsonData["setup"]["tilemap"])
         self.scene = arcade.Scene.from_tilemap(self.map)
         self.scene.add_sprite_list("Player")
         self.scene.add_sprite("Player", self.player)
@@ -41,14 +46,19 @@ class Room(arcade.View):
         
         
         for key in keys:
-            newKey = Key(filename=key["filename"],center_x=key["center_x"], center_y=key["center_y"],questionMenu=key["questionMenu"],scale=key["scale"])
+            with open(key["qm"]["questions"],"r") as f:
+                data = f.read()
+            questions = json.loads(data)
+            qm = QuestionMenu(self.window,questions,self.game,menu,key["qm"]["op"],key["qm"]["qq"])
+            
+            newKey = Key(filename=key["filename"],center_x=key["center_x"], center_y=key["center_y"],questionMenu=qm,scale=key["scale"])
             newKey.questionMenu.gameView = self
             
             self.scene.add_sprite("Key",newKey)
         
         self.menu = menu
-        self.x = x
-        self.y = y
+        self.x = jsonData["setup"]["playerX"]
+        self.y = jsonData["setup"]["playerY"]
         self.playerCamera = arcade.Camera(1280,720)
         self.guiCamera = arcade.Camera(1280,720)
        

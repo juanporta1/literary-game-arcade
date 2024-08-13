@@ -1,0 +1,22 @@
+{
+    "keys":[    
+        {
+            "filename": "Assets/Sprites/Books/tile000.png",
+            "center_x": 100,
+            "center_y": 300,
+            "scale": 1,
+            "qm": {
+                "questions":"Assets/Scripts/questionsFiles/level1.json",
+                "op":5, 
+                "qq":3
+            }
+        }
+    ],
+    "setup":{
+        "playerX":300,
+        "playerY":300,
+        "playerScale": 2.5,
+        "tilemap": "Assets/Levels/level1.tmj"
+    }
+
+}

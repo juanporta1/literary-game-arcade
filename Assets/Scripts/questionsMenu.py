@@ -10,7 +10,7 @@ from copy import copy
 
 class QuestionMenu(arcade.View):
     global globalVars
-    def __init__(self, window, questions,gameView,menuView,oportunities,quantityQuestions,boxTexture):
+    def __init__(self, window, questions,gameView,menuView,oportunities,quantityQuestions):
         super().__init__(window)
         self.usedQuestions = []
         self.questions = questions
@@ -42,7 +42,7 @@ class QuestionMenu(arcade.View):
             "border_color": None,
             "border_color_pressed" : None
         }
-        self.boxTexture = boxTexture
+        self.boxTexture = arcade.load_texture("Assets/Sprites/QuestionMenu/commonQuestion.png")
         self.actualQuestion = self.getQuestion(self.questions)
         self.menu = self.questionsMenu(*self.actualQuestion)
         self.canPass = False
@@ -54,8 +54,8 @@ class QuestionMenu(arcade.View):
             randomNumber = random.randint(0,len(questions))
          
                 
-        question = questions[randomNumber]["question"]
-        responses = questions[randomNumber]["responses"]
+        question = questions[str(randomNumber)]["question"]
+        responses = questions[str(randomNumber)]["responses"]
         correct = responses[0]
         random.shuffle(responses)
         self.correct = responses.index(correct)
