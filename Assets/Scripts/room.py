@@ -5,7 +5,6 @@ import random
 import maps as Maps
 from PauseMenu import PauseMenu
 from questionsMenu import QuestionMenu
-import questions as q
 import globalVars
 from gameOver import GameOverView
 import sounds
@@ -46,6 +45,7 @@ class Room(arcade.View):
         self.scene.add_sprite_list("Key")
         self.scene.add_sprite_list("Life")
         
+    
         
         for key in keys:
             with open(key["qm"]["questions"],"r") as f:
@@ -71,6 +71,15 @@ class Room(arcade.View):
         arcade.set_background_color(arcade.csscolor.DIM_GREY)
         self.physicsEngine = arcade.PhysicsEnginePlatformer(player_sprite=self.player, walls=self.scene["Wall"],gravity_constant=0)
         
+        self.falseFloors = arcade.SpriteList(use_spatial_hash=True)
+        i = 1
+        lastI = 1
+       
+        for i in range(1,len(self.scene.sprite_lists)):
+            try:
+                self.falseFloors.insert(len(self.falseFloors),(self.scene[F"Floor{i}"]))
+            except:
+                pass
         
         self.player.center_x = self.x
         self.player.center_y = self.y
@@ -103,11 +112,16 @@ class Room(arcade.View):
     def on_hide_view(self):
         self.lastX = self.player.center_x
         self.lastY = self.player.center_y
+        self.player.moveDown = False
+        self.player.moveLeft = False
+        self.player.moveRight = False
+        self.player.moveUp = False
         self.channel.stop()
     
     def on_show(self):
         self.player.center_x = self.lastX
         self.player.center_y = self.lastY
+        
         
     
     def on_draw(self):
@@ -186,12 +200,19 @@ class Room(arcade.View):
         if not self.channel.get_busy() and isinstance(self.window.current_view,self.__class__):
             self.ambient = sounds.ambient[random.randint(0,2)]
             self.channel = self.ambient.play()
-    
+
         for life in arcade.check_for_collision_with_list(self.player,self.scene["Life"]):
-            globalVars.LIFES += 1
-            globalVars.APPEND_LIFES += 1
+            if globalVars.LIFES < globalVars.TOTAL_LIFES:
+                globalVars.LIFES += 1
+            else:
+                globalVars.APPEND_LIFES += 1
+                globalVars.LIFES += 1
+
             life.kill()
 
+        for i in arcade.check_for_collision_with_list(self.player,self.falseFloors):
+            print(i)
+        
         if globalVars.LIFES == 0:
             globalVars.LIFES = 5
             self.window.show_view(self.gameOverView)

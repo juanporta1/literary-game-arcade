@@ -22,7 +22,7 @@
         "playerX":300,
         "playerY":300,
         "playerScale": 2.5,
-        "tilemap": "Assets/Levels/level1.tmj"
+        "tilemap": "Assets/Levels/level1.json"
     }
 
 }
