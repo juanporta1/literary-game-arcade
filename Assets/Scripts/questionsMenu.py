@@ -151,6 +151,8 @@ class QuestionMenu(arcade.View):
         self.currentOportunities -= 1
         if self.currentOportunities == -1:
             self.window.show_view(self.gameView)
+            if globalVars.APPEND_LIFES > 0:
+                globalVars.APPEND_LIFES -= 1
             globalVars.LIFES -= 1
             self.currentOportunities = copy(self.opportunities)
             self.questionIndex = 0

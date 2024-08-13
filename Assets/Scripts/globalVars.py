@@ -2,3 +2,4 @@ from copy import copy
 
 LIFES = 3
 TOTAL_LIFES = copy(LIFES)
+APPEND_LIFES = 0
