@@ -2,126 +2,153 @@ import arcade
 import arcade.gui
 from Player import Player
 import random
-import maps as Maps
-from PauseMenu import PauseMenu
-from questionsMenu import QuestionMenu
-import questions as q
-import globalVars
-from gameOver import GameOverView
+import json
 import sounds
 import pygame
-import json
+import globalVars
+from PauseMenu import PauseMenu
+from questionsMenu import QuestionMenu
+from gameOver import GameOverView
 
 class Key(arcade.Sprite):
-    def __init__(self, filename: str = None, scale: float = 1, image_x: float = 0, image_y: float = 0, image_width: float = 0, image_height: float = 0, center_x: float = 0, center_y: float = 0, repeat_count_x: int = 1, repeat_count_y: int = 1, flipped_horizontally: bool = False, flipped_vertically: bool = False, flipped_diagonally: bool = False, hit_box_algorithm: str | None = "Simple", hit_box_detail: float = 4.5, texture: arcade.Texture = None, angle: float = 0,questionMenu: QuestionMenu = None):
-        super().__init__(filename, scale, image_x, image_y, image_width, image_height, center_x, center_y, repeat_count_x, repeat_count_y, flipped_horizontally, flipped_vertically, flipped_diagonally, hit_box_algorithm, hit_box_detail, texture, angle)
-        
+    def __init__(
+        self,
+        filename: str = None,
+        scale: float = 1,
+        image_x: float = 0,
+        image_y: float = 0,
+        image_width: float = 0,
+        image_height: float = 0,
+        center_x: float = 0,
+        center_y: float = 0,
+        repeat_count_x: int = 1,
+        repeat_count_y: int = 1,
+        flipped_horizontally: bool = False,
+        flipped_vertically: bool = False,
+        flipped_diagonally: bool = False,
+        hit_box_algorithm: str | None = "Simple",
+        hit_box_detail: float = 4.5,
+        texture: arcade.Texture = None,
+        angle: float = 0,
+        questionMenu: QuestionMenu = None,
+    ):
+        super().__init__(
+            filename,
+            scale,
+            image_x,
+            image_y,
+            image_width,
+            image_height,
+            center_x,
+            center_y,
+            repeat_count_x,
+            repeat_count_y,
+            flipped_horizontally,
+            flipped_vertically,
+            flipped_diagonally,
+            hit_box_algorithm,
+            hit_box_detail,
+            texture,
+            angle,
+        )
         self.canPass = False
         self.questionMenu = questionMenu
 
 
 class Room(arcade.View):
     global globalVars
-    
-    def __init__(self,window,menu,game,jsonFile, nextRoom = None):
+
+    def __init__(self, window, menu, game, jsonFile, nextRoom=None):
         super().__init__(window)
-        
-        with open(jsonFile,"r") as file:
+
+        with open(jsonFile, "r") as file:
             data = file.read()
-          
+
         jsonData = json.loads(data)
-        keys = jsonData["keys"]
+
         self.canPass = False
         self.nextRoom = nextRoom
         self.speed = 4
         self.jump = 25
         self.game = game
-        self.player = Player(jsonData["setup"]["playerX"],jsonData["setup"]["playerY"],jsonData["setup"]["playerScale"])
-        self.gameOverView = GameOverView(self.window,menu)
-        self.map = arcade.load_tilemap(jsonData["setup"]["tilemap"])
-        self.scene = arcade.Scene.from_tilemap(self.map)
-        self.scene.add_sprite_list("Player")
-        self.scene.add_sprite("Player", self.player)
-        self.scene.add_sprite_list("Key")
-        
-        
-        for key in keys:
-            with open(key["qm"]["questions"],"r") as f:
-                data = f.read()
-            questions = json.loads(data)
-            qm = QuestionMenu(self.window,questions,self.game,menu,key["qm"]["op"],key["qm"]["qq"])
-            
-            newKey = Key(filename=key["filename"],center_x=key["center_x"], center_y=key["center_y"],questionMenu=qm,scale=key["scale"])
-            newKey.questionMenu.gameView = self
-            
-            self.scene.add_sprite("Key",newKey)
-        
         self.menu = menu
         self.x = jsonData["setup"]["playerX"]
         self.y = jsonData["setup"]["playerY"]
-        self.playerCamera = arcade.Camera(1280,720)
-        self.guiCamera = arcade.Camera(1280,720)
-       
-        self.pause = PauseMenu(self.window,self,menu)
+        self.lastX = self.x
+        self.lastY = self.y
+
+        self.map = arcade.load_tilemap(jsonData["setup"]["tilemap"])
+        self.scene = arcade.Scene.from_tilemap(self.map)
+        self.scene.add_sprite_list("Player")
+        self.scene.add_sprite_list("Key")
+
+        self.player = Player(
+            jsonData["setup"]["playerX"],
+            jsonData["setup"]["playerY"],
+            jsonData["setup"]["playerScale"],
+        )
+        self.scene.add_sprite("Player", self.player)
+
+        keys = jsonData["keys"]
+        for key in keys:
+            with open(key["qm"]["questions"], "r") as f:
+                data = f.read()
+            questions = json.loads(data)
+            qm = QuestionMenu(
+                self.window,
+                questions,
+                self.game,
+                self.menu,
+                key["qm"]["op"],
+                key["qm"]["qq"],
+            )
+            newKey = Key(
+                filename=key["filename"],
+                center_x=key["center_x"],
+                center_y=key["center_y"],
+                questionMenu=qm,
+                scale=key["scale"],
+            )
+            newKey.questionMenu.gameView = self
+            self.scene.add_sprite("Key", newKey)
+
+        self.playerCamera = arcade.Camera(1280, 720)
+        self.guiCamera = arcade.Camera(1280, 720)
+
+        self.pause = PauseMenu(self.window, self, menu)
+        self.gameOverView = GameOverView(self.window, menu)
+        self.physicsEngine = arcade.PhysicsEnginePlatformer(
+            player_sprite=self.player, walls=self.scene["Wall"], gravity_constant=0
+        )
         arcade.set_background_color(arcade.csscolor.DIM_GREY)
-        self.physicsEngine = arcade.PhysicsEnginePlatformer(player_sprite=self.player, walls=self.scene["Wall"],gravity_constant=0)
-        
-        
-        self.player.center_x = self.x
-        self.player.center_y = self.y
-        self.lastX = self.player.center_x
-        self.lastY = self.player.center_y
-        
+
         self.fillHeart = arcade.load_texture("Assets/Sprites/UI/fillHeart.png")
         self.emptyHeart = arcade.load_texture("Assets/Sprites/UI/emptyHeart.png")
-        
-        
-        
         self.interface = arcade.gui.UIManager()
-        self.ambient: pygame.mixer.Sound = sounds.ambient[random.randint(0,2)]
-        self.channel = self.ambient.play()  
-        self.channel.stop()      
-    def roomSetup(self):
-        self.scene = arcade.Scene.from_tilemap(self.map)
-        
-        self.player.center_x = self.x
-        self.player.center_y = self.y
-        self.lastX = self.player.center_x
-        self.lastY = self.player.center_y
-        self.scene.add_sprite_list("Player")
-        self.scene.add_sprite("Player", self.player)
-        
-        for key in self.keys:
-            newKey = Key(filename=key["filename"],center_x=key["center_x"], center_y=key["center_y"],questionMenu=key["questionMenu"],scale=key["scale"])
-            newKey.questionMenu.gameView = self
-            self.scene.add_sprite("Key",newKey)
-        
-
-        
+        self.ambient: pygame.mixer.Sound = sounds.ambient[random.randint(0, 2)]
+        self.channel = self.ambient.play()
 
     def centerCameraFromPlayer(self):
-        
         cordY = self.player.center_y - (self.playerCamera.viewport_height / 2)
         cordX = self.player.center_x - (self.playerCamera.viewport_width / 2)
-        
+
         if cordX < 0:
             cordX = 0
         if cordY < 0:
             cordY = 0
-        
+
         cords = [cordX, cordY]
-        self.playerCamera.move_to(cords,.1)
-        
+        self.playerCamera.move_to(cords, 0.1)
+
     def on_hide_view(self):
         self.lastX = self.player.center_x
         self.lastY = self.player.center_y
         self.channel.stop()
-    
+
     def on_show(self):
         self.player.center_x = self.lastX
         self.player.center_y = self.lastY
-        
-    
+
     def on_draw(self):
         arcade.start_render()
         self.clear()
@@ -131,17 +158,17 @@ class Room(arcade.View):
         self.guiCamera.use()
         self.interface.draw()
         x = 10
-        
+
         for i in range(globalVars.TOTAL_LIFES):
             if i <= globalVars.LIFES - 1:
-                arcade.draw_lrwh_rectangle_textured(x,650,64,64,self.fillHeart)
+                arcade.draw_lrwh_rectangle_textured(x, 650, 64, 64, self.fillHeart)
             else:
-                arcade.draw_lrwh_rectangle_textured(x,650,64,64,self.emptyHeart)
+                arcade.draw_lrwh_rectangle_textured(x, 650, 64, 64, self.emptyHeart)
             x += 64
-        
-        if arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
-            arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
-                
+
+        if arcade.check_for_collision_with_list(self.player, self.scene["Key"]):
+            arcade.draw_text("Presiona E", (1280 / 2 - 80), 100, font_name="Retro Gaming", font_size=16)
+
     def update_player_velocity(self):
         if self.player.moveUp and not self.player.moveDown:
             self.player.change_y = self.speed
@@ -149,17 +176,15 @@ class Room(arcade.View):
             self.player.change_y = -self.speed
         if (not self.player.moveUp and not self.player.moveDown) or (self.player.moveUp and self.player.moveDown):
             self.player.change_y = 0
-    
+
         if self.player.moveLeft and not self.player.moveRight:
             self.player.change_x = -self.speed
         if self.player.moveRight and not self.player.moveLeft:
             self.player.change_x = self.speed
         if (not self.player.moveLeft and not self.player.moveRight) or (self.player.moveLeft and self.player.moveRight):
             self.player.change_x = 0
-        
-        
+
     def on_key_press(self, key: int, modifiers: int):
-        
         if key == arcade.key.A:
             self.player.moveLeft = True
         if key == arcade.key.D:
@@ -170,13 +195,11 @@ class Room(arcade.View):
             self.player.moveDown = True
         if key == arcade.key.ESCAPE:
             self.window.show_view(self.pause)
-        
-        if key == arcade.key.E and arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
-            for key in arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
+        if key == arcade.key.E and arcade.check_for_collision_with_list(self.player, self.scene["Key"]):
+            for key in arcade.check_for_collision_with_list(self.player, self.scene["Key"]):
                 if not key.questionMenu.canPass:
                     self.window.show_view(key.questionMenu)
-            
-            
+
     def on_key_release(self, key: int, modifiers: int):
         if key == arcade.key.A:
             self.player.moveLeft = False
@@ -186,19 +209,19 @@ class Room(arcade.View):
             self.player.moveUp = False
         if key == arcade.key.S:
             self.player.moveDown = False
+
     def checkKeys(self):
         allPasses = []
         for i in self.scene.get_sprite_list("Key"):
             allPasses.append(i.questionMenu.canPass)
         canPass = all(allPasses)
         return canPass
-    
+
     def on_update(self, delta_time: float):
         self.canPass = self.checkKeys()
-        if not self.channel.get_busy() and isinstance(self.window.current_view,self.__class__):
-            self.ambient = sounds.ambient[random.randint(0,2)]
+        if not self.channel.get_busy() and isinstance(self.window.current_view, self.__class__):
+            self.ambient = sounds.ambient[random.randint(0, 2)]
             self.channel = self.ambient.play()
-            
         if globalVars.LIFES == 0:
             globalVars.LIFES = 5
             self.window.show_view(self.gameOverView)
@@ -207,11 +230,11 @@ class Room(arcade.View):
         self.physicsEngine.update()
         self.scene.get_sprite_list("Player").update_animation()
         if self.canPass:
-            
             self.window.show_view(self.nextRoom)
         if self.player.center_y < 0:
-            self.roomSetup()
+            self.__init__(self.window, self.menu, self.game, jsonFile=self.jsonFile, nextRoom=self.nextRoom)
         if self.player.left < 0:
             self.player.change_x = 0
+
     
         
