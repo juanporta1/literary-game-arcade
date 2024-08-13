@@ -71,16 +71,38 @@ class Room(arcade.View):
         arcade.set_background_color(arcade.csscolor.DIM_GREY)
         self.physicsEngine = arcade.PhysicsEnginePlatformer(player_sprite=self.player, walls=self.scene["Wall"],gravity_constant=0)
         
-        self.falseFloors = arcade.SpriteList(use_spatial_hash=True)
-        i = 1
-        lastI = 1
-       
+        self.falseFloors = []
+
         for i in range(1,len(self.scene.sprite_lists)):
             try:
-                self.falseFloors.insert(len(self.falseFloors),(self.scene[F"Floor{i}"]))
+                if self.scene[f"FalseFloor{i}"]:
+                    self.falseFloors.append(f"FalseFloor{i}")
+                    self.scene[f"FalseFloor{i}"].visible = False
             except:
-                pass
+                break
+            
+        self.bridges = []
         
+        for i in range(1,len(self.scene.sprite_lists)):
+            try:
+                if self.scene[f"Bridge {i}"]:
+                    self.bridges.append(f"Bridge{i}")
+                    self.scene[f"Bridge{i}"].visible = False
+            except:
+                break
+            
+        print(self.bridges)
+            
+        self.bridgeKeys = []
+        for i in range(1,len(self.scene.sprite_lists)):
+            try:
+                if self.scene[f"BridgeKey{i}"]:
+                    self.bridgeKeys.append(f"BridgeKey{i}")
+                    self.scene[f"BridgeKey{i}"].visible = True
+            except:
+                break
+            
+            
         self.player.center_x = self.x
         self.player.center_y = self.y
         self.lastX = self.player.center_x
@@ -209,13 +231,21 @@ class Room(arcade.View):
                 globalVars.LIFES += 1
 
             life.kill()
-
-        for i in arcade.check_for_collision_with_list(self.player,self.falseFloors):
-            print(i)
         
-        if globalVars.LIFES == 0:
-            globalVars.LIFES = 5
-            self.window.show_view(self.gameOverView)
+        for name in self.falseFloors:
+            try:
+                if arcade.check_for_collision_with_list(self.player,self.scene[name])[0]:
+                    print(name)
+                    self.scene[name].visible = True
+                    self.player.center_x = self.lastX
+                    self.player.center_y = self.lastY
+                    globalVars.LIFES -= 1
+                    if globalVars.APPEND_LIFES > 0:
+                        globalVars.APPEND_LIFES -= 1
+            except:
+                pass
+        
+        
         self.update_player_velocity()
         self.centerCameraFromPlayer()
         self.physicsEngine.update()
@@ -223,7 +253,9 @@ class Room(arcade.View):
         if self.canPass:
             
             self.window.show_view(self.nextRoom)
-        
+        if globalVars.LIFES <= 0:
+            globalVars.LIFES = globalVars.TOTAL_LIFES
+            self.window.show_view(self.gameOverView)
     
     
         
