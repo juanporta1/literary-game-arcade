@@ -26,6 +26,8 @@ class Room(arcade.View):
     def __init__(self,window,menu,game,jsonFile, nextRoom = None):
         super().__init__(window)
         
+        
+        
         with open(jsonFile,"r") as file:
             data = file.read()
           
@@ -82,29 +84,48 @@ class Room(arcade.View):
             except:
                 break
             
-        self.bridges = []
+        self.manualBridges = []
         
         for i in range(1,len(self.scene.sprite_lists)):
             try:
-                if self.scene[f"Bridge{i}"]:
-                    self.bridges.append(f"Bridge{i}")
-                    self.scene[f"Bridge{i}"].visible = False
+                if self.scene[f"ManualBridge{i}"]:
+                    self.manualBridges.append(f"ManualBridge{i}")
+                    self.scene[f"ManualBridge{i}"].visible = False
             except:
                 break
             
         
             
-        self.bridgeKeys = []
+        self.manualBridgeKeys = []
         for i in range(1,len(self.scene.sprite_lists)):
             try:
-                if self.scene[f"BridgeKey{i}"]:
-                    self.bridgeKeys.append(f"BridgeKey{i}")
-                    self.scene[f"BridgeKey{i}"].visible = True
+                if self.scene[f"ManualBridgeKey{i}"]:
+                    self.manualBridgeKeys.append(f"ManualBridgeKey{i}")
+                    self.scene[f"ManualBridgeKey{i}"].visible = True
             except:
                 break
         
          
+        self.bridges = []
+        for i in range(1,len(self.scene.sprite_lists)):
+            try:
+                if self.scene[f"Bridge{i}"]:
+                    self.bridges.append(f"Bridge{i}")
+                    self.scene[f"Bridge{i}"].visible = True
+            except:
+                break
             
+        self.holes = []
+        for i in range(1,len(self.scene.sprite_lists)):
+            try:
+                if self.scene[f"Hole{i}"]:
+                    self.holes.append(f"Hole{i}")
+                    self.scene[f"Hole{i}"].visible = True
+            except:
+                break
+        
+        print(self.holes)
+        print(self.bridges)
         self.player.center_x = self.x
         self.player.center_y = self.y
         self.lastX = self.player.center_x
@@ -168,9 +189,9 @@ class Room(arcade.View):
         if arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
             arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
 
-        for i in range(len(self.bridgeKeys)):
-            if arcade.check_for_collision_with_list(self.player,self.scene[self.bridgeKeys[i]]):
-                if self.scene[self.bridges[i]].visible:
+        for i in range(len(self.manualBridgeKeys)):
+            if arcade.check_for_collision_with_list(self.player,self.scene[self.manualBridgeKeys[i]]):
+                if self.scene[self.manualBridges[i]].visible:
                     pass
                 else:
                     arcade.draw_text("Presiona E Para Activar",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
@@ -210,10 +231,10 @@ class Room(arcade.View):
                     self.window.show_view(key.questionMenu)
         
         for i in range(len(self.falseFloors)):
-            if arcade.check_for_collision_with_list(self.player,self.scene[self.bridgeKeys[i]]) and key == arcade.key.E and not self.scene[self.bridges[i]].visible:
-                self.scene[self.bridges[i]].visible = True
+            if arcade.check_for_collision_with_list(self.player,self.scene[self.manualBridgeKeys[i]]) and key == arcade.key.E and not self.scene[self.manualBridges[i]].visible:
+                self.scene[self.manualBridges[i]].visible = True
                 self.scene[self.falseFloors[i]].visible = True
-                self.scene[self.bridgeKeys[i]].visible = False
+                self.scene[self.manualBridgeKeys[i]].visible = False
                 sounds.mechanism.play()
                 
             
@@ -247,10 +268,28 @@ class Room(arcade.View):
                 globalVars.LIFES += 1
 
             life.kill()
+        if self.holes and not self.bridges:
+            for i in range(len(self.holes)):
+                if arcade.check_for_collision_with_list(self.player,self.scene[self.holes[i]]):
+                    self.player.center_x = self.lastX
+                    self.player.center_y = self.lastY
+                    globalVars.LIFES -= 1
+                    if globalVars.APPEND_LIFES > 0:
+                        globalVars.APPEND_LIFES -= 1
+        else:
+            for i in range(len(self.holes)):
+                for j in range(len(self.bridges)):
+                    if arcade.check_for_collision_with_list(self.player,self.scene[self.holes[i]]) and not arcade.check_for_collision_with_list(self.player,self.scene[self.bridges[j]]):
+                        self.player.center_x = self.lastX
+                        self.player.center_y = self.lastY
+                        globalVars.LIFES -= 1
+                        if globalVars.APPEND_LIFES > 0:
+                            globalVars.APPEND_LIFES -= 1
         
+            
         for i in range(len(self.falseFloors)):
             try:
-                if arcade.check_for_collision_with_list(self.player,self.scene[self.bridges[i]]) and self.scene[self.bridges[i]].visible:
+                if arcade.check_for_collision_with_list(self.player,self.scene[self.manualBridges[i]]) and self.scene[self.manualBridges[i]].visible:
                     continue
                 elif arcade.check_for_collision_with_list(self.player,self.scene[self.falseFloors[i]])[0]:
                     self.scene[self.falseFloors[i]].visible = True
