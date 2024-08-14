@@ -22,3 +22,5 @@ footsteps = [footstep1, footstep2, footstep3]
 ambient:Sound = []
 for i in range(1,4):
     ambient.append(Sound(f"Sounds/ambient{i}.mp3"))
+    
+mechanism = Sound("Sounds/mechanism.mp3")

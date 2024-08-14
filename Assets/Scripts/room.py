@@ -1,5 +1,6 @@
 import arcade
 import arcade.gui
+import arcade.key
 from Player import Player
 import random
 import maps as Maps
@@ -85,13 +86,13 @@ class Room(arcade.View):
         
         for i in range(1,len(self.scene.sprite_lists)):
             try:
-                if self.scene[f"Bridge {i}"]:
+                if self.scene[f"Bridge{i}"]:
                     self.bridges.append(f"Bridge{i}")
                     self.scene[f"Bridge{i}"].visible = False
             except:
                 break
             
-        print(self.bridges)
+        
             
         self.bridgeKeys = []
         for i in range(1,len(self.scene.sprite_lists)):
@@ -101,7 +102,8 @@ class Room(arcade.View):
                     self.scene[f"BridgeKey{i}"].visible = True
             except:
                 break
-            
+        
+         
             
         self.player.center_x = self.x
         self.player.center_y = self.y
@@ -165,7 +167,14 @@ class Room(arcade.View):
         
         if arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
             arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
-                
+
+        for i in range(len(self.bridgeKeys)):
+            if arcade.check_for_collision_with_list(self.player,self.scene[self.bridgeKeys[i]]):
+                if self.scene[self.bridges[i]].visible:
+                    pass
+                else:
+                    arcade.draw_text("Presiona E Para Activar",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
+             
     def update_player_velocity(self):
         if self.player.moveUp and not self.player.moveDown:
             self.player.change_y = self.speed
@@ -199,7 +208,13 @@ class Room(arcade.View):
             for key in arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
                 if not key.questionMenu.canPass:
                     self.window.show_view(key.questionMenu)
-            
+        
+        for i in range(len(self.falseFloors)):
+            if arcade.check_for_collision_with_list(self.player,self.scene[self.bridgeKeys[i]]) and key == arcade.key.E and not self.scene[self.bridges[i]].visible:
+                self.scene[self.bridges[i]].visible = True
+                self.scene[self.falseFloors[i]].visible = True
+                sounds.mechanism.play()
+                
             
     def on_key_release(self, key: int, modifiers: int):
         if key == arcade.key.A:
@@ -232,11 +247,12 @@ class Room(arcade.View):
 
             life.kill()
         
-        for name in self.falseFloors:
+        for i in range(len(self.falseFloors)):
             try:
-                if arcade.check_for_collision_with_list(self.player,self.scene[name])[0]:
-                    print(name)
-                    self.scene[name].visible = True
+                if arcade.check_for_collision_with_list(self.player,self.scene[self.bridges[i]]) and self.scene[self.bridges[i]].visible:
+                    continue
+                elif arcade.check_for_collision_with_list(self.player,self.scene[self.falseFloors[i]])[0]:
+                    self.scene[self.falseFloors[i]].visible = True
                     self.player.center_x = self.lastX
                     self.player.center_y = self.lastY
                     globalVars.LIFES -= 1
