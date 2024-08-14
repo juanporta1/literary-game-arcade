@@ -42,6 +42,8 @@ class Player(arcade.Sprite):
         self.moveDown = False
         self.animationList = self.idle_down
         self.canPlay = False
+        self.set_hit_box(((-5,-12),(5,-12),(5,-6),(-5,-6)))
+        
     def update_animation(self, delta_time: float = 1 / 60):
         
         self.time += delta_time

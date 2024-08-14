@@ -213,6 +213,7 @@ class Room(arcade.View):
             if arcade.check_for_collision_with_list(self.player,self.scene[self.bridgeKeys[i]]) and key == arcade.key.E and not self.scene[self.bridges[i]].visible:
                 self.scene[self.bridges[i]].visible = True
                 self.scene[self.falseFloors[i]].visible = True
+                self.scene[self.bridgeKeys[i]].visible = False
                 sounds.mechanism.play()
                 
             
