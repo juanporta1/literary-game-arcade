@@ -32,3 +32,10 @@ getlife1 = Sound("Sounds/getlife1.mp3")
 lostlife = Sound("Sounds/lostlife.mp3")
 
 fall1 = Sound("Sounds/fall1.mp3")
+
+floorbreakings: list[Sound] = []
+
+for i in range(1,5):
+    sound = Sound(f"Sounds/floorbreaking{i}.mp3")
+    floorbreakings.append(sound)
+    

@@ -2,6 +2,8 @@ import arcade
 import arcade.gui
 import random
 import sounds
+
+
 class TextView(arcade.View):
     def __init__(self, window: arcade.Window, text: str,nextView: arcade.View,style = {
         "font_name": "Retro Gaming",
@@ -26,6 +28,9 @@ class TextView(arcade.View):
         self.touchedKey = False
         self.sound = sounds.writes[random.randint(0,3)]
         self.maxTime = 0
+        self.lastView = lastView
+        
+        
     def on_draw(self):
         self.window.clear()
         arcade.draw_lrwh_rectangle_textured(0,0,1280,720,self.bg)

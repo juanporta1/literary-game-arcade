@@ -312,7 +312,6 @@ class Room(arcade.View):
         if self.holes and not self.bridges:
             for i in range(len(self.holes)):
                 if arcade.check_for_collision_with_list(self.player,self.scene[self.holes[i]]):
-                    sounds.fall1.play()
                     self.holeView = TextView(self.window,self.holeTexts[random.randint(0,len(self.holeTexts)-1)],self,bg=f"Assets/Backgrounds/{self.falseFloorbgs[random.randint(0,len(self.falseFloorbgs)-1)]}.jpg",quickPass=True)
                     self.player.center_x = self.lastX
                     self.player.center_y = self.lastY
@@ -331,7 +330,7 @@ class Room(arcade.View):
                     if haveTouch:
                         if arcade.check_for_collision_with_list(self.player,self.scene[hole]) and not arcade.check_for_collision_with_list(self.player,self.scene[bridge]):
                             sounds.fall1.play()
-                            self.holeView = TextView(self.window,self.holeTexts[random.randint(0,len(self.holeTexts)-1)],self,bg=f"Assets/Backgrounds/{self.falseFloorbgs[random.randint(0,len(self.falseFloorbgs)-1)]}.jpg",quickPass=True)
+                            self.holeView = TextView(self.window,self.holeTexts[random.randint(0,len(self.holeTexts)-1)],self ,bg=f"Assets/Backgrounds/{self.falseFloorbgs[random.randint(0,len(self.falseFloorbgs)-1)]}.jpg",quickPass=True)
                             self.player.center_x = self.lastX
                             self.player.center_y = self.lastY
                             globalVars.LIFES -= 1
@@ -342,8 +341,10 @@ class Room(arcade.View):
             try:    
                 for i in range(len(self.falseFloors)):
                     if arcade.check_for_collision_with_list(self.player,self.scene[self.falseFloors[i]]):
+                        if self.scene[self.falseFloors[i]].visible == False:
+                            sounds.floorbreakings[random.randint(0,len(sounds.floorbreakings))].play()
                         sounds.fall1.play()
-                        self.falseFloorView = TextView(self.window,self.falseFloorbgs[random.randint(0,len(self.falseFloorTexts)-1)],self,bg=f"Assets/Backgrounds/{self.falseFloorbgs[random.randint(0,len(self.falseFloorbgs)-1)]}.jpg",quickPass=True,time=3)
+                        self.falseFloorView = TextView(self.window,self.falseFloorTexts[random.randint(0,len(self.falseFloorTexts)-1)],self ,bg=f"Assets/Backgrounds/{self.falseFloorbgs[random.randint(0,len(self.falseFloorbgs)-1)]}.jpg",quickPass=True,time=3)
                         self.scene[self.falseFloors[i]].visible = True
                         self.player.center_x = self.lastX
                         self.player.center_y = self.lastY
@@ -369,7 +370,9 @@ class Room(arcade.View):
                                 continue
                             elif arcade.check_for_collision_with_list(self.player,self.scene[floor]):
                                 sounds.fall1.play()
-                                self.falseFloorView = TextView(self.window,self.falseFloorbgs[random.randint(0,len(self.falseFloorTexts)-1)],self,bg=f"Assets/Backgrounds/{self.falseFloorbgs[random.randint(0,len(self.falseFloorbgs)-1)]}.jpg",quickPass=True,time=3)
+                                if self.scene[floor].visible == False:
+                                    sounds.floorbreakings[random.randint(0,len(sounds.floorbreakings))].play()
+                                self.falseFloorView = TextView(self.window,self.falseFloorTexts[random.randint(0,len(self.falseFloorTexts)-1)],self,bg=f"Assets/Backgrounds/{self.falseFloorbgs[random.randint(0,len(self.falseFloorbgs)-1)]}.jpg",quickPass=True,time=3)
                                 self.scene[floor].visible = True
                                 self.player.center_x = self.lastX
                                 self.player.center_y = self.lastY
