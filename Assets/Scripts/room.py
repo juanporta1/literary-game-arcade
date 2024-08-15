@@ -11,15 +11,35 @@ import sounds
 from textView import TextView
 import pygame
 import json
+import functions
 
 class Key(arcade.Sprite):
-    def __init__(self, filename: str = None, scale: float = 1, image_x: float = 0, image_y: float = 0, image_width: float = 0, image_height: float = 0, center_x: float = 0, center_y: float = 0, repeat_count_x: int = 1, repeat_count_y: int = 1, flipped_horizontally: bool = False, flipped_vertically: bool = False, flipped_diagonally: bool = False, hit_box_algorithm: str | None = "Simple", hit_box_detail: float = 4.5, texture: arcade.Texture = None, angle: float = 0,questionMenu: QuestionMenu = None):
-        super().__init__(filename, scale, image_x, image_y, image_width, image_height, center_x, center_y, repeat_count_x, repeat_count_y, flipped_horizontally, flipped_vertically, flipped_diagonally, hit_box_algorithm, hit_box_detail, texture, angle)
+    def __init__(self,x,y, filename: str = None, scale: float = 1,questionMenu: QuestionMenu = None):
+        super().__init__(filename = filename,scale = scale, center_x= x, center_y=y)
         
         self.canPass = False
         self.questionMenu = questionMenu
 
-
+class Life(arcade.Sprite):
+    
+    def __init__(self, filename: str = "Assets/Sprites/UI/PickupHeart/tile000.png", x = 0,y = 0):
+        super().__init__(filename, scale = 2, center_x=x,center_y=y)
+        self.time = 0
+        self.animationIndex = 0
+        self.spriteList = functions.createAnimationList("Assets//Sprites//UI//PickupHeart//tile00",6)
+        self.scale = 3
+    def update_animation(self, delta_time: float = 1 / 60):
+        self.time += delta_time
+        
+        if self.time >= .15:
+            if self.animationIndex == len(self.spriteList) - 1:
+                self.animationIndex = 0
+            else:
+                self.animationIndex += 1
+            self.texture = self.spriteList[self.animationIndex]
+            self.time = 0  
+        
+    
 class Room(arcade.View):
     global globalVars
     
@@ -33,8 +53,10 @@ class Room(arcade.View):
         jsonData = json.loads(data)
         keys = jsonData["keys"]
         lifes = jsonData["lifes"]
-        
-        self.falseFloorView = TextView(self.window,"Has caído en un pozo oculto, el castillo guarda más secretos de los que imaginabas.",self,quickPass=True)
+        self.falseFloorbgs = ["hole1","hole2","hole3","hole4","hole5"]
+        self.falseFloorTexts = ["Has caído en un pozo oculto, el castillo guarda más secretos de los que imaginabas.","Has caído en un pozo oculto, cuidado con tus pasos en la oscuridad.","Te has caído en un pozo oculto, vigila mejor tus pasos.","Has caído en un pozo escondido, este castillo tiene trampas inesperadas.","Te has tropezado con un pozo oculto, parece que el castillo no ha revelado todos sus secretos.","Un pozo oculto te ha sorprendido, el camino es más peligroso de lo que pensabas.","Has caído en un pozo oculto, el castillo es más traicionero de lo que parece."]
+
+        self.holeTexts = ["Has caído en un pozo por descuido, un paso en falso te ha costado caro.","Has caído en un pozo, la prisa te jugó una mala pasada.","Te has tropezado y caído en un pozo, un error torpe en el momento equivocado.","Has caído en un pozo, un pequeño desliz y aquí estás.","Has caído en un pozo, un paso en falso fue todo lo que necesitó.","Te has caído en un pozo, un error tonto que te costó caro.","Has caído en un pozo, un tropiezo que no viste venir."]
         
         self.canPass = False
         self.nextRoom = nextRoom
@@ -50,22 +72,19 @@ class Room(arcade.View):
         self.scene.add_sprite_list("Key")
         self.scene.add_sprite_list("Life")
         
-    
-        
         for key in keys:
             with open(key["qm"]["questions"],"r") as f:
                 data = f.read()
             questions = json.loads(data)
             qm = QuestionMenu(self.window,questions,self.game,menu,key["qm"]["op"],key["qm"]["qq"])
-            
-            newKey = Key(filename=key["filename"],center_x=key["center_x"], center_y=key["center_y"],questionMenu=qm,scale=key["scale"])
+            newKey = Key(filename=key["filename"],x=key["center_x"], y=key["center_y"],questionMenu=qm,scale=key["scale"])
             newKey.questionMenu.gameView = self
-            
             self.scene.add_sprite("Key",newKey)
             
         for life in lifes:
-            sprite = arcade.Sprite("Assets/Sprites/UI/fillHeart.png",2,center_x=life["x"],center_y=life["y"])
+            sprite = Life(x= life["x"],y=life["y"])
             self.scene.add_sprite("Life",sprite)
+            
         self.menu = menu
         self.x = jsonData["setup"]["playerX"]
         self.y = jsonData["setup"]["playerY"]
@@ -137,9 +156,9 @@ class Room(arcade.View):
         
         
         self.interface = arcade.gui.UIManager()
-        self.ambient: pygame.mixer.Sound = sounds.ambient[random.randint(0,2)]
-        self.channel = self.ambient.play()  
-        self.channel.stop()           
+        
+         
+               
 
     def centerCameraFromPlayer(self):
         
@@ -161,7 +180,6 @@ class Room(arcade.View):
         self.player.moveLeft = False
         self.player.moveRight = False
         self.player.moveUp = False
-        self.channel.stop()
     
     def on_show(self):
         self.player.center_x = self.lastX
@@ -277,9 +295,10 @@ class Room(arcade.View):
             self.lastLifes = globalVars.LIFES
             sounds.lostlife.play()
         self.canPass = self.checkKeys()
-        if not self.channel.get_busy() and isinstance(self.window.current_view,self.__class__):
-            self.ambient = sounds.ambient[random.randint(0,2)]
-            self.channel = self.ambient.play()
+        if not globalVars.MUSIC.get_busy() and isinstance(self.window.current_view,self.__class__):
+            globalVars.MUSIC = sounds.ambient[random.randint(0,2)]
+            globalVars.MUSIC = globalVars.MUSIC.play()
+            
 
         for life in arcade.check_for_collision_with_list(self.player,self.scene["Life"]):
             if globalVars.LIFES < globalVars.TOTAL_LIFES:
@@ -293,11 +312,14 @@ class Room(arcade.View):
         if self.holes and not self.bridges:
             for i in range(len(self.holes)):
                 if arcade.check_for_collision_with_list(self.player,self.scene[self.holes[i]]):
+                    sounds.fall1.play()
+                    self.holeView = TextView(self.window,self.holeTexts[random.randint(0,len(self.holeTexts)-1)],self,bg=f"Assets/Backgrounds/{self.falseFloorbgs[random.randint(0,len(self.falseFloorbgs)-1)]}.jpg",quickPass=True)
                     self.player.center_x = self.lastX
                     self.player.center_y = self.lastY
                     globalVars.LIFES -= 1
                     if globalVars.APPEND_LIFES > 0:
                         globalVars.APPEND_LIFES -= 1
+                    self.window.show_view(self.holeView)
         else:
             for hole in self.holes:
                 for bridge in self.bridges:
@@ -308,22 +330,27 @@ class Room(arcade.View):
                             break                        
                     if haveTouch:
                         if arcade.check_for_collision_with_list(self.player,self.scene[hole]) and not arcade.check_for_collision_with_list(self.player,self.scene[bridge]):
+                            sounds.fall1.play()
+                            self.holeView = TextView(self.window,self.holeTexts[random.randint(0,len(self.holeTexts)-1)],self,bg=f"Assets/Backgrounds/{self.falseFloorbgs[random.randint(0,len(self.falseFloorbgs)-1)]}.jpg",quickPass=True)
                             self.player.center_x = self.lastX
                             self.player.center_y = self.lastY
                             globalVars.LIFES -= 1
                             if globalVars.APPEND_LIFES > 0:
                                 globalVars.APPEND_LIFES -= 1
+                            self.window.show_view(self.holeView)
         if self.falseFloors and not self.manualBridges:
             try:    
                 for i in range(len(self.falseFloors)):
                     if arcade.check_for_collision_with_list(self.player,self.scene[self.falseFloors[i]]):
-                        
+                        sounds.fall1.play()
+                        self.falseFloorView = TextView(self.window,self.falseFloorbgs[random.randint(0,len(self.falseFloorTexts)-1)],self,bg=f"Assets/Backgrounds/{self.falseFloorbgs[random.randint(0,len(self.falseFloorbgs)-1)]}.jpg",quickPass=True,time=3)
                         self.scene[self.falseFloors[i]].visible = True
                         self.player.center_x = self.lastX
                         self.player.center_y = self.lastY
                         globalVars.LIFES -= 1
                         if globalVars.APPEND_LIFES > 0:
                             globalVars.APPEND_LIFES -= 1
+                        
                         self.window.show_view(self.falseFloorView)
             except:
                 pass
@@ -341,6 +368,8 @@ class Room(arcade.View):
                                 print("Toca con puente")
                                 continue
                             elif arcade.check_for_collision_with_list(self.player,self.scene[floor]):
+                                sounds.fall1.play()
+                                self.falseFloorView = TextView(self.window,self.falseFloorbgs[random.randint(0,len(self.falseFloorTexts)-1)],self,bg=f"Assets/Backgrounds/{self.falseFloorbgs[random.randint(0,len(self.falseFloorbgs)-1)]}.jpg",quickPass=True,time=3)
                                 self.scene[floor].visible = True
                                 self.player.center_x = self.lastX
                                 self.player.center_y = self.lastY
@@ -354,6 +383,7 @@ class Room(arcade.View):
         self.centerCameraFromPlayer()
         self.physicsEngine.update()
         self.scene.get_sprite_list("Player").update_animation()
+        self.scene.get_sprite_list("Life").update_animation()
         if self.canPass:
             
             self.window.show_view(self.nextRoom)

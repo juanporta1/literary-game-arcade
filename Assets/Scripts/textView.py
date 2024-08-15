@@ -7,12 +7,13 @@ class TextView(arcade.View):
         "font_name": "Retro Gaming",
         "bg_color": None,
         "bg_color_pressed": None,
-        "border_color": arcade.color.WHITE,
+        "border_color": None,
         "font_size": 16
-    }, bg="Assets/Backgrounds/black.jpg",quickPass = False):
+    }, bg="Assets/Backgrounds/black.jpg",quickPass = False,time = 2):
         super().__init__(window)
         self.canPass = False
         self.quickPass = quickPass
+        self.time = time
         self.text = text
         self.nextView = nextView
         self.textsParts = self.text.split(" ")
@@ -20,6 +21,7 @@ class TextView(arcade.View):
         self.currentText = ""
         self.currentTime = 0
         self.label = self.makeText()
+        self.image = bg
         self.bg = arcade.load_texture(bg)
         self.touchedKey = False
         self.sound = sounds.writes[random.randint(0,3)]
@@ -65,7 +67,7 @@ class TextView(arcade.View):
         self.touchedKey = False
         self.sound = sounds.writes[random.randint(0,3)]
         self.maxTime = 0
-
+        self.bg = arcade.load_texture(self.image)
     def on_update(self, delta_time: float):
         self.currentTime += delta_time
         if not self.quickPass:
@@ -93,6 +95,6 @@ class TextView(arcade.View):
                 self.sound.play()    
             if len(self.textsParts) == 0:
                 self.maxTime += delta_time
-                if self.maxTime >= 2:
+                if self.maxTime >= self.time:
                     self.window.show_view(self.nextView)
         

@@ -16,7 +16,9 @@ writes = [write1, write2, write3,write4]
 footstep1 = Sound("Sounds/footstep1.mp3")
 footstep2 = Sound("Sounds/footstep2.mp3")
 footstep3 = Sound("Sounds/footstep3.mp3")
-
+footstep1.set_volume(.5)
+footstep2.set_volume(.5)
+footstep3.set_volume(.5)
 footsteps = [footstep1, footstep2, footstep3]
 
 ambient:Sound = []
@@ -28,3 +30,5 @@ mechanism = Sound("Sounds/mechanism.mp3")
 getlife1 = Sound("Sounds/getlife1.mp3")
 
 lostlife = Sound("Sounds/lostlife.mp3")
+
+fall1 = Sound("Sounds/fall1.mp3")
