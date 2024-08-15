@@ -82,7 +82,7 @@ class Room(arcade.View):
                     self.scene[f"FalseFloor{i}"].visible = False
             except:
                 break
-        print(self.falseFloors)
+        
         self.manualBridges = []
         
         for i in range(1,len(self.scene.sprite_lists)):
@@ -94,7 +94,7 @@ class Room(arcade.View):
                 break
             
         
-            
+        
         self.manualBridgeKeys = []
         for i in range(1,len(self.scene.sprite_lists)):
             try:
@@ -290,14 +290,20 @@ class Room(arcade.View):
                     if globalVars.APPEND_LIFES > 0:
                         globalVars.APPEND_LIFES -= 1
         else:
-            for i in range(len(self.holes)):
-                for j in range(len(self.bridges)):
-                    if arcade.check_for_collision_with_list(self.player,self.scene[self.holes[i]]) and not arcade.check_for_collision_with_list(self.player,self.scene[self.bridges[j]]):
-                        self.player.center_x = self.lastX
-                        self.player.center_y = self.lastY
-                        globalVars.LIFES -= 1
-                        if globalVars.APPEND_LIFES > 0:
-                            globalVars.APPEND_LIFES -= 1
+            for hole in self.holes:
+                for bridge in self.bridges:
+                    haveTouch = False
+                    for i in range(len(self.scene[hole])):
+                        if arcade.check_for_collision_with_list(self.scene[hole][i],self.scene[bridge]):
+                            haveTouch = True
+                            break                        
+                    if haveTouch:
+                        if arcade.check_for_collision_with_list(self.player,self.scene[hole]) and not arcade.check_for_collision_with_list(self.player,self.scene[bridge]):
+                            self.player.center_x = self.lastX
+                            self.player.center_y = self.lastY
+                            globalVars.LIFES -= 1
+                            if globalVars.APPEND_LIFES > 0:
+                                globalVars.APPEND_LIFES -= 1
         if self.falseFloors and not self.manualBridges:
             try:    
                 for i in range(len(self.falseFloors)):
@@ -314,16 +320,23 @@ class Room(arcade.View):
             try:
                 for floor in self.falseFloors:
                     for bridge in self.manualBridges:
-                        if arcade.check_for_collision_with_list(self.player,self.scene[bridge]) and self.scene[bridge].visible:
-                            continue
-                        elif arcade.check_for_collision_with_list(self.player,self.scene[floor]):
-                            self.scene[floor].visible = True
-                            self.player.center_x = self.lastX
-                            self.player.center_y = self.lastY
-                            globalVars.LIFES -= 1
-                            if globalVars.APPEND_LIFES > 0:
-                                globalVars.APPEND_LIFES -= 1
-                            
+                        haveTouch = False
+                        for i in range(len(self.scene[floor])):
+                            if arcade.check_for_collision_with_list(self.scene[floor][i],self.scene[bridge]):
+                                haveTouch = True
+                                break
+                        if haveTouch:      
+                            if arcade.check_for_collision_with_list(self.player,self.scene[bridge]) and self.scene[bridge].visible:
+                                print("Toca con puente")
+                                continue
+                            elif arcade.check_for_collision_with_list(self.player,self.scene[floor]):
+                                self.scene[floor].visible = True
+                                self.player.center_x = self.lastX
+                                self.player.center_y = self.lastY
+                                globalVars.LIFES -= 1
+                                if globalVars.APPEND_LIFES > 0:
+                                    globalVars.APPEND_LIFES -= 1
+                                
             except:
                 pass                
         self.update_player_velocity()
