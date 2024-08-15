@@ -3,12 +3,12 @@ import arcade.gui
 import arcade.key
 from Player import Player
 import random
-import maps as Maps
 from PauseMenu import PauseMenu
 from questionsMenu import QuestionMenu
 import globalVars
 from gameOver import GameOverView
 import sounds
+from textView import TextView
 import pygame
 import json
 
@@ -33,6 +33,9 @@ class Room(arcade.View):
         jsonData = json.loads(data)
         keys = jsonData["keys"]
         lifes = jsonData["lifes"]
+        
+        self.falseFloorView = TextView(self.window,"Has caído en un pozo oculto, el castillo guarda más secretos de los que imaginabas.",self,quickPass=True)
+        
         self.canPass = False
         self.nextRoom = nextRoom
         self.speed = 4
@@ -210,7 +213,7 @@ class Room(arcade.View):
         
         
     def on_key_press(self, key: int, modifiers: int):
-        if self.player.center_x >= 0 and self.player.center_y >= 0:
+        if self.player.center_x >= 0 and self.player.center_y >= 0 and not self.player.wasDeath:
             if key == arcade.key.A:
                 self.player.moveLeft = True
             if key == arcade.key.D:
@@ -244,13 +247,13 @@ class Room(arcade.View):
                         pass
             
     def on_key_release(self, key: int, modifiers: int):
-        if key == arcade.key.A:
+        if key == arcade.key.A or self.player.wasDeath:
             self.player.moveLeft = False
-        if key == arcade.key.D:
+        if key == arcade.key.D or self.player.wasDeath:
             self.player.moveRight = False
-        if key == arcade.key.W:
+        if key == arcade.key.W or self.player.wasDeath:
             self.player.moveUp = False
-        if key == arcade.key.S:
+        if key == arcade.key.S or self.player.wasDeath:
             self.player.moveDown = False
     def checkKeys(self):
         allPasses = []
@@ -260,6 +263,12 @@ class Room(arcade.View):
         return canPass
     
     def on_update(self, delta_time: float):
+        
+        if self.player.wasDeath:
+            self.player.moveDown = False
+            self.player.moveLeft = False
+            self.player.moveRight = False
+            self.player.moveUp = False
         
         if self.lastLifes < globalVars.LIFES:
             self.lastLifes = globalVars.LIFES
@@ -308,12 +317,14 @@ class Room(arcade.View):
             try:    
                 for i in range(len(self.falseFloors)):
                     if arcade.check_for_collision_with_list(self.player,self.scene[self.falseFloors[i]]):
+                        
                         self.scene[self.falseFloors[i]].visible = True
                         self.player.center_x = self.lastX
                         self.player.center_y = self.lastY
                         globalVars.LIFES -= 1
                         if globalVars.APPEND_LIFES > 0:
                             globalVars.APPEND_LIFES -= 1
+                        self.window.show_view(self.falseFloorView)
             except:
                 pass
         else:
@@ -336,7 +347,7 @@ class Room(arcade.View):
                                 globalVars.LIFES -= 1
                                 if globalVars.APPEND_LIFES > 0:
                                     globalVars.APPEND_LIFES -= 1
-                                
+                                self.window.show_view(self.falseFloorView)
             except:
                 pass                
         self.update_player_velocity()
@@ -349,6 +360,7 @@ class Room(arcade.View):
         if globalVars.LIFES <= 0:
             globalVars.LIFES = globalVars.TOTAL_LIFES
             self.window.show_view(self.gameOverView)
+            
     
     
         

@@ -4,7 +4,6 @@ import arcade.color
 import arcade.gui
 from Player import Player
 from PauseMenu import PauseMenu
-import maps as Maps
 import random
 from questionsMenu import QuestionMenu
 from room import Room

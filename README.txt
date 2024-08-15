@@ -4,7 +4,7 @@ Pozos invisibles:Para hacer pozos invisibles se deben crear capas por cada pozo 
 
 Puentes convencionales:Para crear puentes deben hacer lo mismo que los FalseFloor pero poniendo Bridge en su lugar.
 
-Pozos convencionales: Se debe poner Hole.
+Pozos convencionales: Se debe poner Hole y su indice.
 
 Puentes Activables: Son puentes que requieren si o si de la capa que viene a continuacion. Son puentes que pueden ser activados por una llave, para que sean creibles deben ponerse sobre un pozo convencional o un pozo invisible, si estan sobre un pozo invisible lo haran visible. Para poder usar esta capa debe ponerse, al igual que los anteriores con su indice, ManualBridge
 
