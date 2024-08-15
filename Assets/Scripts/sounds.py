@@ -24,3 +24,7 @@ for i in range(1,4):
     ambient.append(Sound(f"Sounds/ambient{i}.mp3"))
     
 mechanism = Sound("Sounds/mechanism.mp3")
+
+getlife1 = Sound("Sounds/getlife1.mp3")
+
+lostlife = Sound("Sounds/lostlife.mp3")

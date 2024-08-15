@@ -26,8 +26,7 @@ class Room(arcade.View):
     def __init__(self,window,menu,game,jsonFile, nextRoom = None):
         super().__init__(window)
         
-        
-        
+        self.lastLifes = globalVars.LIFES
         with open(jsonFile,"r") as file:
             data = file.read()
           
@@ -83,7 +82,7 @@ class Room(arcade.View):
                     self.scene[f"FalseFloor{i}"].visible = False
             except:
                 break
-            
+        print(self.falseFloors)
         self.manualBridges = []
         
         for i in range(1,len(self.scene.sprite_lists)):
@@ -124,8 +123,6 @@ class Room(arcade.View):
             except:
                 break
         
-        print(self.holes)
-        print(self.bridges)
         self.player.center_x = self.x
         self.player.center_y = self.y
         self.lastX = self.player.center_x
@@ -230,13 +227,21 @@ class Room(arcade.View):
                 if not key.questionMenu.canPass:
                     self.window.show_view(key.questionMenu)
         
-        for i in range(len(self.falseFloors)):
+        for i in range(len(self.manualBridges)):
             if arcade.check_for_collision_with_list(self.player,self.scene[self.manualBridgeKeys[i]]) and key == arcade.key.E and not self.scene[self.manualBridges[i]].visible:
                 self.scene[self.manualBridges[i]].visible = True
-                self.scene[self.falseFloors[i]].visible = True
                 self.scene[self.manualBridgeKeys[i]].visible = False
                 sounds.mechanism.play()
                 
+                for j in range(len(self.falseFloors)):
+                    try:
+                        if arcade.check_for_collision_with_list(self.scene[self.manualBridges[i]][0],self.scene[self.falseFloors[j]]):
+                            self.scene[self.falseFloors[i]].visible = True
+                            print("Entro")
+                        
+                        
+                    except:
+                        pass
             
     def on_key_release(self, key: int, modifiers: int):
         if key == arcade.key.A:
@@ -255,6 +260,13 @@ class Room(arcade.View):
         return canPass
     
     def on_update(self, delta_time: float):
+        
+        if self.lastLifes < globalVars.LIFES:
+            self.lastLifes = globalVars.LIFES
+        
+        if self.lastLifes > globalVars.LIFES:
+            self.lastLifes = globalVars.LIFES
+            sounds.lostlife.play()
         self.canPass = self.checkKeys()
         if not self.channel.get_busy() and isinstance(self.window.current_view,self.__class__):
             self.ambient = sounds.ambient[random.randint(0,2)]
@@ -266,6 +278,7 @@ class Room(arcade.View):
             else:
                 globalVars.APPEND_LIFES += 1
                 globalVars.LIFES += 1
+            sounds.getlife1.play()
 
             life.kill()
         if self.holes and not self.bridges:
@@ -285,23 +298,34 @@ class Room(arcade.View):
                         globalVars.LIFES -= 1
                         if globalVars.APPEND_LIFES > 0:
                             globalVars.APPEND_LIFES -= 1
-        
-            
-        for i in range(len(self.falseFloors)):
-            try:
-                if arcade.check_for_collision_with_list(self.player,self.scene[self.manualBridges[i]]) and self.scene[self.manualBridges[i]].visible:
-                    continue
-                elif arcade.check_for_collision_with_list(self.player,self.scene[self.falseFloors[i]])[0]:
-                    self.scene[self.falseFloors[i]].visible = True
-                    self.player.center_x = self.lastX
-                    self.player.center_y = self.lastY
-                    globalVars.LIFES -= 1
-                    if globalVars.APPEND_LIFES > 0:
-                        globalVars.APPEND_LIFES -= 1
+        if self.falseFloors and not self.manualBridges:
+            try:    
+                for i in range(len(self.falseFloors)):
+                    if arcade.check_for_collision_with_list(self.player,self.scene[self.falseFloors[i]]):
+                        self.scene[self.falseFloors[i]].visible = True
+                        self.player.center_x = self.lastX
+                        self.player.center_y = self.lastY
+                        globalVars.LIFES -= 1
+                        if globalVars.APPEND_LIFES > 0:
+                            globalVars.APPEND_LIFES -= 1
             except:
                 pass
-        
-        
+        else:
+            try:
+                for floor in self.falseFloors:
+                    for bridge in self.manualBridges:
+                        if arcade.check_for_collision_with_list(self.player,self.scene[bridge]) and self.scene[bridge].visible:
+                            continue
+                        elif arcade.check_for_collision_with_list(self.player,self.scene[floor]):
+                            self.scene[floor].visible = True
+                            self.player.center_x = self.lastX
+                            self.player.center_y = self.lastY
+                            globalVars.LIFES -= 1
+                            if globalVars.APPEND_LIFES > 0:
+                                globalVars.APPEND_LIFES -= 1
+                            
+            except:
+                pass                
         self.update_player_velocity()
         self.centerCameraFromPlayer()
         self.physicsEngine.update()
