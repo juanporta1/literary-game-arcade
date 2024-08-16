@@ -21,28 +21,32 @@ class QuestionMenu(arcade.View):
         self.questionIndex = 0
         self.usedQuestions = []
         self.canPass = False
-
+        self.init = 1
+        self.alpha = 255
+        self.time = 1
         self.questionStyle = {
             "bg_color": None,
             "bg_color_pressed": None,
             "border_color": arcade.color.BLACK,
             "border_color_pressed": arcade.color.BLACK,
             "font_color_pressed": arcade.color.WHITE,
-            "font_name": "Retro Gaming"
+            "texture_xfont_name": "Retro Gaming"
         }
 
         self.opportunitiesStyleDefault = {
             "bg_color": None,
             "bg_color_pressed": None,
             "border_color": None,
-            "border_color_pressed": None
+            "border_color_pressed": None,
+            "font_name": "Retro Gaming"
         }
 
         self.opportunitiesStyleEmpty = {
             "bg_color": None,
             "bg_color_pressed": None,
             "border_color": None,
-            "border_color_pressed": None
+            "border_color_pressed": None,
+            "font_name": "Retro Gaming"
         }
 
         self.boxTexture = arcade.load_texture("Assets/Sprites/QuestionMenu/commonQuestion.png")
@@ -61,7 +65,9 @@ class QuestionMenu(arcade.View):
         self.correct = responses.index(correct)
         self.usedQuestions.append(randomNumber)
         return question, responses
-
+    def on_show_view(self):
+        self.init = 0
+    
     def questionsMenu(self, question, responses):
         self.fillX = arcade.load_texture("Assets/Sprites/UI/fillX.png")
         self.emptyX = arcade.load_texture("Assets/Sprites/UI/emptyX.png")
@@ -136,6 +142,7 @@ class QuestionMenu(arcade.View):
         self.window.clear()
         self.menu.draw()
         arcade.set_background_color(arcade.color.ASH_GREY)
+        arcade.draw_rectangle_filled(self.window.width/2,self.window.height/2,self.window.width,self.window.height,(0,0,0,self.alpha))
 
     def pressCorrect(self, event):
         self.actualQuestion = self.getQuestion(self.questions)
@@ -145,12 +152,12 @@ class QuestionMenu(arcade.View):
             self.menu.enable()
         else:
             self.canPass = True
-            self.window.show_view(self.gameView)
+            self.init = 2
 
     def pressIncorrect(self, event):
         self.currentOportunities -= 1
         if self.currentOportunities == -1:
-            self.window.show_view(self.gameView)
+            self.init = 2
             if globalVars.APPEND_LIFES > 0:
                 globalVars.APPEND_LIFES -= 1
             globalVars.LIFES -= 1
@@ -165,4 +172,19 @@ class QuestionMenu(arcade.View):
     def on_hide_view(self):
         self.menu.disable()
 
+    def on_update(self, delta_time: float):
+        if self.init == 0:
+            self.time -= delta_time
+            if self.time <= 0:
+                self.time = 0
+                self.init = 1
+            self.alpha = 255 * abs(self.time / 1)
+            
+        if self.init == 2:
+            self.time += delta_time
+            if self.time >= 1:
+                self.time = 1
+                self.init = 1
+                self.window.show_view(self.gameView)
+            self.alpha = 255 * abs(self.time/1)
         

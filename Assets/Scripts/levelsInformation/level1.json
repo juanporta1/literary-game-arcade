@@ -16,6 +16,18 @@
         {
             "x":100,
             "y":500
+        },
+        {
+            "x":200,
+            "y":500
+        }
+    ],
+    "notes":[
+        {
+            "x": 300,
+            "y":500,
+            "text":"Esta es una nota que da una pista, y es una prueba para ver como funciona",
+            "bg":"Backgrounds/black.jpg"
         }
     ],
     "setup":{

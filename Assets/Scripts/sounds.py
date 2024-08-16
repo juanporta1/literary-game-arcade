@@ -38,4 +38,5 @@ floorbreakings: list[Sound] = []
 for i in range(1,5):
     sound = Sound(f"Sounds/floorbreaking{i}.mp3")
     floorbreakings.append(sound)
-    
+
+openingdoor = Sound("Sounds/openingdoor.mp3")
