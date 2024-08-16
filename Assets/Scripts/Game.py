@@ -38,6 +38,8 @@ class Game(arcade.View):
         self.firstTextTwo = TextView(self.window,'Hace poco, encontraste un mapa antiguo en una librería polvorienta, que indicaba la ubicación del castillo perdido. En el rincón de la librería, te llamó la atención un libro con una ilustración de un caballero de triste figura, un símbolo de alguien que parecía haber sido olvidado por el tiempo. Intrigado por la promesa de conocimiento y misterio, te aventuraste a explorar los antiguos salones del castillo. Sabes que superar este desafío no solo te dará acceso a sabiduría prohibida, sino que también resolverá un enigma que ha perdurado durante siglos.',self.firstLevel,bg="Assets/Backgrounds/bookmap.jpg")
         self.firstTextOne = TextView(self.window,'Te encuentras en el Castillo de Arcanum, un lugar antiguo y lleno de misterio. Hace siglos, el mago Alden escondió en este castillo los libros más valiosos de la literatura. Para preservar su conocimiento, creó un desafío: solo quien pudiera encontrar los libros y responder las preguntas literarias podría acceder a su sabiduría.',self.firstTextTwo,bg="Assets/Backgrounds/hallway.jpeg")
         
+        
+        
     def on_update(self, delta_time: float):
         self.window.show_view(self.firstTextOne)
             

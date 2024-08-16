@@ -25,17 +25,21 @@ class TextView(arcade.View):
         self.label = self.makeText()
         self.image = bg
         self.bg = arcade.load_texture(bg)
-        self.touchedKey = False
+        self.touchedKey = 0
         self.sound = sounds.writes[random.randint(0,3)]
         self.maxTime = 0
-        self.lastView = lastView
-        
-        
+        self.imageFade = None
+        self.time = 1.5
+        self.alpha = 255
+        self.init = 0
+        self.wait = 0
     def on_draw(self):
-        self.window.clear()
+        arcade.start_render()
+        self.clear()
+        
         arcade.draw_lrwh_rectangle_textured(0,0,1280,720,self.bg)
         self.label.draw()
-        
+        arcade.draw_rectangle_filled(self.window.width/2,self.window.height/2,1280,1920,(0,0,0,self.alpha))
 
     def makeText(self):
 
@@ -59,12 +63,11 @@ class TextView(arcade.View):
         return gui
     
     def on_key_press(self, symbol: int, modifiers: int):
-        if not self.touchedKey:
-            self.touchedKey = True
-        else:
-            self.window.show_view(self.nextView)
+        if self.touchedKey >= 0 and self.touchedKey <= 1 and not self.quickPass:
+          self.touchedKey += 1
     
     def on_hide_view(self):
+        
         self.canPass = False
         self.textsParts = self.text.split(" ")
         self.currentText = ""
@@ -73,10 +76,32 @@ class TextView(arcade.View):
         self.sound = sounds.writes[random.randint(0,3)]
         self.maxTime = 0
         self.bg = arcade.load_texture(self.image)
+        self.init = 1
+        self.time = 1.4
+
+    def on_show(self):
+        self.init = 0
     def on_update(self, delta_time: float):
-        self.currentTime += delta_time
+        self.wait += delta_time
+        if self.init == 0 and self.time >= 0:
+            self.time -= delta_time
+            if self.time < 0:
+                self.time = 0
+                self.init = 1
+            self.alpha = 255 * abs(self.time/1.5)
+            
+        elif self.init == 2 or (self.touchedKey == 2 and not self.quickPass):
+            self.time += delta_time
+            if self.time >= 1.5:
+                self.window.show_view(self.nextView)
+            self.alpha = 255 * abs(self.time / 1.5)
+            
+        
+        
+    
+        self.currentTime += delta_time    
         if not self.quickPass:
-            if self.touchedKey:
+            if self.touchedKey == 1 or self.touchedKey == 2:
                 time = 0
             else:
                 time = random.random()/2
@@ -90,6 +115,10 @@ class TextView(arcade.View):
             if len(self.textsParts) == 0 and self.currentTime > 1:
                 self.canPass = True
                 self.label = self.makeText()
+            
+            
+                
+                
         else:
             time = random.random()/3
             if self.currentTime >= time and len(self.textsParts) != 0:
@@ -100,6 +129,6 @@ class TextView(arcade.View):
                 self.sound.play()    
             if len(self.textsParts) == 0:
                 self.maxTime += delta_time
-                if self.maxTime >= self.time:
-                    self.window.show_view(self.nextView)
+                if self.maxTime >= 2.5:
+                    self.init = 2
         

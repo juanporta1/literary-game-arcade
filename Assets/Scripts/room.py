@@ -72,6 +72,10 @@ class Room(arcade.View):
         self.scene.add_sprite_list("Key")
         self.scene.add_sprite_list("Life")
         
+        self.init = 1
+        self.time = .75
+        self.alpha = 255
+        
         for key in keys:
             with open(key["qm"]["questions"],"r") as f:
                 data = f.read()
@@ -184,7 +188,7 @@ class Room(arcade.View):
     def on_show(self):
         self.player.center_x = self.lastX
         self.player.center_y = self.lastY
-        
+        self.init = 0
         
     
     def on_draw(self):
@@ -213,7 +217,7 @@ class Room(arcade.View):
                     pass
                 else:
                     arcade.draw_text("Presiona E Para Activar",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
-             
+        arcade.draw_rectangle_filled(self.window.width/2, self.window.height/2,self.window.width,self.window.height,(0,0,0,self.alpha))     
     def update_player_velocity(self):
         if self.player.moveUp and not self.player.moveDown:
             self.player.change_y = self.speed
@@ -281,6 +285,19 @@ class Room(arcade.View):
         return canPass
     
     def on_update(self, delta_time: float):
+        
+        if self.init == 0:
+            self.time -= delta_time
+            if self.time <= 0:
+                self.init = 1
+                self.time = 0
+            self.alpha = 255 * abs(self.time/0.75)
+        if self.init == 2:
+            self.time += delta_time
+            if self.time >= .75:
+                self.init = 1
+                self.time = .75
+            self.alpha = 255 * abs(self.time/0.75)
         
         if self.player.wasDeath:
             self.player.moveDown = False
