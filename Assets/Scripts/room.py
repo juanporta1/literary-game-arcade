@@ -2,6 +2,8 @@ import arcade
 import arcade.gui
 import arcade.key
 import arcade.key
+import arcade.key
+import arcade.key
 from Player import Player
 import random
 from PauseMenu import PauseMenu
@@ -13,12 +15,13 @@ from textView import TextView
 import pygame
 import json
 import functions
-
+from codeInput import CodeInput
+from math import *
 class Note(arcade.Sprite):
     def __init__(self, x,y,window,text,nextView,bg="Assets/Backgrounds/note1.jpeg",filename="Assets/Sprites/Notes/closeNote.png",scale = 1):
         super().__init__(filename, scale, center_x = x, center_y = y)
         self.view = TextView(window,text,nextView,bg=bg,type=2,style={ "font_name": "Morris Roman","bg_color": None,"bg_color_pressed": None,"border_color": None,"font_size": 25 ,"font_color":arcade.color.BLACK,"font_color_pressed":arcade.color.BLACK},width=800)
-        
+        self.set_hit_box(((-60,-60),(20,20),(-20,20),(60,-60)))
 
 class Key(arcade.Sprite):
     def __init__(self,x,y, filename: str = None, scale: float = 1,questionMenu: QuestionMenu = None):
@@ -63,13 +66,14 @@ class Room(arcade.View):
         notes = jsonData["notes"]
         self.falseFloorbgs = ["hole1","hole2","hole3","hole4","hole5"]
         self.falseFloorTexts = ["Has caído en un pozo oculto, el castillo guarda más secretos de los que imaginabas.","Has caído en un pozo oculto, cuidado con tus pasos en la oscuridad.","Te has caído en un pozo oculto, vigila mejor tus pasos.","Has caído en un pozo escondido, este castillo tiene trampas inesperadas.","Te has tropezado con un pozo oculto, parece que el castillo no ha revelado todos sus secretos.","Un pozo oculto te ha sorprendido, el camino es más peligroso de lo que pensabas.","Has caído en un pozo oculto, el castillo es más traicionero de lo que parece."]
-
+        self.isInCodeDoor = False
         self.holeTexts = ["Has caído en un pozo por descuido, un paso en falso te ha costado caro.","Has caído en un pozo, la prisa te jugó una mala pasada.","Te has tropezado y caído en un pozo, un error torpe en el momento equivocado.","Has caído en un pozo, un pequeño desliz y aquí estás.","Has caído en un pozo, un paso en falso fue todo lo que necesitó.","Te has caído en un pozo, un error tonto que te costó caro.","Has caído en un pozo, un tropiezo que no viste venir."]
         self.itsOpen = False
         self.canPass = False
         self.nextRoom = nextRoom
         self.speed = 4
         self.jump = 25
+        self.wait = 0
         self.game = game
         self.player = Player(jsonData["setup"]["playerX"],jsonData["setup"]["playerY"],jsonData["setup"]["playerScale"])
         self.gameOverView = GameOverView(self.window,menu)
@@ -163,6 +167,19 @@ class Room(arcade.View):
             except:
                 break
         
+        self.codeDoors = []
+        for i in range(1,len(self.scene.sprite_lists)):
+            try:
+                if self.scene[f"CodeDoor{i}"]:
+                    self.codeDoors.append(f"CodeDoor{i}")
+            except:
+                break
+        
+        for i in range(1,len(self.codeDoors)+1):
+            code = random.randint(1000,9999)
+            self.scene[f"CodeDoor{i}"].input = CodeInput(self.window,self,code)
+            self.scene[f"Code{i}"].codeView = TextView(self.window,f"{code}",self,bg="Assets/Backgrounds/note1.jpeg",type=2,style={ "font_name": "Morris Roman","bg_color": None,"bg_color_pressed": None,"border_color": None,"font_size": 75 ,"font_color":arcade.color.BLACK,"font_color_pressed":arcade.color.BLACK})
+            
         self.player.center_x = self.x
         self.player.center_y = self.y
         self.lastX = self.player.center_x
@@ -204,6 +221,10 @@ class Room(arcade.View):
         self.player.center_y = self.lastY
         self.init = 0
         
+        for i in range(1,len(self.codeDoors)+1):
+            if self.scene[f"CodeDoor{i}"].input.open:
+                self.scene[f"CodeDoor{i}"].visible = False
+        
     
     def on_draw(self):
         arcade.start_render()
@@ -215,12 +236,23 @@ class Room(arcade.View):
         self.interface.draw()
         x = 10
         
+        for codeDoor in self.codeDoors:
+            if arcade.check_for_collision_with_list(self.player,self.scene[f"{codeDoor}A"]) or arcade.check_for_collision_with_list(self.player,self.scene[f"{codeDoor}B"]):
+                if self.scene[codeDoor].visible:
+                    arcade.draw_text("Presiona E Para Ingresar el Codigo",(1280/2 - 180),100,font_name="Retro Gaming",font_size=16)
+                else:
+                    arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
+        for i in range(1,len(self.codeDoors)+1):
+            if arcade.check_for_collision_with_list(self.player,self.scene[f"Code{i}"]):
+                arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
         for i in range(globalVars.TOTAL_LIFES + globalVars.APPEND_LIFES):
             if i <= globalVars.LIFES - 1:
                 arcade.draw_lrwh_rectangle_textured(x,650,64,64,self.fillHeart)
             else:
                 arcade.draw_lrwh_rectangle_textured(x,650,64,64,self.emptyHeart)
             x += 64
+        
+        
         
         if arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
             arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
@@ -271,7 +303,10 @@ class Room(arcade.View):
                 if not key.questionMenu.canPass:
                     self.qm = key.questionMenu
                     self.init = 2
-        
+        for i in range(1,len(self.codeDoors)+1):
+            if arcade.check_for_collision_with_list(self.player,self.scene[f"Code{i}"]) and self.scene[f"CodeDoor{i}"].visible == True and key == arcade.key.E:
+                self.window.show_view(self.scene[f"Code{i}"].codeView)
+                
         for i in range(len(self.manualBridges)):
             if arcade.check_for_collision_with_list(self.player,self.scene[self.manualBridgeKeys[i]]) and key == arcade.key.E and not self.scene[self.manualBridges[i]].visible:
                 self.scene[self.manualBridges[i]].visible = True
@@ -288,7 +323,39 @@ class Room(arcade.View):
         for note in arcade.check_for_collision_with_list(self.player,self.scene["Note"]):
             if key == arcade.key.E:
                 self.window.show_view(note.view)
+                sounds.notes[random.randint(0,len(sounds.notes) - 1)].play()
                 note.texture = self.openNote
+        for codeDoor in self.codeDoors:
+            if arcade.check_for_collision_with_list(self.player,self.scene[f"{codeDoor}A"]) and key == arcade.key.E and self.scene[f"{codeDoor}"].visible == False: 
+                   
+                codeB = self.scene[f"{codeDoor}B"]
+                x = 0
+                y = 0
+                for sprite in codeB:
+                    x += sprite.center_x                    
+                    y += sprite.center_y
+                
+                promX = trunc(x/len(codeB))
+                promY = trunc(y/len(codeB))
+                self.player.center_x = promX
+                self.player.center_y = promY
+
+            elif arcade.check_for_collision_with_list(self.player,self.scene[f"{codeDoor}B"]) and key == arcade.key.E and self.scene[f"{codeDoor}"].visible == False: 
+                   
+                codeA = self.scene[f"{codeDoor}A"]
+                x = 0
+                y = 0
+                for sprite in codeA:
+                    x += sprite.center_x                    
+                    y += sprite.center_y
+                
+                promX = trunc(x/len(codeA))
+                promY = trunc(y/len(codeA))
+                self.player.center_x = promX
+                self.player.center_y = promY
+            elif (arcade.check_for_collision_with_list(self.player,self.scene[f"{codeDoor}A"]) or arcade.check_for_collision_with_list(self.player,self.scene[f"{codeDoor}B"])) and self.scene[f"{codeDoor}"].visible and key == arcade.key.E:
+                self.window.show_view(self.scene[codeDoor].input)
+                
     def on_key_release(self, key: int, modifiers: int):
         if key == arcade.key.A or self.player.wasDeath:
             self.player.moveLeft = False
@@ -307,7 +374,9 @@ class Room(arcade.View):
         
     
     def on_update(self, delta_time: float):
-        
+        self.update_player_velocity()
+        self.scene.get_sprite_list("Player").update_animation()
+        self.scene.get_sprite_list("Life").update_animation()
         self.canPass = self.checkKeys()
         if self.init == 0:
             self.time -= delta_time
@@ -441,15 +510,16 @@ class Room(arcade.View):
                                     globalVars.APPEND_LIFES -= 1
                                 self.window.show_view(self.falseFloorView)
             except:
-                pass           
+                pass 
+            
+        
+            
         if globalVars.LIFES <= 0:
             self.window.show_view(self.gameOverView)
             globalVars.LIFES = globalVars.TOTAL_LIFES     
-        self.update_player_velocity()
         self.centerCameraFromPlayer()
         self.physicsEngine.update()
-        self.scene.get_sprite_list("Player").update_animation()
-        self.scene.get_sprite_list("Life").update_animation()
+        
         if self.canPass and not self.itsOpen:
             self.scene["Door"].visible = False
             sounds.openingdoor.play()

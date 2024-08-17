@@ -40,3 +40,12 @@ for i in range(1,5):
     floorbreakings.append(sound)
 
 openingdoor = Sound("Sounds/openingdoor.mp3")
+
+note1 = Sound("Sounds/note1.mp3")
+note2 = Sound("Sounds/note2.mp3")
+note3 = Sound("Sounds/note3.mp3")
+
+notes = [note1, note2,note3]
+
+unlock = Sound("Sounds/unlock.mp3")
+lock = Sound("Sounds/lock.mp3")

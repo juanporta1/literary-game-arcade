@@ -85,8 +85,12 @@ class TextView(arcade.View):
         return gui
     
     def on_key_press(self, symbol: int, modifiers: int):
-        if self.touchedKey >= 0 and self.touchedKey <= 1 and not self.quickPass:
+        if self.touchedKey >= 0 and self.touchedKey <= 1 and not self.quickPass and self.type == 1:
           self.touchedKey += 1
+        
+        elif self.touchedKey >= 0 and self.touchedKey <= 1 and self.type == 2:
+          self.touchedKey += 2
+        
     
     def on_hide_view(self):
         
