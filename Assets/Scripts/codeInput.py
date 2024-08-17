@@ -12,6 +12,9 @@ class CodeInput(arcade.View):
         self.interface.enable()
         self.open = False
         self.wait = 0
+        self.init = 1
+        self.alpha = 255
+        self.time = .5
         self.bg = arcade.load_texture("Assets/Backgrounds/codedoor.jpeg")
     def makeOnClickFunction(self,number):
         def onClick(event):
@@ -62,14 +65,19 @@ class CodeInput(arcade.View):
         self.interface.enable()
         self.ourCode = ""
         self.wait = 0
+        self.init = 0
     def on_hide_view(self):
         self.ourCode = ""
         self.wait = 0
         self.interface.disable()
+        self.init = 1
+        self.alpha = 255
+        self.time = .5
     def on_draw(self):
         arcade.start_render()
         arcade.draw_lrwh_rectangle_textured(0,0,self.window.width,self.window.height,self.bg)
         self.interface.draw()
+        arcade.draw_rectangle_filled(self.window.width/2,self.window.height/2,self.window.width,self.window.height,(0,0,0,self.alpha))
         
     def reset(self,event = None):
         self.wait = 0
@@ -78,8 +86,23 @@ class CodeInput(arcade.View):
         self.interface = self.makeInterface()
         self.interface.enable()
     def exit(self,event):
-        self.window.show_view(self.nextView)
+        self.init = 2
     def on_update(self, delta_time: float):
+        
+        if self.init == 0:
+            self.time -= delta_time
+            if self.time <= 0:
+                self.init = 1
+                self.time = 0
+            self.alpha = 255 * abs(self.time / .5)
+        if self.init == 2:
+            self.time += delta_time
+            if self.time >= .5:
+                self.time = .5
+                self.init = 1
+                self.window.show_view(self.nextView)
+            self.alpha = 255 * abs(self.time / .5)
+
         
         if len(self.ourCode) == 4:
             self.wait += delta_time
@@ -93,7 +116,7 @@ class CodeInput(arcade.View):
                 self.isExecuting = True
             if self.wait >= 2:
                 self.reset()
-                self.window.show_view(self.nextView)
+                self.init = 2
                 
         elif self.ourCode != str(self.code) and len(self.ourCode) == 4:
             
