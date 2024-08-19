@@ -88,6 +88,10 @@ class Room(arcade.View):
         self.init = 1
         self.time = .75
         self.alpha = 255
+        self.touchShadow = False
+        self.timeWalkAway = 0
+        self.showShadowView = False
+        self.shadowTexts = ["Está demasiado oscuro, primero deberías encender las luces.","Conociendo los peligros de este castillo, creo que no es seguro caminar a oscuras.","Está demasiado oscuro para continuar, encuentra la forma de iluminar el camino.","Es demasiado oscuro para avanzar, deberías encontrar la forma de iluminar el lugar primero."]
         
         for key in keys:
             with open(key["qm"]["questions"],"r") as f:
@@ -180,6 +184,14 @@ class Room(arcade.View):
             self.scene[f"CodeDoor{i}"].input = CodeInput(self.window,self,code)
             self.scene[f"Code{i}"].codeView = TextView(self.window,f"{code}",self,bg="Assets/Backgrounds/note1.jpeg",type=2,style={ "font_name": "Morris Roman","bg_color": None,"bg_color_pressed": None,"border_color": None,"font_size": 75 ,"font_color":arcade.color.BLACK,"font_color_pressed":arcade.color.BLACK})
             
+        self.shadows = []
+        for i in range(1,len(self.scene.sprite_lists)):
+            try:
+                if self.scene[f"Shadow{i}"]:
+                    self.shadows.append(f"Shadow{i}")
+            except:
+                break
+        
         self.player.center_x = self.x
         self.player.center_y = self.y
         self.lastX = self.player.center_x
@@ -211,29 +223,40 @@ class Room(arcade.View):
     def on_hide_view(self):
         self.lastX = self.player.center_x
         self.lastY = self.player.center_y
-        self.player.moveDown = False
-        self.player.moveLeft = False
-        self.player.moveRight = False
-        self.player.moveUp = False
+        if not self.showShadowView:    
+            
+            self.player.moveDown = False
+            self.player.moveLeft = False
+            self.player.moveRight = False
+            self.player.moveUp = False
     
     def on_show(self):
         self.player.center_x = self.lastX
         self.player.center_y = self.lastY
         self.init = 0
-        
+        if self.showShadowView:
+            self.touchShadow = True
+            
         for i in range(1,len(self.codeDoors)+1):
             if self.scene[f"CodeDoor{i}"].input.open:
                 self.scene[f"CodeDoor{i}"].visible = False
         
-    
+    def toggle(self,a):
+        if a:
+            return False
+        else:
+            return True
     def on_draw(self):
         arcade.start_render()
         self.clear()
         arcade.set_background_color(arcade.color.BLACK)
         self.playerCamera.use()
         self.scene.draw()
+        for i in self.shadows:
+            self.scene[i].draw()
         self.guiCamera.use()
         self.interface.draw()
+        
         x = 10
         
         for codeDoor in self.codeDoors:
@@ -252,7 +275,9 @@ class Room(arcade.View):
                 arcade.draw_lrwh_rectangle_textured(x,650,64,64,self.emptyHeart)
             x += 64
         
-        
+        for i in range(1,len(self.shadows)+1):
+                if arcade.check_for_collision_with_list(self.player,self.scene[f"UnShadow{i}"]) and self.scene[f"Shadow{i}"].visible:
+                    arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
         
         if arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
             arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
@@ -286,7 +311,7 @@ class Room(arcade.View):
         
         
     def on_key_press(self, key: int, modifiers: int):
-        if self.player.center_x >= 0 and self.player.center_y >= 0 and not self.player.wasDeath:
+        if self.player.center_x >= 0 and self.player.center_y >= 0 and not self.player.wasDeath and not self.touchShadow:
             if key == arcade.key.A:
                 self.player.moveLeft = True
             if key == arcade.key.D:
@@ -355,7 +380,11 @@ class Room(arcade.View):
                 self.player.center_y = promY
             elif (arcade.check_for_collision_with_list(self.player,self.scene[f"{codeDoor}A"]) or arcade.check_for_collision_with_list(self.player,self.scene[f"{codeDoor}B"])) and self.scene[f"{codeDoor}"].visible and key == arcade.key.E:
                 self.window.show_view(self.scene[codeDoor].input)
-                
+            
+            for i in range(1,len(self.shadows)+1):
+                if arcade.check_for_collision_with_list(self.player,self.scene[f"UnShadow{i}"]) and key == arcade.key.E and self.scene[f"Shadow{i}"].visible:
+                    self.scene[f"UnShadow{i}"].visible = False
+                    self.scene[f"Shadow{i}"].visible = False   
     def on_key_release(self, key: int, modifiers: int):
         if key == arcade.key.A or self.player.wasDeath:
             self.player.moveLeft = False
@@ -372,7 +401,8 @@ class Room(arcade.View):
         canPass = all(allPasses)
         return canPass
         
-    
+    def movePlayerAway(self,delta,direction):
+        pass
     def on_update(self, delta_time: float):
         self.update_player_velocity()
         self.scene.get_sprite_list("Player").update_animation()
@@ -418,7 +448,7 @@ class Room(arcade.View):
         if self.lastLifes > globalVars.LIFES:
             self.lastLifes = globalVars.LIFES
             sounds.lostlife.play()
-            
+    
         
         
         if not globalVars.MUSIC.get_busy() and isinstance(self.window.current_view,self.__class__):
@@ -435,7 +465,7 @@ class Room(arcade.View):
             sounds.getlife1.play()
 
             life.kill()
-        
+         
         
         
         if self.holes and not self.bridges:
@@ -512,6 +542,47 @@ class Room(arcade.View):
             except:
                 pass 
             
+        
+        for i in range(1,len(self.shadows)+1):
+            if arcade.check_for_collision_with_list(self.player,self.scene[f"Shadow{i}"]) and self.scene[f"Shadow{i}"].visible and not self.showShadowView:
+                s = arcade.check_for_collision_with_list(self.player,self.scene[f"Shadow{i}"])[0]
+                
+                if arcade.get_sprites_at_point((s.center_x+64,s.center_y),self.scene[f"Shadow{i}"]) or arcade.get_sprites_at_point((s.center_x+64,s.center_y),self.scene["Wall"]): self.right = False
+                else: self.right = True
+                
+                if arcade.get_sprites_at_point((s.center_x-64,s.center_y),self.scene[f"Shadow{i}"]) or arcade.get_sprites_at_point((s.center_x-64,s.center_y),self.scene["Wall"]): self.left = False
+                else: self.left = True
+                
+                if arcade.get_sprites_at_point((s.center_x,s.center_y+64),self.scene[f"Shadow{i}"]) or arcade.get_sprites_at_point((s.center_x,s.center_y+64),self.scene["Wall"]): self.up = False
+                else: self.up = True
+                
+                if arcade.get_sprites_at_point((s.center_x,s.center_y-64),self.scene[f"Shadow{i}"]) or arcade.get_sprites_at_point((s.center_x,s.center_y-64),self.scene["Wall"]): self.down = False
+                else: self.down = True 
+                    
+                self.showShadowView = True
+                shadowView = TextView(self.window,self.shadowTexts[random.randint(0,len(self.shadowTexts)-1)],self,bg="Assets/Backgrounds/shadow.jpeg",quickPass=True,time=.5)
+                self.window.show_view(shadowView)     
+        
+        
+        if self.touchShadow: 
+            
+            
+            if self.timeWalkAway == 0:
+                self.player.moveDown = self.down
+                self.player.moveUp = self.up
+                self.player.moveLeft = self.left
+                self.player.moveRight = self.right
+            self.timeWalkAway += delta_time
+            if self.timeWalkAway >= .5:
+                self.player.moveDown = False
+                self.player.moveUp = False
+                self.player.moveLeft = False
+                self.player.moveRight = False
+                self.touchShadow = False
+                self.showShadowView = False
+                self.timeWalkAway = 0
+                
+        
         
             
         if globalVars.LIFES <= 0:

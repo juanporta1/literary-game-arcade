@@ -1,13 +1,49 @@
-INFORMACION DE LA CONSTRUCCION DE NIVELES EN TILED:
+1. Pozos Invisibles:
 
-Pozos invisibles:Para hacer pozos invisibles se deben crear capas por cada pozo llamadas FalseFloor sumados a un indice.Por ejemplo: FalseFloor1, FalseFloor2. Este indice no debe saltarse, es decir, no puede existir un FalseFloor1 y un FalseFloor3 y no existir un FalseFloor2.
+    Capa: FalseFloorX (donde X es el índice del pozo, por ejemplo, FalseFloor1, FalseFloor2, etc.).
+    Reglas:
+        Cada pozo invisible debe estar en su propia capa.
+        Los índices deben ser consecutivos (no puede existir un FalseFloor1 y un FalseFloor3 sin un FalseFloor2).
 
-Puentes convencionales:Para crear puentes deben hacer lo mismo que los FalseFloor pero poniendo Bridge en su lugar.
+2. Puentes Convencionales:
 
-Pozos convencionales: Se debe poner Hole y su indice.
+    Capa: BridgeX (donde X es el índice del puente, por ejemplo, Bridge1, Bridge2, etc.).
+    Reglas:
+        Similar a los pozos invisibles, cada puente debe estar en su propia capa con índices consecutivos.
 
-Puentes Activables: Son puentes que requieren si o si de la capa que viene a continuacion. Son puentes que pueden ser activados por una llave, para que sean creibles deben ponerse sobre un pozo convencional o un pozo invisible, si estan sobre un pozo invisible lo haran visible. Para poder usar esta capa debe ponerse, al igual que los anteriores con su indice, ManualBridge
+3. Pozos Convencionales:
 
-Llave de los Puentes Activables: Activaran al puente que tenga su mismo indice, debajo de esta capa debe haber algo que la remplaze, ya que al activarse se hara invisible, es decir, si se pone como llave un cofre, debera ponerse un cofre abierto en la capa inferior para que de la ilusion de que se activo. El nombre de la capa debe ser ManualBridgeKey, con su respectivo indice.
+    Capa: HoleX (donde X es el índice del pozo, por ejemplo, Hole1, Hole2, etc.).
+    Reglas:
+        Cada pozo debe tener su capa y respetar el orden de los índices, sin saltos.
 
-Puertas con codigo: Consta de varias partes, CodeDoor1A (el numero varia segun el indice de la puerta) que es la parte donde el jugador elegira poner el codigo o pasar del otro lado si ya esta abierta la puerta, CodeDoor1B que es la parte que estara del otro lado de la pared y cumple exactamente las mismas funciones que la anterior, por ende es indistinto donde este cada una y no tienen un orden especifico. CodeDoor1 esta es la decoracion, debe ser una puerta cerrada y debajo de esta en la capa de decoraciones debe estar la puerta abierta para que de la sensacion de que se hya abierto. Code1 esta capa es algo(una biblioteca, un baul) que debe estar habilitado para tener colision con el jugador, es decir que no debe estar sobre un muro, y es la que a la hora de interactuar el jugador con ella, le mostrara el codigo de la puerta en cuestion.
+4. Puentes Activables:
+
+    Capa: ManualBridgeX (donde X es el índice del puente activable, por ejemplo, ManualBridge1, ManualBridge2, etc.).
+    Reglas:
+        Estos puentes requieren una llave para ser activados.
+        Deben colocarse sobre un pozo convencional (HoleX) o un pozo invisible (FalseFloorX).
+        Si están sobre un pozo invisible, al activarse, el puente lo hará visible.
+
+5. Llave de Puentes Activables:
+
+    Capa: ManualBridgeKeyX (donde X es el índice que debe coincidir con el del puente correspondiente, por ejemplo, ManualBridgeKey1 para ManualBridge1).
+    Reglas:
+        Cuando se activa, la capa de la llave se vuelve invisible, por lo que se debe colocar un reemplazo visual (por ejemplo, un cofre abierto) en la capa inferior para dar la ilusión de activación.
+
+6. Puertas con Código:
+
+    Capas:
+        CodeDoorXA y CodeDoorXB: Representan los lados de la puerta que el jugador puede interactuar para ingresar el código. La disposición de A y B es indiferente.
+        CodeDoorX: Decoración de la puerta cerrada. Debajo, en la capa de decoraciones, se debe colocar la puerta abierta.
+        CodeX: Objeto interactivo que muestra el código al jugador (por ejemplo, una biblioteca o un baúl). Debe tener colisión y estar sobre el suelo, no sobre un muro.
+
+7. Sombra:
+
+    Capas:
+        ShadowX: Representa la sección inaccesible hasta que se active un dispositivo.
+        UnShadowX: Dispositivo que, al activarse, permite el acceso a la sección ShadowX.
+    Reglas:
+        ShadowX bloquea el acceso al jugador hasta que UnShadowX se active.
+        UnShadowX debe tener colisión y estar sobre el suelo.
+        Al activarse, UnShadowX se vuelve invisible, por lo que se debe colocar un elemento decorativo en la capa inferior para reflejar el cambio.

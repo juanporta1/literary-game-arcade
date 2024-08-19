@@ -38,12 +38,12 @@ class Button(arcade.gui.UIFlatButton):
         
 class MenuView(arcade.View):
 
-    def __init__(self, window,):
+    def __init__(self, window):
         super().__init__(window)
         self.bg = arcade.load_texture("Assets/Backgrounds/mainMenu.jpeg")
         self.menu = self.principalMenu()
         self.menu.enable()
-        
+        self.gameView = Game(window,self)
     def on_draw(self):
         self.clear()
         arcade.draw_lrwh_rectangle_textured(0,0,1280,720,self.bg)
@@ -69,12 +69,12 @@ class MenuView(arcade.View):
             "boreder_color_focused":None,
         }
 
-        self.play = Button(text="Jugar",style=buttonStyle,width=300,height=75)
+        self.play = Button(text="Jugar",style=buttonStyle,width=300,height=100)
         self.play.on_click = self.inPressPlay
         vBox.add(self.play.with_space_around(10,0,10,0))
         
         
-        self.exit = Button(text="Salir",style=buttonStyle,width=300,height=75)
+        self.exit = Button(text="Salir",style=buttonStyle,width=300,height=100)
         self.exit.on_click = self.inPressExit
         vBox.add(self.exit.with_space_around(10,0,10,0))
         
@@ -89,7 +89,7 @@ class MenuView(arcade.View):
         return principalManager
         
     def inPressPlay(self,event):
-        gameView = Game(self.window,self)
+        
         self.play.style = {
             "font_name": "Retro Gaming",
             "font_size": 50,
@@ -100,7 +100,7 @@ class MenuView(arcade.View):
             "boreder_color_focused":None,
             "font_color": arcade.color.BLACK
         }
-        self.window.show_view(gameView)
+        self.window.show_view(self.gameView)
     
     def inPressExit(self,event):
         
@@ -112,21 +112,4 @@ class MenuView(arcade.View):
     def on_show_view(self):
         self.menu.enable()
     
-    def on_mouse_motion(self, x: int, y: int, dx: int, dy: int):
-        if self.play.collides_with_point(x,y):
-            self.play.on_hover()
-            self.menu = self.principalMenu()
-            self.menu.enable()
-        else:
-            self.play.on_unhover()
-            self.menu = self.principalMenu()
-            self.menu.enable()
-        
-        if self.exit.collides_with_point(x,y):
-            self.exit.on_hover()
-            self.menu = self.principalMenu()
-            self.menu.enable()
-        else:
-            self.exit.on_unhover()
-            self.menu = self.principalMenu()
-            self.menu.enable()
+    

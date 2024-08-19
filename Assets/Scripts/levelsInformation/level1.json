@@ -31,8 +31,8 @@
         }
     ],
     "setup":{
-        "playerX":300,
-        "playerY":300,
+        "playerX":500,
+        "playerY":1300,
         "playerScale": 2.5,
         "tilemap": "Assets/Levels/proofLevel.json"
     }
