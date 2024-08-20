@@ -4,6 +4,7 @@ import arcade.key
 import arcade.key
 import arcade.key
 import arcade.key
+import arcade.key
 from Player import Player
 import random
 from PauseMenu import PauseMenu
@@ -64,6 +65,7 @@ class Room(arcade.View):
         keys = jsonData["keys"]
         lifes = jsonData["lifes"]
         notes = jsonData["notes"]
+        rocks = jsonData["rocks"]
         self.falseFloorbgs = ["hole1","hole2","hole3","hole4","hole5"]
         self.falseFloorTexts = ["Has caído en un pozo oculto, el castillo guarda más secretos de los que imaginabas.","Has caído en un pozo oculto, cuidado con tus pasos en la oscuridad.","Te has caído en un pozo oculto, vigila mejor tus pasos.","Has caído en un pozo escondido, este castillo tiene trampas inesperadas.","Te has tropezado con un pozo oculto, parece que el castillo no ha revelado todos sus secretos.","Un pozo oculto te ha sorprendido, el camino es más peligroso de lo que pensabas.","Has caído en un pozo oculto, el castillo es más traicionero de lo que parece."]
         self.isInCodeDoor = False
@@ -84,6 +86,7 @@ class Room(arcade.View):
         self.scene.add_sprite_list("Key")
         self.scene.add_sprite_list("Life")
         self.scene.add_sprite_list("Note")
+        self.scene.add_sprite_list("Rock")
         self.openNote = arcade.load_texture("Assets/Sprites/Notes/openNote.png")
         self.init = 1
         self.time = .75
@@ -109,8 +112,13 @@ class Room(arcade.View):
         for note in notes:
             nt = Note(note["x"],note["y"],self.window,note["text"],self)
             self.scene.add_sprite("Note",nt)
-            
+        self.rockEngines = []
         
+        for rock in rocks:
+            r = arcade.Sprite(f"Assets/Sprites/DecoCastle/rocks/rock{random.randint(3,5)}.png",center_x=rock["x"],center_y=rock["y"],scale=1)
+            self.scene.add_sprite("Rock",r)
+            self.rockEngines.append(arcade.PhysicsEnginePlatformer(r,self.scene["Wall"],0))
+            self.catchedRock = [False,r]
         self.menu = menu
         self.x = jsonData["setup"]["playerX"]
         self.y = jsonData["setup"]["playerY"]
@@ -120,6 +128,7 @@ class Room(arcade.View):
         self.pause = PauseMenu(self.window,self,menu)
         arcade.set_background_color(arcade.csscolor.DIM_GREY)
         self.physicsEngine = arcade.PhysicsEnginePlatformer(player_sprite=self.player, walls=self.scene["Wall"],gravity_constant=0)
+        
         
         self.falseFloors = []
 
@@ -191,6 +200,15 @@ class Room(arcade.View):
                     self.shadows.append(f"Shadow{i}")
             except:
                 break
+        
+        self.rockDoors = []
+        for i in range(1,len(self.scene.sprite_lists)+1):
+            try:
+                if self.scene[f"RockDoor{i}"]:
+                    self.rockDoors.append(f"RockDoor{i}")
+            except:
+                break
+        print(self.rockDoors)
         
         self.player.center_x = self.x
         self.player.center_y = self.y
@@ -290,11 +308,22 @@ class Room(arcade.View):
                     arcade.draw_text("Presiona E Para Activar",(1280/2 - 110),100,font_name="Retro Gaming",font_size=16)
                     
         if arcade.check_for_collision_with_list(self.player,self.scene["Note"]):
-            arcade.draw_text("Presiona E Para leer",(1280/2 - 110),100,font_name="Retro Gaming",font_size=16)
-            
+            arcade.draw_text("Presiona E Para Leer",(1280/2 - 110),100,font_name="Retro Gaming",font_size=16)
+
+        if arcade.check_for_collision_with_list(self.player,self.scene["Rock"]):
+            if self.catchedRock[0]:
+                pass
+            else:
+                arcade.draw_text("Manten Espacio Para Empujar",(1280/2 - 110),100,font_name="Retro Gaming",font_size=16)
+        
         arcade.draw_rectangle_filled(self.window.width/2, self.window.height/2,self.window.width,self.window.height,(0,0,0,self.alpha))
             
     def update_player_velocity(self):
+        if self.catchedRock[0]:
+            self.speed = 2
+        else:
+            self.speed = 4
+        
         if self.player.moveUp and not self.player.moveDown:
             self.player.change_y = self.speed
         if self.player.moveDown and not self.player.moveUp:
@@ -308,7 +337,13 @@ class Room(arcade.View):
             self.player.change_x = self.speed
         if (not self.player.moveLeft and not self.player.moveRight) or (self.player.moveLeft and self.player.moveRight):
             self.player.change_x = 0
-        
+            
+        if self.catchedRock[0]:
+            self.catchedRock[1].change_x = self.player.change_x
+            self.catchedRock[1].change_y = self.player.change_y
+        else:
+            self.catchedRock[1].change_x = 0
+            self.catchedRock[1].change_y = 0       
         
     def on_key_press(self, key: int, modifiers: int):
         if self.player.center_x >= 0 and self.player.center_y >= 0 and not self.player.wasDeath and not self.touchShadow:
@@ -384,7 +419,14 @@ class Room(arcade.View):
             for i in range(1,len(self.shadows)+1):
                 if arcade.check_for_collision_with_list(self.player,self.scene[f"UnShadow{i}"]) and key == arcade.key.E and self.scene[f"Shadow{i}"].visible:
                     self.scene[f"UnShadow{i}"].visible = False
-                    self.scene[f"Shadow{i}"].visible = False   
+                    self.scene[f"Shadow{i}"].visible = False  
+                    
+            for rock in arcade.check_for_collision_with_list(self.player,self.scene["Rock"]):
+                if key == arcade.key.SPACE and not self.catchedRock[0]:
+                    print("Entro en rock true")
+                    self.catchedRock = [True,rock]
+                    break
+                
     def on_key_release(self, key: int, modifiers: int):
         if key == arcade.key.A or self.player.wasDeath:
             self.player.moveLeft = False
@@ -394,6 +436,10 @@ class Room(arcade.View):
             self.player.moveUp = False
         if key == arcade.key.S or self.player.wasDeath:
             self.player.moveDown = False
+            
+        if key == arcade.key.SPACE and self.catchedRock[0]:
+            self.catchedRock = [False,self.catchedRock[1]]
+        
     def checkKeys(self):
         allPasses = []
         for i in self.scene.get_sprite_list("Key"):
@@ -590,12 +636,19 @@ class Room(arcade.View):
             globalVars.LIFES = globalVars.TOTAL_LIFES     
         self.centerCameraFromPlayer()
         self.physicsEngine.update()
-        
+        for i in self.rockEngines:
+            i.update()
         if self.canPass and not self.itsOpen:
             self.scene["Door"].visible = False
             sounds.openingdoor.play()
             self.itsOpen = True
             
+        
+        for rock in self.scene["Rock"]:
+            for i in range(1,len(self.rockDoors)+1):
+                if arcade.check_for_collision_with_list(rock,self.scene[f"RockDoorKey{i}"]) and not self.catchedRock[0]:
+                    rock.center_x = self.scene[f"RockDoorKey{i}"][0].center_x
+                    rock.center_y = self.scene[f"RockDoorKey{i}"][0].center_y
         
         if arcade.check_for_collision_with_list(self.player,self.scene["Door"]) and not self.scene["Door"].visible:
             self.init = 3

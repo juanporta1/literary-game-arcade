@@ -30,9 +30,19 @@
             "bg":"Backgrounds/black.jpg"
         }
     ],
+    "rocks":[
+        {
+            "x":500,
+            "y":950
+        },
+        {
+            "x":600,
+            "y":950
+        }
+    ],
     "setup":{
         "playerX":500,
-        "playerY":1300,
+        "playerY":800,
         "playerScale": 2.5,
         "tilemap": "Assets/Levels/proofLevel.json"
     }
