@@ -94,6 +94,7 @@ class Room(arcade.View):
         self.touchShadow = False
         self.timeWalkAway = 0
         self.showShadowView = False
+        self.isInRockDoor = False
         self.shadowTexts = ["Está demasiado oscuro, primero deberías encender las luces.","Conociendo los peligros de este castillo, creo que no es seguro caminar a oscuras.","Está demasiado oscuro para continuar, encuentra la forma de iluminar el camino.","Es demasiado oscuro para avanzar, deberías encontrar la forma de iluminar el lugar primero."]
         
         for key in keys:
@@ -316,8 +317,12 @@ class Room(arcade.View):
             else:
                 arcade.draw_text("Manten Espacio Para Empujar",(1280/2 - 110),100,font_name="Retro Gaming",font_size=16)
         
+        for i in self.rockDoors:
+            if (arcade.check_for_collision_with_list(self.player,self.scene[f"{i}A"]) or arcade.check_for_collision_with_list(self.player,self.scene[f"{i}B"])) and self.scene[f"{i}"].visible == False:
+                arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
         arcade.draw_rectangle_filled(self.window.width/2, self.window.height/2,self.window.width,self.window.height,(0,0,0,self.alpha))
-            
+        
+         
     def update_player_velocity(self):
         if self.catchedRock[0]:
             self.speed = 2
@@ -423,10 +428,41 @@ class Room(arcade.View):
                     
             for rock in arcade.check_for_collision_with_list(self.player,self.scene["Rock"]):
                 if key == arcade.key.SPACE and not self.catchedRock[0]:
-                    print("Entro en rock true")
+                    
                     self.catchedRock = [True,rock]
                     break
-                
+            for i in self.rockDoors:
+                if arcade.check_for_collision_with_list(self.player,self.scene[f"{i}A"]) and key == arcade.key.E and self.scene[f"{i}"].visible == False and not self.isInRockDoor:  
+                    
+                    codeB = self.scene[f"{i}B"]
+                    x = 0
+                    y = 0
+                    for sprite in codeB:
+                        x += sprite.center_x                    
+                        y += sprite.center_y
+                    
+                    promX = trunc(x/len(codeB))
+                    promY = trunc(y/len(codeB))
+                    self.player.center_x = promX
+                    self.player.center_y = promY
+                    self.isInRockDoor = True
+
+                elif arcade.check_for_collision_with_list(self.player,self.scene[f"{i}B"]) and key == arcade.key.E and self.scene[f"{i}"].visible == False and not self.isInRockDoor: 
+                    
+                    codeA = self.scene[f"{i}A"]
+                    x = 0
+                    y = 0
+                    for sprite in codeA:
+                        x += sprite.center_x                    
+                        y += sprite.center_y
+                    
+                    promX = trunc(x/len(codeA))
+                    promY = trunc(y/len(codeA))
+                    self.player.center_x = promX
+                    self.player.center_y = promY
+                    self.isInRockDoor = True
+
+                    
     def on_key_release(self, key: int, modifiers: int):
         if key == arcade.key.A or self.player.wasDeath:
             self.player.moveLeft = False
@@ -450,6 +486,12 @@ class Room(arcade.View):
     def movePlayerAway(self,delta,direction):
         pass
     def on_update(self, delta_time: float):
+        for i in self.rockDoors:
+            if (not arcade.check_for_collision_with_list(self.player,self.scene[f"{i}A"]) and not arcade.check_for_collision_with_list(self.player,self.scene[f"{i}B"])) or self.waitRock:
+                self.isInRockDoor = False
+                self.waitRock = False
+            else: self.waitRock = True
+        
         self.update_player_velocity()
         self.scene.get_sprite_list("Player").update_animation()
         self.scene.get_sprite_list("Life").update_animation()
@@ -644,11 +686,16 @@ class Room(arcade.View):
             self.itsOpen = True
             
         
-        for rock in self.scene["Rock"]:
-            for i in range(1,len(self.rockDoors)+1):
+        for i in range(1,len(self.rockDoors)+1):
+            for rock in self.scene["Rock"]:
                 if arcade.check_for_collision_with_list(rock,self.scene[f"RockDoorKey{i}"]) and not self.catchedRock[0]:
                     rock.center_x = self.scene[f"RockDoorKey{i}"][0].center_x
                     rock.center_y = self.scene[f"RockDoorKey{i}"][0].center_y
+                    self.scene[f"RockDoor{i}"].visible = False
+                    break
+                elif self.catchedRock[1] == rock and arcade.check_for_collision_with_list(rock,self.scene[f"RockDoorKey{i}"]):
+                    self.scene[f"RockDoor{i}"].visible = True
+        
         
         if arcade.check_for_collision_with_list(self.player,self.scene["Door"]) and not self.scene["Door"].visible:
             self.init = 3
