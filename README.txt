@@ -21,6 +21,7 @@
 
     Capa: ManualBridgeX (donde X es el índice del puente activable, por ejemplo, ManualBridge1, ManualBridge2, etc.).
     Reglas:
+        Debe existir obligatoriamente un ManualBridgeKeyX que es la capa que activará el puente cuando el jugador interactúe con ella, tras ser activada se hará invisible, por lo que debajo de esta debe haber algo que de la sensación de cambio.
         Estos puentes requieren una llave para ser activados.
         Deben colocarse sobre un pozo convencional (HoleX) o un pozo invisible (FalseFloorX).
         Si están sobre un pozo invisible, al activarse, el puente lo hará visible.
