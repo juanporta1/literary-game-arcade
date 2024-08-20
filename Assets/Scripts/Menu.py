@@ -1,7 +1,8 @@
 import arcade
 import arcade.gui
 from Game import Game
-
+from controlMenu import ControlMenu
+import globalVars
 class Button(arcade.gui.UIFlatButton):
     def __init__(self, width: float = 100, height: float = 50, text="",style = None):
         super().__init__(width=width, height=height, text =text,style=style)
@@ -37,13 +38,14 @@ class Button(arcade.gui.UIFlatButton):
 
         
 class MenuView(arcade.View):
-
+    global globalVars
     def __init__(self, window):
         super().__init__(window)
         self.bg = arcade.load_texture("Assets/Backgrounds/mainMenu.jpeg")
         self.menu = self.principalMenu()
         self.menu.enable()
         self.gameView = None
+        self.control = ControlMenu(self.window,self)
     def on_draw(self):
         self.clear()
         arcade.draw_lrwh_rectangle_textured(0,0,1280,720,self.bg)
@@ -73,7 +75,9 @@ class MenuView(arcade.View):
         self.play.on_click = self.inPressPlay
         vBox.add(self.play.with_space_around(10,0,10,0))
         
-        
+        self.control = Button(500,100,"Controles",buttonStyle)
+        self.control.on_click = self.inPressControl
+        vBox.add(self.control)
         self.exit = Button(text="Salir",style=buttonStyle,width=300,height=100)
         self.exit.on_click = self.inPressExit
         vBox.add(self.exit.with_space_around(10,0,10,0))
@@ -87,7 +91,9 @@ class MenuView(arcade.View):
         )
 
         return principalManager
-        
+
+    def inPressControl(self,event):
+        self.window.show_view(self.control)
     def inPressPlay(self,event):
         
         self.play.style = {
@@ -112,8 +118,11 @@ class MenuView(arcade.View):
     
     def on_show_view(self):
         self.menu.enable()
-        self.gameView = None
-        
+        try:
+            if not isinstance(globalVars.LAST_VIEW,ControlMenu):
+                self.gameView = None
+        except:
+            pass
     def on_update(self, delta_time: float):
         if self.gameView == None:
             self.gameView = Game(self.window,self)

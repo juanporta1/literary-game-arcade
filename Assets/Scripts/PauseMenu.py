@@ -1,6 +1,6 @@
 import arcade
 import arcade.gui
-
+from controlMenu import ControlMenu
 
 class PauseMenu(arcade.View):
     
@@ -10,7 +10,7 @@ class PauseMenu(arcade.View):
         self.menuView = menuView
         self.menu = self.pauseMenu()
         self.menu.enable()
-        
+        self.control = ControlMenu(self.window,self)
     def on_draw(self):
         self.clear()
         self.menu.draw()
@@ -31,6 +31,9 @@ class PauseMenu(arcade.View):
         play = arcade.gui.UIFlatButton(text="Continuar",style=buttonStyle,width=300,height=75)
         vBox.add(play.with_space_around(10,0,10,0))
         play.on_click = self.inPressPlay
+        control = arcade.gui.UIFlatButton(text="Controles",style=buttonStyle,width=300,height=75)
+        vBox.add(control)
+        control.on_click = self.inPressControl
         exit = arcade.gui.UIFlatButton(text="Volver al Menu Principal",style=buttonStyle,width=300,height=75)
         vBox.add(exit.with_space_around(10,0,10,0))
         exit.on_click = self.inPressExit
@@ -43,7 +46,10 @@ class PauseMenu(arcade.View):
         )
 
         return principalManager
-        
+    
+    def inPressControl(self,event):
+        self.window.show_view(self.control)
+    
     def inPressPlay(self,event):
         self.window.show_view(self.gameView)
     

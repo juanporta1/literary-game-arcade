@@ -189,6 +189,24 @@ class Room(arcade.View):
             try:
                 if self.scene[f"CodeDoor{i}"]:
                     self.codeDoors.append(f"CodeDoor{i}")
+                    for s in self.scene[f"CodeDoor{i}A"]:
+                        color = s.color
+                        newColor = []
+                        for ci in color:
+                            ci -= 50
+                            if ci < 0:
+                                ci = 0
+                            newColor.append(ci)
+                        s.color  = newColor
+                    for s in self.scene[f"CodeDoor{i}B"]:
+                        color = s.color
+                        newColor = []
+                        for ci in color:
+                            ci -= 50
+                            if ci < 0:
+                                ci = 0
+                            newColor.append(ci)
+                        s.color  = newColor
             except:
                 break
         
@@ -210,7 +228,26 @@ class Room(arcade.View):
             try:
                 if self.scene[f"RockDoor{i}"]:
                     self.rockDoors.append(f"RockDoor{i}")
-            except:
+                    
+                    for s in self.scene[f"RockDoor{i}A"]:
+                        color = s.color
+                        newColor = []
+                        for ci in color:
+                            ci -= 50
+                            if ci < 0:
+                                ci = 0
+                            newColor.append(ci)
+                        s.color  = newColor
+                    for s in self.scene[f"RockDoor{i}B"]:
+                        color = s.color
+                        newColor = []
+                        for ci in color:
+                            ci -= 50
+                            if ci < 0:
+                                ci = 0
+                            newColor.append(ci)
+                        s.color  = newColor
+            except: 
                 break
         print(self.rockDoors)
         

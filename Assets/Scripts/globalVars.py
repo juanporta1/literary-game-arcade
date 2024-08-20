@@ -2,6 +2,9 @@ from copy import copy
 import sounds
 import random
 import pygame
+import arcade
+
+LAST_VIEW = None
 
 LIFES = 3
 TOTAL_LIFES = copy(LIFES)
