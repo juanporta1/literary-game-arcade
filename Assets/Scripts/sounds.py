@@ -49,3 +49,8 @@ notes = [note1, note2,note3]
 
 unlock = Sound("Sounds/unlock.mp3")
 lock = Sound("Sounds/lock.mp3")
+
+rock1 = Sound("Sounds/rock1.mp3")
+rock2 = Sound("Sounds/rock2.mp3")
+rock3 = Sound("Sounds/rock3.mp3")
+rocks = [rock1,rock3]

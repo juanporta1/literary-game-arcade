@@ -43,7 +43,7 @@ class MenuView(arcade.View):
         self.bg = arcade.load_texture("Assets/Backgrounds/mainMenu.jpeg")
         self.menu = self.principalMenu()
         self.menu.enable()
-        self.gameView = Game(window,self)
+        self.gameView = None
     def on_draw(self):
         self.clear()
         arcade.draw_lrwh_rectangle_textured(0,0,1280,720,self.bg)
@@ -108,8 +108,15 @@ class MenuView(arcade.View):
       
     def on_hide_view(self):
         self.menu.disable()
+        
     
     def on_show_view(self):
         self.menu.enable()
+        self.gameView = None
+        
+    def on_update(self, delta_time: float):
+        if self.gameView == None:
+            self.gameView = Game(self.window,self)
+        
     
     

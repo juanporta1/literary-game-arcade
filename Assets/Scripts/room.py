@@ -76,6 +76,9 @@ class Room(arcade.View):
         self.speed = 4
         self.jump = 25
         self.wait = 0
+        self.rockSound = sounds.rocks[random.randint(0,len(sounds.rocks)-1)].play()
+        self.rockSound.stop()
+        
         self.game = game
         self.player = Player(jsonData["setup"]["playerX"],jsonData["setup"]["playerY"],jsonData["setup"]["playerScale"])
         self.gameOverView = GameOverView(self.window,menu)
@@ -344,6 +347,9 @@ class Room(arcade.View):
             self.player.change_x = 0
             
         if self.catchedRock[0]:
+            if not self.rockSound.get_busy():
+                self.rockSound = sounds.rocks[random.randint(0,len(sounds.rocks)-1)].play()
+            
             self.catchedRock[1].change_x = self.player.change_x
             self.catchedRock[1].change_y = self.player.change_y
         else:
@@ -430,6 +436,7 @@ class Room(arcade.View):
                 if key == arcade.key.SPACE and not self.catchedRock[0]:
                     
                     self.catchedRock = [True,rock]
+                    self.rockSound = sounds.rocks[random.randint(0,len(sounds.rocks)-1)].play()
                     break
             for i in self.rockDoors:
                 if arcade.check_for_collision_with_list(self.player,self.scene[f"{i}A"]) and key == arcade.key.E and self.scene[f"{i}"].visible == False and not self.isInRockDoor:  
@@ -475,6 +482,9 @@ class Room(arcade.View):
             
         if key == arcade.key.SPACE and self.catchedRock[0]:
             self.catchedRock = [False,self.catchedRock[1]]
+            for i in range(1, len(self.rockDoors)+1):
+                if arcade.check_for_collision_with_list(self.catchedRock[1],self.scene[f"RockDoorKey{i}"]):
+                    sounds.mechanism.play()
         
     def checkKeys(self):
         allPasses = []
