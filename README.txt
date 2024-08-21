@@ -1,3 +1,15 @@
+
+Capas Obligatorias:
+    1.Wall: Los muros contra los que colisionara el jugador.
+    2.Decos: Las decoraciones que tambien se utilizaran para dar los efectos de cambio en las capas de mas adelante.
+    3.Door: Puerta por la que pasara el jugador, esta debe estar cerrada, y estar sobre una deco abierta, el jugador debe poder tener colisión con ella.
+    4.Floor: es la primer capa en dibujarse, no hace realmente nada, pero todo el mapa debe estar cubierto por esta capa.
+    Estas capas deben estar puesta debajo de todo en Tiled en el siguiente orden:
+        1.Door
+        2.Decos
+        3.Wall
+        4.Floor
+
 1. Pozos Invisibles:
 
     Capa: FalseFloorX (donde X es el índice del pozo, por ejemplo, FalseFloor1, FalseFloor2, etc.).
@@ -48,3 +60,10 @@
         ShadowX bloquea el acceso al jugador hasta que UnShadowX se active.
         UnShadowX debe tener colisión y estar sobre el suelo.
         Al activarse, UnShadowX se vuelve invisible, por lo que se debe colocar un elemento decorativo en la capa inferior para reflejar el cambio.
+
+8. Puertas de Rocas:
+    Capas:
+        RockDoorXA y RockDoorXB: Representan los lados de la puerta que el jugador puede interactuar para pasar de un lado al otro. La disposición de A y B es indiferente.
+        RockDoorX: Decoración de la puerta cerrada. Debajo, en la capa de decoraciones, se debe colocar la puerta abierta.
+        RockDoorKeyX: Es el lugar donde se debera llevar la roca, la cual se pone manualmente a traves de la configuracion del nivel, no debe ponerse desde el tiled.
+        

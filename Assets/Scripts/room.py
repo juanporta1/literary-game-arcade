@@ -54,57 +54,57 @@ class Life(arcade.Sprite):
 class Room(arcade.View):
     global globalVars
     
+    def createList(self,prefix,visible = True):
+        lista = []
+        for i in range(1,len(self.scene.sprite_lists)+1):
+            try:
+                if self.scene[f"{prefix}{i}"]:
+                  lista.append(f"{prefix}{i}")
+                  self.scene[f"{prefix}{i}"].visible = visible
+            except:
+                break
+        return lista  
+    
     def __init__(self,window,menu,game,jsonFile, nextRoom = None):
         super().__init__(window)
-        
-        self.lastLifes = globalVars.LIFES
         with open(jsonFile,"r") as file:
             data = file.read()
-        
         jsonData = json.loads(data)
+        self.x = jsonData["setup"]["playerX"]
+        self.y = jsonData["setup"]["playerY"]
         keys = jsonData["keys"]
         lifes = jsonData["lifes"]
         notes = jsonData["notes"]
         rocks = jsonData["rocks"]
-        self.falseFloorbgs = ["hole1","hole2","hole3","hole4","hole5"]
-        self.falseFloorTexts = ["Has caído en un pozo oculto, el castillo guarda más secretos de los que imaginabas.","Has caído en un pozo oculto, cuidado con tus pasos en la oscuridad.","Te has caído en un pozo oculto, vigila mejor tus pasos.","Has caído en un pozo escondido, este castillo tiene trampas inesperadas.","Te has tropezado con un pozo oculto, parece que el castillo no ha revelado todos sus secretos.","Un pozo oculto te ha sorprendido, el camino es más peligroso de lo que pensabas.","Has caído en un pozo oculto, el castillo es más traicionero de lo que parece."]
-        self.isInCodeDoor = False
-        self.holeTexts = ["Has caído en un pozo por descuido, un paso en falso te ha costado caro.","Has caído en un pozo, la prisa te jugó una mala pasada.","Te has tropezado y caído en un pozo, un error torpe en el momento equivocado.","Has caído en un pozo, un pequeño desliz y aquí estás.","Has caído en un pozo, un paso en falso fue todo lo que necesitó.","Te has caído en un pozo, un error tonto que te costó caro.","Has caído en un pozo, un tropiezo que no viste venir."]
-        self.itsOpen = False
-        self.canPass = False
-        self.nextRoom = nextRoom
-        self.speed = 4
-        self.jump = 25
-        self.wait = 0
-        self.rockSound = sounds.rocks[random.randint(0,len(sounds.rocks)-1)].play()
-        self.rockSound.stop()
-        
-        self.game = game
-        self.player = Player(jsonData["setup"]["playerX"],jsonData["setup"]["playerY"],jsonData["setup"]["playerScale"])
-        self.gameOverView = GameOverView(self.window,menu)
+        self.playerCamera = arcade.Camera(1280,720)
+        self.guiCamera = arcade.Camera(1280,720)
         self.map = arcade.load_tilemap(jsonData["setup"]["tilemap"])
         self.scene = arcade.Scene.from_tilemap(self.map)
+        self.player = Player(jsonData["setup"]["playerX"],jsonData["setup"]["playerY"],jsonData["setup"]["playerScale"])
         self.scene.add_sprite_list("Player")
         self.scene.add_sprite("Player", self.player)
+        self.player.center_x = self.x
+        self.player.center_y = self.y
+        self.lastX = self.player.center_x
+        self.lastY = self.player.center_y
+        self.physicsEngine = arcade.PhysicsEnginePlatformer(player_sprite=self.player, walls=self.scene["Wall"],gravity_constant=0)
+        self.pause = PauseMenu(self.window,self,menu)
+        self.gameOverView = GameOverView(self.window,menu)
+        self.lastLifes = globalVars.LIFES
+        self.nextRoom = nextRoom
+        
+        
+        
         self.scene.add_sprite_list("Key")
         self.scene.add_sprite_list("Life")
         self.scene.add_sprite_list("Note")
         self.scene.add_sprite_list("Rock")
-        self.openNote = arcade.load_texture("Assets/Sprites/Notes/openNote.png")
-        self.init = 1
-        self.time = .75
-        self.alpha = 255
-        self.touchShadow = False
-        self.timeWalkAway = 0
-        self.showShadowView = False
-        self.isInRockDoor = False
-        self.shadowTexts = ["Está demasiado oscuro, primero deberías encender las luces.","Conociendo los peligros de este castillo, creo que no es seguro caminar a oscuras.","Está demasiado oscuro para continuar, encuentra la forma de iluminar el camino.","Es demasiado oscuro para avanzar, deberías encontrar la forma de iluminar el lugar primero."]
         
         for key in keys:
             with open(key["qm"]["questions"],"r") as f:
                 data = f.read()
             questions = json.loads(data)
-            qm = QuestionMenu(self.window,questions,self.game,menu,key["qm"]["op"],key["qm"]["qq"])
+            qm = QuestionMenu(self.window,questions,game,menu,key["qm"]["op"],key["qm"]["qq"])
             newKey = Key(filename=key["filename"],x=key["center_x"], y=key["center_y"],questionMenu=qm,scale=key["scale"])
             newKey.questionMenu.gameView = self
             self.scene.add_sprite("Key",newKey)
@@ -123,142 +123,62 @@ class Room(arcade.View):
             self.scene.add_sprite("Rock",r)
             self.rockEngines.append(arcade.PhysicsEnginePlatformer(r,self.scene["Wall"],0))
             self.catchedRock = [False,r]
+        
+        self.shadowTexts = ["Está demasiado oscuro, primero deberías encender las luces.","Conociendo los peligros de este castillo, creo que no es seguro caminar a oscuras.","Está demasiado oscuro para continuar, encuentra la forma de iluminar el camino.","Es demasiado oscuro para avanzar, deberías encontrar la forma de iluminar el lugar primero."]
+        self.falseFloorbgs = ["hole1","hole2","hole3","hole4","hole5"]
+        self.falseFloorTexts = ["Has caído en un pozo oculto, el castillo guarda más secretos de los que imaginabas.","Has caído en un pozo oculto, cuidado con tus pasos en la oscuridad.","Te has caído en un pozo oculto, vigila mejor tus pasos.","Has caído en un pozo escondido, este castillo tiene trampas inesperadas.","Te has tropezado con un pozo oculto, parece que el castillo no ha revelado todos sus secretos.","Un pozo oculto te ha sorprendido, el camino es más peligroso de lo que pensabas.","Has caído en un pozo oculto, el castillo es más traicionero de lo que parece."]
+        self.holeTexts = ["Has caído en un pozo por descuido, un paso en falso te ha costado caro.","Has caído en un pozo, la prisa te jugó una mala pasada.","Te has tropezado y caído en un pozo, un error torpe en el momento equivocado.","Has caído en un pozo, un pequeño desliz y aquí estás.","Has caído en un pozo, un paso en falso fue todo lo que necesitó.","Te has caído en un pozo, un error tonto que te costó caro.","Has caído en un pozo, un tropiezo que no viste venir."]
         self.menu = menu
-        self.x = jsonData["setup"]["playerX"]
-        self.y = jsonData["setup"]["playerY"]
-        self.playerCamera = arcade.Camera(1280,720)
-        self.guiCamera = arcade.Camera(1280,720)
-       
-        self.pause = PauseMenu(self.window,self,menu)
-        arcade.set_background_color(arcade.csscolor.DIM_GREY)
-        self.physicsEngine = arcade.PhysicsEnginePlatformer(player_sprite=self.player, walls=self.scene["Wall"],gravity_constant=0)
-        
-        
-        self.falseFloors = []
-
-        for i in range(1,len(self.scene.sprite_lists)):
-            try:
-                if self.scene[f"FalseFloor{i}"]:
-                    self.falseFloors.append(f"FalseFloor{i}")
-                    self.scene[f"FalseFloor{i}"].visible = False
-            except:
-                break
-        
-        self.manualBridges = []
-        
-        for i in range(1,len(self.scene.sprite_lists)):
-            try:
-                if self.scene[f"ManualBridge{i}"]:
-                    self.manualBridges.append(f"ManualBridge{i}")
-                    self.scene[f"ManualBridge{i}"].visible = False
-            except:
-                break
-            
-        
-        
-        self.manualBridgeKeys = []
-        for i in range(1,len(self.scene.sprite_lists)):
-            try:
-                if self.scene[f"ManualBridgeKey{i}"]:
-                    self.manualBridgeKeys.append(f"ManualBridgeKey{i}")
-                    self.scene[f"ManualBridgeKey{i}"].visible = True
-            except:
-                break
-        
-         
-        self.bridges = []
-        for i in range(1,len(self.scene.sprite_lists)):
-            try:
-                if self.scene[f"Bridge{i}"]:
-                    self.bridges.append(f"Bridge{i}")
-                    self.scene[f"Bridge{i}"].visible = True
-            except:
-                break
-            
-        self.holes = []
-        for i in range(1,len(self.scene.sprite_lists)):
-            try:
-                if self.scene[f"Hole{i}"]:
-                    self.holes.append(f"Hole{i}")
-                    self.scene[f"Hole{i}"].visible = True
-            except:
-                break
-        
-        self.codeDoors = []
-        for i in range(1,len(self.scene.sprite_lists)):
-            try:
-                if self.scene[f"CodeDoor{i}"]:
-                    self.codeDoors.append(f"CodeDoor{i}")
-                    for s in self.scene[f"CodeDoor{i}A"]:
-                        color = s.color
-                        newColor = []
-                        for ci in color:
-                            ci -= 50
-                            if ci < 0:
-                                ci = 0
-                            newColor.append(ci)
-                        s.color  = newColor
-                    for s in self.scene[f"CodeDoor{i}B"]:
-                        color = s.color
-                        newColor = []
-                        for ci in color:
-                            ci -= 50
-                            if ci < 0:
-                                ci = 0
-                            newColor.append(ci)
-                        s.color  = newColor
-            except:
-                break
+        self.game = game
+        self.speed = 4
+        self.jump = 25
+        self.init = 1
+        self.time = .75
+        self.alpha = 255
+        self.wait = 0
+        self.waitColor = 0
+        self.timeWalkAway = 0
+        self.color = 0
+        self.showShadowView = False
+        self.isInRockDoor = False
+        self.touchShadow = False
+        self.itsOpen = False
+        self.canPass = False
+        self.isInCodeDoor = False
+        self.colorState = False
+        self.falseFloors = self.createList("FalseFloor",False)
+        self.manualBridges = self.createList("ManualBridge",False)
+        self.bridges = self.createList("Bridge")
+        self.holes = self.createList("Hole")
+        self.codeDoors = self.createList("CodeDoor")
+        self.shadows = self.createList("Shadow")
+        self.rockDoors = self.createList("RockDoor")
+        self.moveWalls = self.createList("MoveWall")
         
         for i in range(1,len(self.codeDoors)+1):
             code = random.randint(1000,9999)
             self.scene[f"CodeDoor{i}"].input = CodeInput(self.window,self,code)
             self.scene[f"Code{i}"].codeView = TextView(self.window,f"{code}",self,bg="Assets/Backgrounds/note1.jpeg",type=2,style={ "font_name": "Morris Roman","bg_color": None,"bg_color_pressed": None,"border_color": None,"font_size": 75 ,"font_color":arcade.color.BLACK,"font_color_pressed":arcade.color.BLACK})
-            
-        self.shadows = []
-        for i in range(1,len(self.scene.sprite_lists)):
-            try:
-                if self.scene[f"Shadow{i}"]:
-                    self.shadows.append(f"Shadow{i}")
-            except:
-                break
-        
-        self.rockDoors = []
-        for i in range(1,len(self.scene.sprite_lists)+1):
-            try:
-                if self.scene[f"RockDoor{i}"]:
-                    self.rockDoors.append(f"RockDoor{i}")
+
+        for i in self.moveWalls:
+            self.scene[i].leftCenterX = 0
+            self.scene[i].rightCenterX = 0
+            for s in self.scene[i]:
+                if self.scene[i].leftCenterX == 0 or self.scene[i].leftCenterX > s.center_x:
+                    self.scene[i].leftCenterX = s.center_x
+                    self.scene[i].startLeftCenterX = s.center_x
                     
-                    for s in self.scene[f"RockDoor{i}A"]:
-                        color = s.color
-                        newColor = []
-                        for ci in color:
-                            ci -= 50
-                            if ci < 0:
-                                ci = 0
-                            newColor.append(ci)
-                        s.color  = newColor
-                    for s in self.scene[f"RockDoor{i}B"]:
-                        color = s.color
-                        newColor = []
-                        for ci in color:
-                            ci -= 50
-                            if ci < 0:
-                                ci = 0
-                            newColor.append(ci)
-                        s.color  = newColor
-            except: 
-                break
-        print(self.rockDoors)
-        
-        self.player.center_x = self.x
-        self.player.center_y = self.y
-        self.lastX = self.player.center_x
-        self.lastY = self.player.center_y
-        
+                if self.scene[i].rightCenterX == 0 or self.scene[i].rightCenterX < s.center_x:
+                    self.scene[i].rightCenterX = s.center_x
+                    self.scene[i].startRightCenterX = s.center_x
+                    
+            
+
+        self.openNote = arcade.load_texture("Assets/Sprites/Notes/openNote.png")
         self.fillHeart = arcade.load_texture("Assets/Sprites/UI/fillHeart.png")
         self.emptyHeart = arcade.load_texture("Assets/Sprites/UI/emptyHeart.png")
-        
+        self.rockSound = sounds.rocks[random.randint(0,len(sounds.rocks)-1)].play()
+        self.rockSound.stop()
         
         
         self.interface = arcade.gui.UIManager()
@@ -311,13 +231,102 @@ class Room(arcade.View):
         arcade.set_background_color(arcade.color.BLACK)
         self.playerCamera.use()
         self.scene.draw()
+        
+        for wall in self.moveWalls:
+            for s in self.scene[wall]:
+                s.draw()
+        self.player.draw()        
         for i in self.shadows:
             self.scene[i].draw()
         self.guiCamera.use()
         self.interface.draw()
+        # if not self.colorState and self.color >= 40 and self.waitColor >= .9:
+        #     self.colorState = True
+        # elif self.colorState and self.color == 0:
+        #     self.colorState = False 
         
-        x = 10
+        # for i in range(1,len(self.rockDoors)+1):
+        #         for s in self.scene[f"RockDoor{i}A"]:
+        #             color = s.color
+        #             newColor = []
+                    
+        #             for ci in color:
+        #                 if not self.colorState:
+        #                     ci -= .5
+        #                 else:
+        #                     ci += .5
+        #                 if ci < 0:
+        #                     ci = 0
+        #                 if ci > 255:
+        #                     ci = 255
+        #                 newColor.append(ci)
+        #             s.color  = newColor
+                
+        #         for s in self.scene[f"RockDoor{i}B"]:
+        #             color = s.color
+        #             newColor = []
+        #             for ci in color:
+        #                 if not self.colorState:
+        #                     ci -= .5
+        #                 else:
+        #                     ci += .5
+        #                 if ci < 0:
+        #                     ci = 0
+        #                 if ci > 255:
+        #                     ci = 255
+        #                 newColor.append(ci)
+        #             s.color  = newColor
+        # for i in range(1,len(self.codeDoors)+1):
+        #         for s in self.scene[f"CodeDoor{i}A"]:
+        #             color = s.color
+        #             newColor = []
+                    
+        #             for ci in color:
+        #                 if not self.colorState:
+        #                     ci -= .5
+        #                 else:
+        #                     ci += .5
+        #                 if ci < 0:
+        #                     ci = 0
+        #                 if ci > 255:
+        #                     ci = 255
+        #                 newColor.append(ci)
+        #             s.color  = newColor
+                
+        #         for s in self.scene[f"CodeDoor{i}B"]:
+        #             color = s.color
+        #             newColor = []
+        #             for ci in color:
+        #                 if not self.colorState:
+        #                     ci -= .5
+        #                 else:
+        #                     ci += .5
+        #                 if ci < 0:
+        #                     ci = 0
+        #                 if ci > 255:
+        #                     ci = 255
+        #                 newColor.append(ci)
+        #             s.color  = newColor
+                    
+        # if self.colorState:
+        #     self.color -= 1
+        # else:
+        #     self.color += 1
         
+        for i in range(1,len(self.moveWalls)+1):
+            try:
+                if arcade.check_for_collision_with_list(self.player, self.scene[f"MoveWallKey{i}Right"]) and self.scene[f"MoveWallKey{i}Right"].visible:
+                    arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
+                    break
+            except:
+                pass
+            try:
+                if arcade.check_for_collision_with_list(self.player, self.scene[f"MoveWallKey{i}Left"]) and self.scene[f"MoveWallKey{i}Left"].visible:
+                        arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
+                        break
+            except:
+                pass
+        x = 10    
         for codeDoor in self.codeDoors:
             if arcade.check_for_collision_with_list(self.player,self.scene[f"{codeDoor}A"]) or arcade.check_for_collision_with_list(self.player,self.scene[f"{codeDoor}B"]):
                 if self.scene[codeDoor].visible:
@@ -341,9 +350,9 @@ class Room(arcade.View):
         if arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
             arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
 
-        for i in range(len(self.manualBridgeKeys)):
-            if arcade.check_for_collision_with_list(self.player,self.scene[self.manualBridgeKeys[i]]):
-                if self.scene[self.manualBridges[i]].visible:
+        for i in range(1,len(self.manualBridges)+1):
+            if arcade.check_for_collision_with_list(self.player,self.scene[f"ManualBridgeKey{i}"]):
+                if self.scene[f"ManualBridge{i}"].visible:
                     pass
                 else:
                     arcade.draw_text("Presiona E Para Activar",(1280/2 - 110),100,font_name="Retro Gaming",font_size=16)
@@ -362,7 +371,7 @@ class Room(arcade.View):
                 arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
         arcade.draw_rectangle_filled(self.window.width/2, self.window.height/2,self.window.width,self.window.height,(0,0,0,self.alpha))
         
-         
+        
     def update_player_velocity(self):
         if self.catchedRock[0]:
             self.speed = 2
@@ -415,16 +424,16 @@ class Room(arcade.View):
             if arcade.check_for_collision_with_list(self.player,self.scene[f"Code{i}"]) and self.scene[f"CodeDoor{i}"].visible == True and key == arcade.key.E:
                 self.window.show_view(self.scene[f"Code{i}"].codeView)
                 
-        for i in range(len(self.manualBridges)):
-            if arcade.check_for_collision_with_list(self.player,self.scene[self.manualBridgeKeys[i]]) and key == arcade.key.E and not self.scene[self.manualBridges[i]].visible:
-                self.scene[self.manualBridges[i]].visible = True
-                self.scene[self.manualBridgeKeys[i]].visible = False
+        for i in range(1,len(self.manualBridges)+1):
+            if arcade.check_for_collision_with_list(self.player,self.scene[f"ManualBridgeKey{i}"]) and key == arcade.key.E and not self.scene[f"ManualBridge{i}"].visible:
+                self.scene[f"ManualBridge{i}"].visible = True
+                self.scene[f"ManualBridgeKey{i}"].visible = False
                 sounds.mechanism.play()
                 
                 for j in range(len(self.falseFloors)):
                     try:
-                        if arcade.check_for_collision_with_list(self.scene[self.manualBridges[i]][0],self.scene[self.falseFloors[j]]):
-                            self.scene[self.falseFloors[i]].visible = True 
+                        if arcade.check_for_collision_with_list(self.scene[f"ManualBridge{i}"][0],self.scene[self.falseFloors[j]]):
+                            self.scene[self.falseFloors[j]].visible = True 
                     except:
                         pass
         
@@ -505,8 +514,18 @@ class Room(arcade.View):
                     self.player.center_x = promX
                     self.player.center_y = promY
                     self.isInRockDoor = True
-
-                    
+                for i in range(1,len(self.moveWalls)+1):
+                    try:
+                        if arcade.check_for_collision_with_list(self.player,self.scene[f"MoveWallKey{i}Left"]) and self.scene[f"MoveWallKey{i}Left"].visible and key == arcade.key.E:
+                            self.scene[f"MoveWallKey{i}Left"].visible = False
+                            
+                    except:
+                        pass
+                    try:
+                        if arcade.check_for_collision_with_list(self.player,self.scene[f"MoveWallKey{i}Right"]) and self.scene[f"MoveWallKey{i}Right"].visible and key == arcade.key.E:
+                            self.scene[f"MoveWallKey{i}Right"].visible = False
+                    except:
+                        pass
     def on_key_release(self, key: int, modifiers: int):
         if key == arcade.key.A or self.player.wasDeath:
             self.player.moveLeft = False
@@ -533,6 +552,10 @@ class Room(arcade.View):
     def movePlayerAway(self,delta,direction):
         pass
     def on_update(self, delta_time: float):
+        self.waitColor += delta_time
+        if self.waitColor >= 1:
+            self.waitColor = 0
+        
         for i in self.rockDoors:
             if (not arcade.check_for_collision_with_list(self.player,self.scene[f"{i}A"]) and not arcade.check_for_collision_with_list(self.player,self.scene[f"{i}B"])) or self.waitRock:
                 self.isInRockDoor = False
@@ -743,6 +766,31 @@ class Room(arcade.View):
                 elif self.catchedRock[1] == rock and arcade.check_for_collision_with_list(rock,self.scene[f"RockDoorKey{i}"]):
                     self.scene[f"RockDoor{i}"].visible = True
         
+        
+        for i in range(1,len(self.moveWalls)+1):
+            try:
+                if self.scene[f"MoveWallKey{i}Left"].visible == False and self.scene[f"MoveWall{i}"].startLeftCenterX != self.scene[f"MoveWall{i}"].rightCenterX:
+                    
+                    for s in self.scene[f"MoveWall{i}"]:
+                        for sprite in arcade.get_sprites_at_exact_point((s.center_x,s.center_y),self.scene["Wall"]):
+                            sprite.center_x -= 1    
+                        s.center_x -= 1
+                         
+                    self.scene[f"MoveWall{i}"].rightCenterX -= 1
+            except:
+                pass
+            try:
+                if self.scene[f"MoveWallKey{i}Right"].visible == False and self.scene[f"MoveWall{i}"].startRightCenterX != self.scene[f"MoveWall{i}"].leftCenterX:
+                    
+                    for s in self.scene[f"MoveWall{i}"]:
+                        for sprite in arcade.get_sprites_at_exact_point((s.center_x,s.center_y),self.scene["Wall"]):
+                            sprite.center_x += 1
+  
+                        s.center_x += 1
+                         
+                    self.scene[f"MoveWall{i}"].leftCenterX += 1
+            except:
+                pass
         
         if arcade.check_for_collision_with_list(self.player,self.scene["Door"]) and not self.scene["Door"].visible:
             self.init = 3

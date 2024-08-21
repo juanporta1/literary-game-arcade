@@ -1,5 +1,5 @@
 import arcade
-from Menu import MenuView
+from Menu import MenuView   
 from Game import Game
 
 
@@ -15,5 +15,5 @@ if __name__ == '__main__':
     window = Window(1280,720,"Habia una vez...")
     menu = MenuView(window)
     
-    window.show_view(menu) 
+    window.show_view(menu)
     arcade.run()
