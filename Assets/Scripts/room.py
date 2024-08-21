@@ -316,13 +316,13 @@ class Room(arcade.View):
         for i in range(1,len(self.moveWalls)+1):
             try:
                 if arcade.check_for_collision_with_list(self.player, self.scene[f"MoveWallKey{i}Right"]) and self.scene[f"MoveWallKey{i}Right"].visible:
-                    arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
+                    arcade.draw_text("PRESIONA E",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
                     break
             except:
                 pass
             try:
                 if arcade.check_for_collision_with_list(self.player, self.scene[f"MoveWallKey{i}Left"]) and self.scene[f"MoveWallKey{i}Left"].visible:
-                        arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
+                        arcade.draw_text("PRESIONA E",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
                         break
             except:
                 pass
@@ -330,12 +330,12 @@ class Room(arcade.View):
         for codeDoor in self.codeDoors:
             if arcade.check_for_collision_with_list(self.player,self.scene[f"{codeDoor}A"]) or arcade.check_for_collision_with_list(self.player,self.scene[f"{codeDoor}B"]):
                 if self.scene[codeDoor].visible:
-                    arcade.draw_text("Presiona E Para Ingresar el Codigo",(1280/2 - 180),100,font_name="Retro Gaming",font_size=16)
+                    arcade.draw_text("PRESIONA E PARA INGRESAR EL CODIGO",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
                 else:
-                    arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
+                    arcade.draw_text("PRESIONA E",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
         for i in range(1,len(self.codeDoors)+1):
             if arcade.check_for_collision_with_list(self.player,self.scene[f"Code{i}"]):
-                arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
+                arcade.draw_text("PRESIONA E",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
         for i in range(globalVars.TOTAL_LIFES + globalVars.APPEND_LIFES):
             if i <= globalVars.LIFES - 1:
                 arcade.draw_lrwh_rectangle_textured(x,650,64,64,self.fillHeart)
@@ -345,30 +345,30 @@ class Room(arcade.View):
         
         for i in range(1,len(self.shadows)+1):
                 if arcade.check_for_collision_with_list(self.player,self.scene[f"UnShadow{i}"]) and self.scene[f"Shadow{i}"].visible:
-                    arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
+                    arcade.draw_text("PRESIONA E",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
         
         if arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
-            arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
+            arcade.draw_text("PRESIONA E",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
 
         for i in range(1,len(self.manualBridges)+1):
             if arcade.check_for_collision_with_list(self.player,self.scene[f"ManualBridgeKey{i}"]):
                 if self.scene[f"ManualBridge{i}"].visible:
                     pass
                 else:
-                    arcade.draw_text("Presiona E Para Activar",(1280/2 - 110),100,font_name="Retro Gaming",font_size=16)
+                    arcade.draw_text("PRESIONA E PARA ACTIVAR",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
                     
         if arcade.check_for_collision_with_list(self.player,self.scene["Note"]):
-            arcade.draw_text("Presiona E Para Leer",(1280/2 - 110),100,font_name="Retro Gaming",font_size=16)
+            arcade.draw_text("PRESIONA E PARA LEER",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
 
         if arcade.check_for_collision_with_list(self.player,self.scene["Rock"]):
             if self.catchedRock[0]:
                 pass
             else:
-                arcade.draw_text("Manten Espacio Para Empujar",(1280/2 - 110),100,font_name="Retro Gaming",font_size=16)
+                arcade.draw_text("MANTEN ESPACIO PARA EMPUJAR",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
         
         for i in self.rockDoors:
             if (arcade.check_for_collision_with_list(self.player,self.scene[f"{i}A"]) or arcade.check_for_collision_with_list(self.player,self.scene[f"{i}B"])) and self.scene[f"{i}"].visible == False:
-                arcade.draw_text("Presiona E",(1280/2 - 80),100,font_name="Retro Gaming",font_size=16)
+                arcade.draw_text("PRESIONA E",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
         arcade.draw_rectangle_filled(self.window.width/2, self.window.height/2,self.window.width,self.window.height,(0,0,0,self.alpha))
         
         
