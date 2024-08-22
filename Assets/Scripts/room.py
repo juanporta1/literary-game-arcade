@@ -163,6 +163,7 @@ class Room(arcade.View):
         for i in self.moveWalls:
             self.scene[i].leftCenterX = 0
             self.scene[i].rightCenterX = 0
+            self.scene[i].side = None
             for s in self.scene[i]:
                 if self.scene[i].leftCenterX == 0 or self.scene[i].leftCenterX > s.center_x:
                     self.scene[i].leftCenterX = s.center_x
@@ -240,92 +241,13 @@ class Room(arcade.View):
             self.scene[i].draw()
         self.guiCamera.use()
         self.interface.draw()
-        # if not self.colorState and self.color >= 40 and self.waitColor >= .9:
-        #     self.colorState = True
-        # elif self.colorState and self.color == 0:
-        #     self.colorState = False 
-        
-        # for i in range(1,len(self.rockDoors)+1):
-        #         for s in self.scene[f"RockDoor{i}A"]:
-        #             color = s.color
-        #             newColor = []
-                    
-        #             for ci in color:
-        #                 if not self.colorState:
-        #                     ci -= .5
-        #                 else:
-        #                     ci += .5
-        #                 if ci < 0:
-        #                     ci = 0
-        #                 if ci > 255:
-        #                     ci = 255
-        #                 newColor.append(ci)
-        #             s.color  = newColor
-                
-        #         for s in self.scene[f"RockDoor{i}B"]:
-        #             color = s.color
-        #             newColor = []
-        #             for ci in color:
-        #                 if not self.colorState:
-        #                     ci -= .5
-        #                 else:
-        #                     ci += .5
-        #                 if ci < 0:
-        #                     ci = 0
-        #                 if ci > 255:
-        #                     ci = 255
-        #                 newColor.append(ci)
-        #             s.color  = newColor
-        # for i in range(1,len(self.codeDoors)+1):
-        #         for s in self.scene[f"CodeDoor{i}A"]:
-        #             color = s.color
-        #             newColor = []
-                    
-        #             for ci in color:
-        #                 if not self.colorState:
-        #                     ci -= .5
-        #                 else:
-        #                     ci += .5
-        #                 if ci < 0:
-        #                     ci = 0
-        #                 if ci > 255:
-        #                     ci = 255
-        #                 newColor.append(ci)
-        #             s.color  = newColor
-                
-        #         for s in self.scene[f"CodeDoor{i}B"]:
-        #             color = s.color
-        #             newColor = []
-        #             for ci in color:
-        #                 if not self.colorState:
-        #                     ci -= .5
-        #                 else:
-        #                     ci += .5
-        #                 if ci < 0:
-        #                     ci = 0
-        #                 if ci > 255:
-        #                     ci = 255
-        #                 newColor.append(ci)
-        #             s.color  = newColor
-                    
-        # if self.colorState:
-        #     self.color -= 1
-        # else:
-        #     self.color += 1
         
         for i in range(1,len(self.moveWalls)+1):
-            try:
-                if arcade.check_for_collision_with_list(self.player, self.scene[f"MoveWallKey{i}Right"]) and self.scene[f"MoveWallKey{i}Right"].visible:
+            
+                if arcade.check_for_collision_with_list(self.player, self.scene[f"MoveWallKey{i}"]) and self.scene[f"MoveWallKey{i}"].visible:
                     arcade.draw_text("PRESIONA E",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
                     break
-            except:
-                pass
-            try:
-                if arcade.check_for_collision_with_list(self.player, self.scene[f"MoveWallKey{i}Left"]) and self.scene[f"MoveWallKey{i}Left"].visible:
-                        arcade.draw_text("PRESIONA E",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
-                        break
-            except:
-                pass
+            
         x = 10    
         for codeDoor in self.codeDoors:
             if arcade.check_for_collision_with_list(self.player,self.scene[f"{codeDoor}A"]) or arcade.check_for_collision_with_list(self.player,self.scene[f"{codeDoor}B"]):
@@ -515,17 +437,19 @@ class Room(arcade.View):
                     self.player.center_y = promY
                     self.isInRockDoor = True
                 for i in range(1,len(self.moveWalls)+1):
-                    try:
-                        if arcade.check_for_collision_with_list(self.player,self.scene[f"MoveWallKey{i}Left"]) and self.scene[f"MoveWallKey{i}Left"].visible and key == arcade.key.E:
-                            self.scene[f"MoveWallKey{i}Left"].visible = False
+                    
+                    if arcade.check_for_collision_with_list(self.player,self.scene[f"MoveWallKey{i}"]) and self.scene[f"MoveWallKey{i}"].visible and key == arcade.key.E:
+                        self.scene[f"MoveWallKey{i}"].visible = False
+                        for s in self.scene[f"SideMoveWall{i}"]:
+                            if s.center_x == self.scene[f"MoveWall{i}"].rightCenterX:
+                                self.scene[f"MoveWall{i}"].side = "right"
+                                break
+                            elif s.center_x == self.scene[f"MoveWall{i}"].leftCenterX:
+                                self.scene[f"MoveWall{i}"].side = "left"
+                                break
                             
-                    except:
-                        pass
-                    try:
-                        if arcade.check_for_collision_with_list(self.player,self.scene[f"MoveWallKey{i}Right"]) and self.scene[f"MoveWallKey{i}Right"].visible and key == arcade.key.E:
-                            self.scene[f"MoveWallKey{i}Right"].visible = False
-                    except:
-                        pass
+                    
+                    
     def on_key_release(self, key: int, modifiers: int):
         if key == arcade.key.A or self.player.wasDeath:
             self.player.moveLeft = False
@@ -768,8 +692,8 @@ class Room(arcade.View):
         
         
         for i in range(1,len(self.moveWalls)+1):
-            try:
-                if self.scene[f"MoveWallKey{i}Left"].visible == False and self.scene[f"MoveWall{i}"].startLeftCenterX != self.scene[f"MoveWall{i}"].rightCenterX:
+            
+                if self.scene[f"MoveWallKey{i}"].visible == False and self.scene[f"MoveWall{i}"].startLeftCenterX != self.scene[f"MoveWall{i}"].rightCenterX and self.scene[f"MoveWall{i}"].side == "left":
                     
                     for s in self.scene[f"MoveWall{i}"]:
                         for sprite in arcade.get_sprites_at_exact_point((s.center_x,s.center_y),self.scene["Wall"]):
@@ -777,10 +701,9 @@ class Room(arcade.View):
                         s.center_x -= 1
                          
                     self.scene[f"MoveWall{i}"].rightCenterX -= 1
-            except:
-                pass
-            try:
-                if self.scene[f"MoveWallKey{i}Right"].visible == False and self.scene[f"MoveWall{i}"].startRightCenterX != self.scene[f"MoveWall{i}"].leftCenterX:
+            
+            
+                if self.scene[f"MoveWallKey{i}"].visible == False and self.scene[f"MoveWall{i}"].startRightCenterX != self.scene[f"MoveWall{i}"].leftCenterX and self.scene[f"MoveWall{i}"].side == "right":
                     
                     for s in self.scene[f"MoveWall{i}"]:
                         for sprite in arcade.get_sprites_at_exact_point((s.center_x,s.center_y),self.scene["Wall"]):
@@ -789,8 +712,7 @@ class Room(arcade.View):
                         s.center_x += 1
                          
                     self.scene[f"MoveWall{i}"].leftCenterX += 1
-            except:
-                pass
+            
         
         if arcade.check_for_collision_with_list(self.player,self.scene["Door"]) and not self.scene["Door"].visible:
             self.init = 3
