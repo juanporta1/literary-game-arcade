@@ -163,18 +163,36 @@ class Room(arcade.View):
         for i in self.moveWalls:
             self.scene[i].leftCenterX = 0
             self.scene[i].rightCenterX = 0
+            self.scene[i].topCenterY = 0
+            self.scene[i].bottomCenterY = 0
+            self.scene[i].startTopCenterY = 0
+            self.scene[i].startBottomCenterY = 0
+            self.scene[i].startLeftCenterX = 0
+            self.scene[i].startRightCenterX = 0
             self.scene[i].side = None
-            for s in self.scene[i]:
-                if self.scene[i].leftCenterX == 0 or self.scene[i].leftCenterX > s.center_x:
-                    self.scene[i].leftCenterX = s.center_x
-                    self.scene[i].startLeftCenterX = s.center_x
-                    
-                if self.scene[i].rightCenterX == 0 or self.scene[i].rightCenterX < s.center_x:
-                    self.scene[i].rightCenterX = s.center_x
-                    self.scene[i].startRightCenterX = s.center_x
-                    
             
-
+            if self.scene[i][0].center_x == self.scene[i][1].center_x:
+                for s in self.scene[i]:
+                    if self.scene[i].topCenterY == 0 or self.scene[i].topCenterY < s.center_y:
+                        self.scene[i].topCenterY = s.center_y
+                        self.scene[i].startTopCenterY = s.center_y
+                        
+                    if self.scene[i].bottomCenterY == 0 or self.scene[i].bottomCenterY > s.center_y:
+                        self.scene[i].bottomCenterY = s.center_y
+                        self.scene[i].startBottomCenterY = s.center_y
+            else:
+                for s in self.scene[i]:
+                    if self.scene[i].leftCenterX == 0 or self.scene[i].leftCenterX > s.center_x:
+                        self.scene[i].leftCenterX = s.center_x
+                        self.scene[i].startLeftCenterX = s.center_x
+                        
+                    if self.scene[i].rightCenterX == 0 or self.scene[i].rightCenterX < s.center_x:
+                        self.scene[i].rightCenterX = s.center_x
+                        self.scene[i].startRightCenterX = s.center_x
+                    
+        for i in range(1,len(self.moveWalls)+1):
+            self.scene[f"SideMoveWall{i}"].visible = False
+            
         self.openNote = arcade.load_texture("Assets/Sprites/Notes/openNote.png")
         self.fillHeart = arcade.load_texture("Assets/Sprites/UI/fillHeart.png")
         self.emptyHeart = arcade.load_texture("Assets/Sprites/UI/emptyHeart.png")
@@ -440,13 +458,22 @@ class Room(arcade.View):
                     
                     if arcade.check_for_collision_with_list(self.player,self.scene[f"MoveWallKey{i}"]) and self.scene[f"MoveWallKey{i}"].visible and key == arcade.key.E:
                         self.scene[f"MoveWallKey{i}"].visible = False
-                        for s in self.scene[f"SideMoveWall{i}"]:
-                            if s.center_x == self.scene[f"MoveWall{i}"].rightCenterX:
-                                self.scene[f"MoveWall{i}"].side = "right"
-                                break
-                            elif s.center_x == self.scene[f"MoveWall{i}"].leftCenterX:
-                                self.scene[f"MoveWall{i}"].side = "left"
-                                break
+                        if self.scene[f"MoveWall{i}"].leftCenterX != 0:
+                            for s in self.scene[f"SideMoveWall{i}"]:
+                                if s.center_x == self.scene[f"MoveWall{i}"].rightCenterX:
+                                    self.scene[f"MoveWall{i}"].side = "right"
+                                    break
+                                elif s.center_x == self.scene[f"MoveWall{i}"].leftCenterX:
+                                    self.scene[f"MoveWall{i}"].side = "left"
+                                    break
+                        else:
+                            for s in self.scene[f"SideMoveWall{i}"]:
+                                if s.center_y == self.scene[f"MoveWall{i}"].topCenterY:
+                                    self.scene[f"MoveWall{i}"].side = "top"
+                                    break
+                                elif s.center_y == self.scene[f"MoveWall{i}"].bottomCenterY:
+                                    self.scene[f"MoveWall{i}"].side = "bottom"
+                                    break
                             
                     
                     
@@ -712,7 +739,44 @@ class Room(arcade.View):
                         s.center_x += 1
                          
                     self.scene[f"MoveWall{i}"].leftCenterX += 1
+                if self.scene[f"MoveWallKey{i}"].visible == False and self.scene[f"MoveWall{i}"].startLeftCenterX != self.scene[f"MoveWall{i}"].rightCenterX and self.scene[f"MoveWall{i}"].side == "left":
+                    
+                    for s in self.scene[f"MoveWall{i}"]:
+                        for sprite in arcade.get_sprites_at_exact_point((s.center_x,s.center_y),self.scene["Wall"]):
+                            sprite.center_x -= 1    
+                        s.center_x -= 1
+                         
+                    self.scene[f"MoveWall{i}"].rightCenterX -= 1
             
+            
+                if self.scene[f"MoveWallKey{i}"].visible == False and self.scene[f"MoveWall{i}"].startRightCenterX != self.scene[f"MoveWall{i}"].leftCenterX and self.scene[f"MoveWall{i}"].side == "right":
+                    
+                    for s in self.scene[f"MoveWall{i}"]:
+                        for sprite in arcade.get_sprites_at_exact_point((s.center_x,s.center_y),self.scene["Wall"]):
+                            sprite.center_x += 1
+  
+                        s.center_x += 1
+                         
+                    self.scene[f"MoveWall{i}"].leftCenterX += 1
+                if self.scene[f"MoveWallKey{i}"].visible == False and self.scene[f"MoveWall{i}"].startBottomCenterY != self.scene[f"MoveWall{i}"].topCenterY and self.scene[f"MoveWall{i}"].side == "bottom":
+                    
+                    for s in self.scene[f"MoveWall{i}"]:
+                        for sprite in arcade.get_sprites_at_exact_point((s.center_x,s.center_y),self.scene["Wall"]):
+                            sprite.center_y -= 1    
+                        s.center_y -= 1
+                         
+                    self.scene[f"MoveWall{i}"].topCenterY -= 1
+            
+            
+                if self.scene[f"MoveWallKey{i}"].visible == False and self.scene[f"MoveWall{i}"].startTopCenterY != self.scene[f"MoveWall{i}"].bottomCenterY and self.scene[f"MoveWall{i}"].side == "top":
+                    
+                    for s in self.scene[f"MoveWall{i}"]:
+                        for sprite in arcade.get_sprites_at_exact_point((s.center_x,s.center_y),self.scene["Wall"]):
+                            sprite.center_y += 1
+  
+                        s.center_y += 1
+                         
+                    self.scene[f"MoveWall{i}"].bottomCenterY += 1
         
         if arcade.check_for_collision_with_list(self.player,self.scene["Door"]) and not self.scene["Door"].visible:
             self.init = 3
