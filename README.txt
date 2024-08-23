@@ -66,4 +66,12 @@ Capas Obligatorias:
         RockDoorXA y RockDoorXB: Representan los lados de la puerta que el jugador puede interactuar para pasar de un lado al otro. La disposición de A y B es indiferente.
         RockDoorX: Decoración de la puerta cerrada. Debajo, en la capa de decoraciones, se debe colocar la puerta abierta.
         RockDoorKeyX: Es el lugar donde se debera llevar la roca, la cual se pone manualmente a traves de la configuracion del nivel, no debe ponerse desde el tiled.
-        
+    
+
+9.Muros Corredizos:
+    Capas:
+        MoveWallX: Es la parte que se va a mover, debe estar sobre muros de la capa Wall.
+        MoveWallKeyX: Es lo que activa el muro. Desaparece tras ser activada.
+        SideMoveWallX: Va del lado para el que debe moverse el muro, debe estar sobre uno de los extremo.
+
+        El muro tambien se movera hasta que el sprite del otro lado coincida con este otro extremo.
