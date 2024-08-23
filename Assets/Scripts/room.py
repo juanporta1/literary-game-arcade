@@ -1,12 +1,9 @@
 import arcade
 import arcade.gui
 import arcade.key
-import arcade.key
-import arcade.key
-import arcade.key
-import arcade.key
 from Player import Player
 import random
+from crosswordView import CrosswordView
 from PauseMenu import PauseMenu
 from questionsMenu import QuestionMenu
 import globalVars
@@ -25,11 +22,12 @@ class Note(arcade.Sprite):
         self.set_hit_box(((-60,-60),(20,20),(-20,20),(60,-60)))
 
 class Key(arcade.Sprite):
-    def __init__(self,x,y, filename: str = None, scale: float = 1,questionMenu: QuestionMenu = None):
+    def __init__(self,x,y, filename: str = None, scale: float = 1,questionMenu: QuestionMenu = None,type = 1):
         super().__init__(filename = filename,scale = scale, center_x= x, center_y=y)
         
         self.canPass = False
         self.questionMenu = questionMenu
+        
 
 class Life(arcade.Sprite):
     
@@ -101,14 +99,16 @@ class Room(arcade.View):
         self.scene.add_sprite_list("Rock")
         
         for key in keys:
-            with open(key["qm"]["questions"],"r") as f:
-                data = f.read()
-            questions = json.loads(data)
-            qm = QuestionMenu(self.window,questions,game,menu,key["qm"]["op"],key["qm"]["qq"])
-            newKey = Key(filename=key["filename"],x=key["center_x"], y=key["center_y"],questionMenu=qm,scale=key["scale"])
-            newKey.questionMenu.gameView = self
-            self.scene.add_sprite("Key",newKey)
-            
+            if key["type"] == 1:
+                with open(key["qm"]["questions"],"r",encoding="utf-8") as f:
+                    data = f.read()
+                questions = json.loads(data)
+                qm = QuestionMenu(self.window,questions,game,menu,key["qm"]["op"],key["qm"]["qq"])
+                newKey = Key(filename=key["filename"],x=key["center_x"], y=key["center_y"],questionMenu=qm,scale=key["scale"])
+                newKey.questionMenu.gameView = self
+                self.scene.add_sprite("Key",newKey)
+            elif key["type"] == 2:
+                pass
         for life in lifes:
             sprite = Life(x= life["x"],y=life["y"])
             self.scene.add_sprite("Life",sprite)
@@ -203,7 +203,7 @@ class Room(arcade.View):
         self.interface = arcade.gui.UIManager()
         
          
-               
+    
 
     def centerCameraFromPlayer(self):
         
@@ -309,6 +309,9 @@ class Room(arcade.View):
         for i in self.rockDoors:
             if (arcade.check_for_collision_with_list(self.player,self.scene[f"{i}A"]) or arcade.check_for_collision_with_list(self.player,self.scene[f"{i}B"])) and self.scene[f"{i}"].visible == False:
                 arcade.draw_text("PRESIONA E",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
+        
+        arcade.draw_text("Moverse: W/A/S/D",self.window.width * .1,10,font_name="Retro Gaming",anchor_x="center",font_size=16)
+        
         arcade.draw_rectangle_filled(self.window.width/2, self.window.height/2,self.window.width,self.window.height,(0,0,0,self.alpha))
         
         

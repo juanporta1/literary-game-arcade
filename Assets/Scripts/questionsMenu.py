@@ -30,7 +30,8 @@ class QuestionMenu(arcade.View):
             "border_color": arcade.color.BLACK,
             "border_color_pressed": arcade.color.BLACK,
             "font_color_pressed": arcade.color.WHITE,
-            "texture_xfont_name": "Retro Gaming"
+            "font_name": "Retro Gaming",
+            "font_size": 15
         }
 
         self.opportunitiesStyleDefault = {
@@ -49,9 +50,12 @@ class QuestionMenu(arcade.View):
             "font_name": "Retro Gaming"
         }
 
+    
+        self.colors = [arcade.color.BLUE_BELL,arcade.color.BLUE_SAPPHIRE,arcade.color.BLUE_YONDER,arcade.color.BLUEBERRY,arcade.color.BLEU_DE_FRANCE]
+        
         self.boxTexture = arcade.load_texture("Assets/Sprites/QuestionMenu/commonQuestion.png")
         self.actualQuestion = self.getQuestion(self.questions)
-        self.menu = self.questionsMenu(*self.actualQuestion)
+        self.menu = self.questionsMenu(self.actualQuestion[0],self.actualQuestion[1])
 
     def getQuestion(self, questions):
         randomNumber = random.randint(0, len(questions) - 1)
@@ -80,16 +84,9 @@ class QuestionMenu(arcade.View):
         principalBox = arcade.gui.UIBoxLayout()
         principalBox.add(missingBox.with_space_around(0, 0, 20, 0))
 
-        responsesStyle = {
-            "font_name": "Retro Gaming",
-            "border_color": None,
-            "border_color_focused": None,
-            "bg_color_focused": arcade.color.BLACK,
-            "border_radius": 100
-        }
-
+        
         secondBox = arcade.gui.UIBoxLayout(vertical=False)
-        questionBox = arcade.gui.UITextureButton(text=question, width=1000, height=200, style=self.questionStyle, texture=self.boxTexture, font_name="Retro Gaming")
+        questionBox = arcade.gui.UIFlatButton(text=question, width=1000, height=200, style=self.questionStyle)
         secondBox.add(questionBox.with_space_around(2, 2, 2, 2))
 
         opportunitiesBox = arcade.gui.UIBoxLayout()
@@ -105,20 +102,45 @@ class QuestionMenu(arcade.View):
 
         secondBox.add(opportunitiesBox.with_space_around(2, 2, 2, 2))
         principalBox.add(secondBox)
-
+        responsesStyle = {
+            "font_name": "Retro Gaming",
+            "border_color": None,
+            "border_color_focused": None,
+            "bg_color_focused": self.colors[0],
+            "border_radius": 100
+        }
         responsesBoxOne = arcade.gui.UIBoxLayout(vertical=False)
         responseOne = arcade.gui.UIFlatButton(text=responses[0], width=600, height=160, style=responsesStyle)
         responsesBoxOne.add(responseOne.with_space_around(10, 20, 10, 20))
-
+        responsesStyle = {
+            "font_name": "Retro Gaming",
+            "border_color": None,
+            "border_color_focused": None,
+            "bg_color_focused": self.colors[1],
+            "border_radius": 100
+        }
         responseTwo = arcade.gui.UIFlatButton(text=responses[1], width=600, height=160, style=responsesStyle)
         responsesBoxOne.add(responseTwo.with_space_around(10, 20, 10, 20))
 
         principalBox.add(responsesBoxOne.with_space_around(10, 20, 10, 20))
 
         responsesBoxTwo = arcade.gui.UIBoxLayout(vertical=False)
+        responsesStyle = {
+            "font_name": "Retro Gaming",
+            "border_color": None,
+            "border_color_focused": None,
+            "bg_color_focused": self.colors[2],
+            "border_radius": 100
+        }
         responseThree = arcade.gui.UIFlatButton(text=responses[2], width=600, height=160, style=responsesStyle)
         responsesBoxTwo.add(responseThree.with_space_around(10, 20, 10, 20))
-
+        responsesStyle = {
+            "font_name": "Retro Gaming",
+            "border_color": None,
+            "border_color_focused": None,
+            "bg_color_focused": self.colors[3],
+            "border_radius": 100
+        }
         responseFour = arcade.gui.UIFlatButton(text=responses[3], width=600, height=160, style=responsesStyle)
         responsesBoxTwo.add(responseFour.with_space_around(10, 20, 10, 20))
 
@@ -148,7 +170,7 @@ class QuestionMenu(arcade.View):
         self.actualQuestion = self.getQuestion(self.questions)
         self.questionIndex += 1
         if self.questionIndex < self.quantityQuestions:
-            self.menu = self.questionsMenu(*self.actualQuestion)
+            self.menu = self.questionsMenu(self.actualQuestion[0],self.actualQuestion[1])
             self.menu.enable()
         else:
             self.canPass = True

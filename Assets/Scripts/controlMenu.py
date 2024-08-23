@@ -1,4 +1,6 @@
 import arcade
+import arcade.color
+import arcade.color
 from arcade.gui import *
 import globalVars
 class ControlMenu(arcade.View):
@@ -13,11 +15,27 @@ class ControlMenu(arcade.View):
         }
         
         manager = UIManager()
-        boxV = UIBoxLayout()
+        principalBoxV = UIBoxLayout(space_between=20)
         
-        boxV.add(UILabel(text="CONTROLES",font_size=24,font_name="Retro Gaming"))
+        principalBoxV.add(UILabel(text="CONTROLES",font_size=24,font_name="Retro Gaming"))
         
-        manager.add(UIAnchorWidget(anchor_x="center_x",anchor_y="center_y",child=boxV))
+        moveBoxH = UIBoxLayout(vertical=False)
+        moveBoxH.add(UILabel(text="Moverse:   ",font_size=14,text_color=arcade.color.WHITE_SMOKE,font_name="Retro Gaming"))
+        moveBoxH.add(UILabel(text="W/A/S/D",font_name="Retro Gaming",font_size=20,text_color=arcade.color.BLIZZARD_BLUE))
+        principalBoxV.add(moveBoxH)
+        
+        
+        eBoxH = UIBoxLayout(vertical=False)
+        eBoxH.add(UILabel(text="Interactuar:   ",font_name="Retro Gaming",font_size=14,text_color=arcade.color.WHITE_SMOKE))
+        eBoxH.add(UILabel(text="E",font_name="Retro Gaming",font_size=20,text_color=arcade.color.REDWOOD))
+        principalBoxV.add(eBoxH)
+        
+        spaceBoxH = UIBoxLayout(vertical=False)
+        spaceBoxH.add(UILabel(text="Mover Rocas(Mantener):   ",font_name="Retro Gaming",font_size=14,text_color=arcade.color.WHITE_SMOKE))
+        spaceBoxH.add(UILabel(text="ESPACIO",font_name="Retro Gaming",font_size= 20, text_color=arcade.color.NEON_GREEN))
+        principalBoxV.add(spaceBoxH)
+        
+        manager.add(UIAnchorWidget(anchor_x="center_x",anchor_y="center_y",child=principalBoxV))
         return manager
     
     def on_key_press(self, symbol: int, modifiers: int):
@@ -27,5 +45,6 @@ class ControlMenu(arcade.View):
         arcade.start_render()
         
         self.menu.draw()
+        arcade.draw_text("PRESIONE CUALQUIER TECLA PARA VOLVER",self.window.width/2,10,anchor_x="center",font_name="Retro Gaming",font_size=16)
     def on_hide_view(self):
         globalVars.LAST_VIEW = self
