@@ -713,10 +713,11 @@ class Room(arcade.View):
                     rock.center_x = self.scene[f"RockDoorKey{i}"][0].center_x
                     rock.center_y = self.scene[f"RockDoorKey{i}"][0].center_y
                     self.scene[f"RockDoor{i}"].visible = False
+                    self.scene[f"RockDoorKey{i}"].visible = False
                     break
                 elif self.catchedRock[1] == rock and arcade.check_for_collision_with_list(rock,self.scene[f"RockDoorKey{i}"]):
                     self.scene[f"RockDoor{i}"].visible = True
-        
+                    self.scene[f"RockDoorKey{i}"].visible = True
         
         for i in range(1,len(self.moveWalls)+1):
             
