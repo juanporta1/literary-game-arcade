@@ -2,11 +2,25 @@ import arcade
 import random
 from copy import copy
 class CrosswordView(arcade.View):
+    
+    def shuffle(self):
+        newList = arcade.SpriteList()
+        indexs = []
+        while len(indexs) != len(self.crossWords):
+            i = random.randint(0,len(self.crossWords)-1)
+            if i in indexs:
+                continue
+            else:
+                indexs.append(i)
+                newList.append(self.wordsSpriteList[i])
+        self.wordsSpriteList = newList
+        
     def __init__(self, window: arcade.Window,file):
         super().__init__(window)
         
         self.gameView = None
         self.alpha = 255
+        self.file = file
         self.time = 1
         self.init = 1
         self.font_size = 16
@@ -36,20 +50,13 @@ class CrosswordView(arcade.View):
         
         
         self.wordsSpriteList = arcade.SpriteList()   
-        y = (self.window.height/2) + (self.font_size * (len(self.crossWords)/2)) + 30 * len(self.crossWords)/2
         for i in range(len(self.crossWords)):
                 
                 sprite = arcade.SpriteSolidColor((len(self.crossWords[i]) * self.font_size)+6,20,arcade.color.GRAY_ASPARAGUS)
-                sprite.center_x = self.window.width - sprite.width/2
-                sprite.center_y = y
-                sprite.startX = copy(sprite.center_x)
-                sprite.startY = copy(sprite.center_y)
                 sprite.isCatched = False
                 sprite.word = self.crossWords[i]
-                self.wordsSpriteList.append(sprite)
-                y -= self.font_size + 30 
-                
-        
+                self.wordsSpriteList.append(sprite) 
+                   
         self.principalSpriteList = arcade.SpriteList()
         height = len(self.letters) * self.principalFontSize + (len(self.letters) -1) * 50
         diff = self.window.height - height
@@ -63,15 +70,22 @@ class CrosswordView(arcade.View):
             sprite.word = self.crossWords[i]
             sprite.isMaked = False
             self.principalSpriteList.append(sprite)
-            y -= height 
-        
+            y -= height
+        self.shuffle()
+        y = (self.window.height/2) + (self.font_size * (len(self.crossWords)/2)) + 30 * len(self.crossWords)/2
+        for sprite in self.wordsSpriteList:
+            sprite.center_x = self.window.width - sprite.width/2
+            sprite.center_y = y
+            sprite.startX = copy(sprite.center_x)
+            sprite.startY = copy(sprite.center_y)
+            y -= self.font_size + 30 
         self.canPass = False
     def on_show(self):
         self.init = 0    
     def on_hide_view(self):
         canPass = self.canPass
         gameView = self.gameView
-        self.__init__(self.window,self.word,self.crossWords)
+        self.__init__(self.window,self.file)
         self.gameView = gameView
         self.canPass = canPass   
          
@@ -88,11 +102,11 @@ class CrosswordView(arcade.View):
             x = center - (self.spacesFontSize * s.wordIndex + 20 * s.wordIndex)
             for i in range(len(s.word)):
                 if not s.isMaked:
-                    if i != s.wordIndex:
+                    if i != s.wordIndex and i != " ":
                         arcade.draw_text("_",x,s.center_y + 15,font_size=self.spacesFontSize,font_name="Retro Gaming",anchor_x="center",anchor_y="top")
                 else:
                     if i != s.wordIndex:
-                        arcade.draw_text(f"{s.word[i]}",x,s.center_y + 15,font_size=self.spacesFontSize,font_name="Retro Gaming",anchor_x="center",anchor_y="top")
+                        arcade.draw_text(f"{s.word[i]}",x,s.center_y + 15,font_size=self.spacesFontSize,font_name="Retro Gaming",anchor_x="center",anchor_y="top",color=arcade.color.TEA_GREEN)
 
                 x += self.spacesFontSize + 20
                 
@@ -186,14 +200,14 @@ class CrosswordView(arcade.View):
         
         for s in self.principalSpriteList:
             for mW in arcade.check_for_collision_with_list(s,self.wordsSpriteList):
-                
-                if mW.word == s.word:
-                    s.isMaked = True
-                    mW.kill()
-                    for s in self.wordsSpriteList:
-                        s.isCatched = False
-                else:
-                    mW.center_x = mW.startX
-                    mW.center_y = mW.startY
-                    for s in self.wordsSpriteList:
-                        s.isCatched = False
+                if not mW.isCatched:
+                    if mW.word == s.word:
+                        s.isMaked = True
+                        mW.kill()
+                        for s in self.wordsSpriteList:
+                            s.isCatched = False
+                    else:
+                        mW.center_x = mW.startX
+                        mW.center_y = mW.startY
+                        for s in self.wordsSpriteList:
+                            s.isCatched = False
