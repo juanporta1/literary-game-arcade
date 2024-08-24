@@ -1,7 +1,7 @@
 import arcade
 from Menu import MenuView   
 from Game import Game
-
+ 
 
 
 class Window(arcade.Window):

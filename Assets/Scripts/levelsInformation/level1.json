@@ -2,8 +2,8 @@
     "keys":[    
         {
             "filename": "Assets/Sprites/Books/tile000.png",
-            "center_x": 100,
-            "center_y": 300,
+            "x": 100,
+            "y": 300,
             "scale": 1,
             "type": 1,
             "qm": {
@@ -14,13 +14,13 @@
         },
         {
             "filename": "Assets/Sprites/Books/tile000.png",
-            "center_x": 600,
-            "center_y": 900,
+            "x": 600,
+            "y": 900,
             "scale": 1,
             "type": 2,
             "cw": {
                 "word": "SODA",
-                "crossWords": ["Gas","Refresco","Dinosaurio","Administracion"]
+                "crosswords": ["Gas","Refresco","Dinosaurio","Administracion"]
             }
         }
     ],

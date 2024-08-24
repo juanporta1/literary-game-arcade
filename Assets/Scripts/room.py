@@ -104,11 +104,14 @@ class Room(arcade.View):
                     data = f.read()
                 questions = json.loads(data)
                 qm = QuestionMenu(self.window,questions,game,menu,key["qm"]["op"],key["qm"]["qq"])
-                newKey = Key(filename=key["filename"],x=key["center_x"], y=key["center_y"],questionMenu=qm,scale=key["scale"])
+                newKey = Key(filename=key["filename"],x=key["x"], y=key["y"],questionMenu=qm,scale=key["scale"])
                 newKey.questionMenu.gameView = self
                 self.scene.add_sprite("Key",newKey)
             elif key["type"] == 2:
-                pass
+                qm = CrosswordView(window,key["cw"]["word"],key["cw"]["crosswords"])
+                newKey = Key(key["x"],key["y"],key["filename"],key["scale"],qm)
+                newKey.questionMenu.gameView = self
+                self.scene.add_sprite("Key",newKey)
         for life in lifes:
             sprite = Life(x= life["x"],y=life["y"])
             self.scene.add_sprite("Life",sprite)
