@@ -2,26 +2,29 @@ import arcade
 import random
 from copy import copy
 class CrosswordView(arcade.View):
-    def __init__(self, window: arcade.Window,word,crossWords):
+    def __init__(self, window: arcade.Window,file):
         super().__init__(window)
         
         self.gameView = None
+        self.alpha = 255
+        self.time = 1
+        self.init = 1
         self.font_size = 16
         self.principalFontSize = 30
-        self.spacesFontSize = 20
-        self.word: str = word
-        self.crossWords: list[str] = crossWords
+        self.spacesFontSize = 16
+        self.word: str = file["word"]
+        self.crossWords: list[str] = file["crosswords"]
         for i in range(len(self.crossWords)):
             
             self.crossWords[i] = self.crossWords[i].upper()
             
         self.letters = []
-        for i in range(len(word)):
-            letter = word[i].upper()
+        for i in range(len(self.word)):
+            letter = self.word[i].upper()
             self.letters.append(letter)
         
         self.indexs = []
-        for i in range(len(word)):
+        for i in range(len(self.word)):
             letter = self.letters[i]
             self.indexs.append([])
             for j in range(len(self.crossWords[i])):
@@ -63,7 +66,8 @@ class CrosswordView(arcade.View):
             y -= height 
         
         self.canPass = False
-        
+    def on_show(self):
+        self.init = 0    
     def on_hide_view(self):
         canPass = self.canPass
         gameView = self.gameView
@@ -71,8 +75,7 @@ class CrosswordView(arcade.View):
         self.gameView = gameView
         self.canPass = canPass   
          
-    def on_key_press(self, symbol: int, modifiers: int):
-        self.window.show_view(self.gameView)
+    
     def on_draw(self):
         arcade.start_render()
         self.clear()
@@ -99,7 +102,7 @@ class CrosswordView(arcade.View):
         for i in self.wordsSpriteList:
             i.draw()
             arcade.draw_text(f"{i.word}",i.center_x,i.center_y,font_name="Retro Gaming",font_size=self.font_size,anchor_x="center",anchor_y="center")
-    
+        arcade.draw_rectangle_filled(self.window.width/2,self.window.height/2,self.window.width,self.window.height,(0,0,0,self.alpha))
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         
             try: 
@@ -130,6 +133,31 @@ class CrosswordView(arcade.View):
                 s.center_y += dy
         
     def on_update(self, delta_time: float):
+        if self.init == 0:
+            self.time -= delta_time
+            if self.time <= 0:
+                self.init = 1
+                self.time = 0
+            self.alpha = 255 * (self.time / 1)
+        if self.init == 2:
+            self.time += delta_time
+            if self.time >= 1:
+                self.time = 1
+                self.alpha = 255
+                self.init = 1
+                self.window.show_view(self.gameView)
+            self.alpha = 255 * (self.time / 1)
+        
+        
+        list = []
+        for s in self.principalSpriteList:
+            list.append(s.isMaked)
+        if all(list):
+            self.canPass = True
+            self.init = 2 
+        
+            
+        
         
         for s in self.wordsSpriteList:
                     for s2 in self.wordsSpriteList:

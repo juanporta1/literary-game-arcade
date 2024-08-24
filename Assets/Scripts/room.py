@@ -108,7 +108,10 @@ class Room(arcade.View):
                 newKey.questionMenu.gameView = self
                 self.scene.add_sprite("Key",newKey)
             elif key["type"] == 2:
-                qm = CrosswordView(window,key["cw"]["word"],key["cw"]["crosswords"])
+                with open(key["cw"]["words"],"r",encoding="utf-8") as f:
+                    data = f.read()
+                words = json.loads(data)
+                qm = CrosswordView(window,words[str(random.randint(0,len(words)-1))])
                 newKey = Key(key["x"],key["y"],key["filename"],key["scale"],qm)
                 newKey.questionMenu.gameView = self
                 self.scene.add_sprite("Key",newKey)

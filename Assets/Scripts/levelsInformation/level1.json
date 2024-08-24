@@ -7,7 +7,7 @@
             "scale": 1,
             "type": 1,
             "qm": {
-                "questions":"Assets/Scripts/questionsFiles/level1.json",
+                "questions":"Assets/Scripts/questionsFiles/level1Q.json",
                 "op":5, 
                 "qq":3
             }
@@ -19,8 +19,8 @@
             "scale": 1,
             "type": 2,
             "cw": {
-                "word": "SODA",
-                "crosswords": ["Gas","Refresco","Dinosaurio","Administracion"]
+                "words":"Assets/Scripts/questionsFiles/level1C.json",
+                "op":5
             }
         }
     ],
