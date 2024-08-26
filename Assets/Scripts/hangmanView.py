@@ -42,7 +42,24 @@ class HangmanView(arcade.View):
             letter = Letter(arcade.color.WHITE,self.fontSize,x,200,l,isIn)
             self.lettersSpriteList.append(letter)
             x+=width
+    def setup(self):
+        self.letters = []
+        for l in self.word:
+            self.letters.append(l.upper())
+        self.discoveredLetters = ["_" for i in range(len(self.letters))]
+        self.lettersSpriteList: arcade.SpriteList[Letter] = arcade.SpriteList()
+        totalWidth = len(self.l) * (self.fontSize + 10)
+        x = (self.window.width - totalWidth)/2
+        width = totalWidth / len(self.l)
         
+        for l in self.l:
+            if self.letters.count(l):
+                isIn = True
+            else:
+                isIn = False
+            letter = Letter(arcade.color.WHITE,self.fontSize,x,200,l,isIn)
+            self.lettersSpriteList.append(letter)
+            x+=width
     def on_draw(self):
         arcade.start_render()
         self.clear()
@@ -55,22 +72,47 @@ class HangmanView(arcade.View):
             x += width
             
         for l in self.lettersSpriteList:
-            arcade.draw_text(l.letter,l.center_x,l.center_y,l.color,l.font,anchor_x="center",anchor_y="center",font_name="Retro Gaming")
+            if l.isIn:
+                arcade.draw_text(l.letter,l.center_x,l.center_y,l.color,l.font,anchor_x="center",anchor_y="center",font_name="Retro Gaming")
+            else:
+                if l.isTouched:
+                    arcade.draw_text(l.letter,l.center_x,l.center_y,l.color,l.font,anchor_x="center",anchor_y="center",font_name="Retro Gaming")
+                    arcade.draw_text("/",l.center_x,l.center_y,arcade.color.RED_DEVIL,30,anchor_x="center",anchor_y="center",font_name="Retro Gaming")
+                else:
+                    arcade.draw_text(l.letter,l.center_x,l.center_y,l.color,l.font,anchor_x="center",anchor_y="center",font_name="Retro Gaming")
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         
         for b in arcade.get_sprites_at_point((x,y),self.lettersSpriteList):
-            
-            if self.letters.count(b.letter):
-                for i in range(len(self.letters)):
-                    if self.letters[i] == b.letter:
-                        self.discoveredLetters[i] = b.letter
-                if not self.discoveredLetters.count("_"):
-                    self.canPass = True
-                    self.window.show_view(self.gameView)
-            else:
-                self.op -= 1
-                if self.op == 0:
-                    globalVars.LIFES -= 1
-                    if globalVars.APPEND_LIFES:
-                        globalVars.APPEND_LIFES -= 1
-                    self.window.show_view(self.gameView)            
+            if not b.isTouched:
+                if self.letters.count(b.letter):
+                    for i in range(len(self.letters)):
+                        if self.letters[i] == b.letter:
+                            self.discoveredLetters[i] = b.letter
+                    if not self.discoveredLetters.count("_"):
+                        self.canPass = True
+                        self.window.show_view(self.gameView)
+                    b.isTouched = True
+                    b.color = arcade.color.GREEN
+                    b.font = 35
+                else:
+                    self.op -= 1
+                    b.isTouched = True
+                    b.font = 25
+                    b.color = arcade.color.GRAY
+                    if self.op == 0:
+                        globalVars.LIFES -= 1
+                        if globalVars.APPEND_LIFES:
+                            globalVars.APPEND_LIFES -= 1
+                        
+                        self.op = self.startOp
+                        self.canPass = False
+                        self.setup()
+                        self.window.show_view(self.gameView)         
+    def on_mouse_motion(self, x: int, y: int, dx: int, dy: int):
+        if arcade.get_sprites_at_point((x,y),self.lettersSpriteList):
+
+            for b in arcade.get_sprites_at_point((x,y),self.lettersSpriteList):
+                if not b.isTouched:
+                    b.color = arcade.color.GRAY
+                    b.font = 26
+        
