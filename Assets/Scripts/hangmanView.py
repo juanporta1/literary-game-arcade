@@ -89,6 +89,7 @@ class HangmanView(arcade.View):
                     for i in range(len(self.letters)):
                         if self.letters[i] == b.letter:
                             self.discoveredLetters[i] = b.letter
+                    sounds.success.play()
                     if not self.discoveredLetters.count("_"):
                         self.canPass = True
                         self.window.show_view(self.gameView)
@@ -100,6 +101,7 @@ class HangmanView(arcade.View):
                     b.isTouched = True
                     b.font = 25
                     b.color = arcade.color.GRAY
+                    sounds.failed.play()
                     if self.op == 0:
                         globalVars.LIFES -= 1
                         if globalVars.APPEND_LIFES:
