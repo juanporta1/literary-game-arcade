@@ -13,11 +13,20 @@
         },
         {
             "x": 600,
-            "y": 900,
+            "y": 500,
             "type": 2,
             "cw": {
                 "words":"Assets/Scripts/questionsFiles/crosswords.json",
                 "op":5
+            }
+        },
+        {
+            "x":600,
+            "y":900,
+            "type":3,
+            "hm":{
+                "words":"CORTAZAR",
+                "op": 5
             }
         }
     ],

@@ -9,8 +9,8 @@ from questionsMenu import QuestionMenu
 import globalVars
 from gameOver import GameOverView
 import sounds
+from hangmanView import HangmanView
 from textView import TextView
-import pygame
 import json
 import functions
 from codeInput import CodeInput
@@ -135,6 +135,12 @@ class Room(arcade.View):
                 newKey = Key(x=key["x"],y=key["y"],game=qm)
                 newKey.game.gameView = self
                 self.scene.add_sprite("Key",newKey)
+            elif key["type"] == 3:
+                hm = HangmanView(self.window,key["hm"]["words"],key["hm"]["op"])
+                newKey = Key(x=key["x"],y=key["y"],game=hm)
+                newKey.game.gameView = self
+                self.scene.add_sprite("Key",newKey)
+                
         for life in lifes:
             sprite = Life(x= life["x"],y=life["y"])
             self.scene.add_sprite("Life",sprite)
@@ -285,7 +291,12 @@ class Room(arcade.View):
             self.scene[i].draw()
         self.guiCamera.use()
         self.interface.draw()
-        
+        i = 0
+        for k in self.scene["Key"]:
+            if k.game.canPass:
+                i+=1
+        l = len(self.scene.get_sprite_list("Key"))
+        arcade.draw_text(f"Llaves del Nivel: {i}/{l}",self.window.width,self.window.height,font_name="Retro Gaming",font_size=20,anchor_x="right",anchor_y="top")
         for i in range(1,len(self.moveWalls)+1):
             
                 if arcade.check_for_collision_with_list(self.player, self.scene[f"MoveWallKey{i}"]) and self.scene[f"MoveWallKey{i}"].visible:
@@ -547,6 +558,9 @@ class Room(arcade.View):
         self.scene.get_sprite_list("Player").update_animation()
         self.scene.get_sprite_list("Life").update_animation()
         self.scene.get_sprite_list("Key").update_animation()
+        for k in self.scene["Key"]:
+            if k.game.canPass == True:
+                k.visible = False
         self.canPass = self.checkKeys()
         if self.init == 0:
             self.time -= delta_time
