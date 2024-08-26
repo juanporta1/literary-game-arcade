@@ -63,6 +63,7 @@ class HangmanView(arcade.View):
     def on_draw(self):
         arcade.start_render()
         self.clear()
+        arcade.draw_text("DESCUBRE LA PALABRA ANTES DE QUE SE TE ACABEN LAS OPORTUNIDADES",self.window.width/2,0,font_name="Retro Gaming",font_size=20,anchor_x="center",anchor_y="bottom")
         arcade.draw_text(f"Oportunidades: {self.op}/{self.startOp}",self.window.width/2,self.window.height,font_name="Retro Gaming",font_size=24,anchor_x="center",anchor_y="top")
         totalWidth = len(self.discoveredLetters) * (50 + 20)
         x = (self.window.width - totalWidth) / 2
@@ -115,4 +116,9 @@ class HangmanView(arcade.View):
                 if not b.isTouched:
                     b.color = arcade.color.GRAY
                     b.font = 26
+        else:
+            for b in self.lettersSpriteList:
+                if not b.isTouched:
+                    b.color = arcade.color.WHITE
+                    b.font = 30
         
