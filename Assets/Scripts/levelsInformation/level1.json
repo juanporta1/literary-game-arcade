@@ -1,10 +1,9 @@
 {
     "keys":[    
         {
-            "filename": "Assets/Sprites/Books/tile000.png",
+            
             "x": 100,
             "y": 300,
-            "scale": 1,
             "type": 1,
             "qm": {
                 "questions":"Assets/Scripts/questionsFiles/level1Q.json",
@@ -13,13 +12,11 @@
             }
         },
         {
-            "filename": "Assets/Sprites/Books/tile000.png",
             "x": 600,
             "y": 900,
-            "scale": 1,
             "type": 2,
             "cw": {
-                "words":"Assets/Scripts/questionsFiles/level1C.json",
+                "words":"Assets/Scripts/questionsFiles/crosswords.json",
                 "op":5
             }
         }

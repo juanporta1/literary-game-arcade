@@ -1,0 +1,14 @@
+{
+    "0": {
+        "word": "BORGES",
+        "crosswords": ["Biblioteca de Babel", "Otras inquisiciones", "Realidades", "Guía de Jerusalén", "Espejo y la máscara", "Sur"]
+    },
+    "1": {
+        "word": "NERUDA",
+        "crosswords": ["Isla Negra", "Estación invierno", "Residencia en la tierra", "Un canto general", "Desnuda", "Alturas de Macchu Picchu"]
+    },
+    "2": {
+        "word": "CORTAZAR",
+        "crosswords": ["Casa tomada", "Ocupación", "Rayuela", "Tango", "Axolotl", "Zoológico", "Aurora", "Rayuela"]
+    }
+}

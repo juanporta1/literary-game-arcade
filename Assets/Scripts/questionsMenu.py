@@ -86,7 +86,7 @@ class QuestionMenu(arcade.View):
 
         
         secondBox = arcade.gui.UIBoxLayout(vertical=False)
-        questionBox = arcade.gui.UIFlatButton(text=question, width=1000, height=200, style=self.questionStyle)
+        questionBox = arcade.gui.UITextureButton(text=question, width=1000, height=200, style=self.questionStyle,texture=self.boxTexture)
         secondBox.add(questionBox.with_space_around(2, 2, 2, 2))
 
         opportunitiesBox = arcade.gui.UIBoxLayout()
@@ -163,7 +163,7 @@ class QuestionMenu(arcade.View):
     def on_draw(self):
         self.window.clear()
         self.menu.draw()
-        arcade.set_background_color(arcade.color.ASH_GREY)
+        arcade.set_background_color(arcade.color.BLACK_LEATHER_JACKET)
         arcade.draw_rectangle_filled(self.window.width/2,self.window.height/2,self.window.width,self.window.height,(0,0,0,self.alpha))
 
     def pressCorrect(self, event):

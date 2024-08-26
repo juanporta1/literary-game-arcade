@@ -22,12 +22,26 @@ class Note(arcade.Sprite):
         self.set_hit_box(((-60,-60),(20,20),(-20,20),(60,-60)))
 
 class Key(arcade.Sprite):
-    def __init__(self,x,y, filename: str = None, scale: float = 1,questionMenu: QuestionMenu = None,type = 1):
-        super().__init__(filename = filename,scale = scale, center_x= x, center_y=y)
+    def __init__(self,x,y, filename: str = "Assets/Sprites/Key/keySprites/tile0.png",game = None,type = 1):
+        super().__init__(filename = filename, center_x= x, center_y=y)
         
         self.canPass = False
-        self.questionMenu = questionMenu
+        self.game = game
+        self.time = 0
+        self.animationIndex = 0
+        self.spriteList = functions.createAnimationList("Assets/Sprites/Key/keySprites/tile",24)
+        self.scale = 1.3
+    
+    def update_animation(self, delta_time: float = 1 / 60):
+        self.time += delta_time
         
+        if self.time >= .08:
+            if self.animationIndex == len(self.spriteList) - 1:
+                self.animationIndex = 0
+            else:
+                self.animationIndex += 1
+            self.texture = self.spriteList[self.animationIndex]
+            self.time = 0 
 
 class Life(arcade.Sprite):
     
@@ -104,16 +118,22 @@ class Room(arcade.View):
                     data = f.read()
                 questions = json.loads(data)
                 qm = QuestionMenu(self.window,questions,game,menu,key["qm"]["op"],key["qm"]["qq"])
-                newKey = Key(filename=key["filename"],x=key["x"], y=key["y"],questionMenu=qm,scale=key["scale"])
-                newKey.questionMenu.gameView = self
+                newKey = Key(x=key["x"], y=key["y"],game=qm)
+                newKey.game.gameView = self
                 self.scene.add_sprite("Key",newKey)
             elif key["type"] == 2:
                 with open(key["cw"]["words"],"r",encoding="utf-8") as f:
                     data = f.read()
                 words = json.loads(data)
-                qm = CrosswordView(window,words[str(random.randint(0,len(words)-1))])
-                newKey = Key(key["x"],key["y"],key["filename"],key["scale"],qm)
-                newKey.questionMenu.gameView = self
+                if len(globalVars.CW_INDEXS) == len(words):
+                    globalVars.CW_INDEXS = []
+                i = random.randint(0,len(words)-1)
+                while globalVars.CW_INDEXS.count(i):
+                    i = random.randint(0,len(words)-1)
+                globalVars.CW_INDEXS.append(i)
+                qm = CrosswordView(window,words[str(i)],key["cw"]["op"])
+                newKey = Key(x=key["x"],y=key["y"],game=qm)
+                newKey.game.gameView = self
                 self.scene.add_sprite("Key",newKey)
         for life in lifes:
             sprite = Life(x= life["x"],y=life["y"])
@@ -293,8 +313,9 @@ class Room(arcade.View):
                 if arcade.check_for_collision_with_list(self.player,self.scene[f"UnShadow{i}"]) and self.scene[f"Shadow{i}"].visible:
                     arcade.draw_text("PRESIONA E",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
         
-        if arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
-            arcade.draw_text("PRESIONA E",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
+        for key in arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
+            if key.game.canPass == False:
+                arcade.draw_text("PRESIONA E",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
 
         for i in range(1,len(self.manualBridges)+1):
             if arcade.check_for_collision_with_list(self.player,self.scene[f"ManualBridgeKey{i}"]):
@@ -366,8 +387,8 @@ class Room(arcade.View):
         
         if key == arcade.key.E and arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
             for key in arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
-                if not key.questionMenu.canPass:
-                    self.qm = key.questionMenu
+                if not key.game.canPass:
+                    self.qm = key.game
                     self.init = 2
         for i in range(1,len(self.codeDoors)+1):
             if arcade.check_for_collision_with_list(self.player,self.scene[f"Code{i}"]) and self.scene[f"CodeDoor{i}"].visible == True and key == arcade.key.E:
@@ -505,7 +526,7 @@ class Room(arcade.View):
     def checkKeys(self):
         allPasses = []
         for i in self.scene.get_sprite_list("Key"):
-            allPasses.append(i.questionMenu.canPass)
+            allPasses.append(i.game.canPass)
         canPass = all(allPasses)
         return canPass
         
@@ -525,6 +546,7 @@ class Room(arcade.View):
         self.update_player_velocity()
         self.scene.get_sprite_list("Player").update_animation()
         self.scene.get_sprite_list("Life").update_animation()
+        self.scene.get_sprite_list("Key").update_animation()
         self.canPass = self.checkKeys()
         if self.init == 0:
             self.time -= delta_time

@@ -15,9 +15,9 @@ class ControlMenu(arcade.View):
         }
         
         manager = UIManager()
-        principalBoxV = UIBoxLayout(space_between=20)
+        principalBoxV = UIBoxLayout(space_between=20,align="left")
         
-        principalBoxV.add(UILabel(text="CONTROLES",font_size=24,font_name="Retro Gaming"))
+        
         
         moveBoxH = UIBoxLayout(vertical=False)
         moveBoxH.add(UILabel(text="Moverse:   ",font_size=14,text_color=arcade.color.WHITE_SMOKE,font_name="Retro Gaming"))
@@ -35,6 +35,13 @@ class ControlMenu(arcade.View):
         spaceBoxH.add(UILabel(text="ESPACIO",font_name="Retro Gaming",font_size= 20, text_color=arcade.color.NEON_GREEN))
         principalBoxV.add(spaceBoxH)
         
+        
+        escBoxH = UIBoxLayout(vertical=False)
+        escBoxH.add(UILabel(text="Pausa:   ",font_name="Retro Gaming",font_size=14,text_color=arcade.color.WHITE_SMOKE))
+        escBoxH.add(UILabel(text="ESCAPE",font_name="Retro Gaming",font_size= 20, text_color=arcade.color.VIVID_VIOLET))
+        principalBoxV.add(escBoxH)
+        
+        
         manager.add(UIAnchorWidget(anchor_x="center_x",anchor_y="center_y",child=principalBoxV))
         return manager
     
@@ -43,7 +50,7 @@ class ControlMenu(arcade.View):
         
     def on_draw(self):
         arcade.start_render()
-        
+        arcade.draw_text("CONTROLES",self.window.width/2,self.window.height*.9,arcade.color.WHITE_SMOKE,24,font_name="Retro Gaming",anchor_x="center",anchor_y="center")
         self.menu.draw()
         arcade.draw_text("PRESIONE CUALQUIER TECLA PARA VOLVER",self.window.width/2,10,anchor_x="center",font_name="Retro Gaming",font_size=16)
     def on_hide_view(self):

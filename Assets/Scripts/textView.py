@@ -21,6 +21,7 @@ class TextView(arcade.View):
         self.text = text
         self.type = type
         self.nextView = nextView
+        self.b = True
         self.textsParts = self.text.split(" ")
         self.style = style
         self.currentText = ""
@@ -116,7 +117,7 @@ class TextView(arcade.View):
                 self.init = 1
             self.alpha = 255 * abs(self.time/1.5)
             
-        elif self.init == 2 or (self.touchedKey == 2 and not self.quickPass):
+        elif self.init == 2 or (self.touchedKey >= 2 and not self.quickPass):
             self.time += delta_time
             if self.time >= 1.5:
                 self.window.show_view(self.nextView)
@@ -139,9 +140,13 @@ class TextView(arcade.View):
                     self.currentTime = 0
                     self.sound.play()
                     
-                if len(self.textsParts) == 0 and self.currentTime > 1:
+                if len(self.textsParts) == 0 and self.currentTime > 1 and self.b:
                     self.canPass = True
                     self.label = self.makeText()
+                    self.b = False
+                    if self.touchedKey < 2:
+                        self.touchedKey = 1
+                    
 
             else:
                 time = random.random()/3

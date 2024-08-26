@@ -14,3 +14,4 @@ MUSIC: pygame.mixer.Sound = sounds.ambient[random.randint(0,2)]
 MUSIC = MUSIC.play()
 MUSIC.stop()
 
+CW_INDEXS = []

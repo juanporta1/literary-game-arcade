@@ -54,3 +54,9 @@ rock1 = Sound("Sounds/rock1.mp3")
 rock2 = Sound("Sounds/rock2.mp3")
 rock3 = Sound("Sounds/rock3.mp3")
 rocks = [rock1,rock3]
+
+success = Sound("Sounds/success.mp3")
+failed = Sound("Sounds/failed.mp3")
+
+select = Sound("Sounds/select.mp3")
+beep1 = Sound("Sounds/beep1.mp3")
