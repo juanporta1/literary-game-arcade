@@ -43,6 +43,26 @@ class Key(arcade.Sprite):
             self.texture = self.spriteList[self.animationIndex]
             self.time = 0 
 
+class Help(arcade.Sprite):
+    def __init__(self,x,y, filename: str = "Assets/Sprites/Star/tile0.png"):
+        super().__init__(filename = filename, center_x= x, center_y=y)
+        
+        self.time = 0
+        self.animationIndex = 0
+        self.spriteList = functions.createAnimationList("Assets/Sprites/Star/tile",13)
+        self.scale = 1.3
+    
+    def update_animation(self, delta_time: float = 1 / 60):
+        self.time += delta_time
+        
+        if self.time >= .12:
+            if self.animationIndex == len(self.spriteList) - 1:
+                self.animationIndex = 0
+            else:
+                self.animationIndex += 1
+            self.texture = self.spriteList[self.animationIndex]
+            self.time = 0 
+
 class Life(arcade.Sprite):
     
     def __init__(self, filename: str = "Assets/Sprites/UI/PickupHeart/tile000.png", x = 0,y = 0):
@@ -88,6 +108,7 @@ class Room(arcade.View):
         lifes = jsonData["lifes"]
         notes = jsonData["notes"]
         rocks = jsonData["rocks"]
+        helps = jsonData["helps"]
         self.playerCamera = arcade.Camera(1280,720)
         self.guiCamera = arcade.Camera(1280,720)
         self.map = arcade.load_tilemap(jsonData["setup"]["tilemap"])
@@ -111,6 +132,7 @@ class Room(arcade.View):
         self.scene.add_sprite_list("Life")
         self.scene.add_sprite_list("Note")
         self.scene.add_sprite_list("Rock")
+        self.scene.add_sprite_list("Help")
         
         for key in keys:
             if key["type"] == 1:
@@ -155,6 +177,10 @@ class Room(arcade.View):
             self.scene.add_sprite("Rock",r)
             self.rockEngines.append(arcade.PhysicsEnginePlatformer(r,self.scene["Wall"],0))
             self.catchedRock = [False,r]
+        
+        for help in helps:
+            h = Help(help["x"],help["y"])
+            self.scene.add_sprite("Help",h)
         
         self.shadowTexts = ["Está demasiado oscuro, primero deberías encender las luces.","Conociendo los peligros de este castillo, creo que no es seguro caminar a oscuras.","Está demasiado oscuro para continuar, encuentra la forma de iluminar el camino.","Es demasiado oscuro para avanzar, deberías encontrar la forma de iluminar el lugar primero."]
         self.falseFloorbgs = ["hole1","hole2","hole3","hole4","hole5"]
@@ -297,6 +323,7 @@ class Room(arcade.View):
                 i+=1
         l = len(self.scene.get_sprite_list("Key"))
         arcade.draw_text(f"Llaves del Nivel: {i}/{l}",self.window.width,self.window.height,font_name="Retro Gaming",font_size=20,anchor_x="right",anchor_y="top")
+        arcade.draw_text(f"Ayudas Actuales: {globalVars.HELPS}",self.window.width,self.window.height-20,font_name="Retro Gaming",font_size=20,anchor_x="right",anchor_y="top")
         for i in range(1,len(self.moveWalls)+1):
             
                 if arcade.check_for_collision_with_list(self.player, self.scene[f"MoveWallKey{i}"]) and self.scene[f"MoveWallKey{i}"].visible:
@@ -401,6 +428,7 @@ class Room(arcade.View):
                 if not key.game.canPass:
                     self.qm = key.game
                     self.init = 2
+                    sounds.key1.play()
         for i in range(1,len(self.codeDoors)+1):
             if arcade.check_for_collision_with_list(self.player,self.scene[f"Code{i}"]) and self.scene[f"CodeDoor{i}"].visible == True and key == arcade.key.E:
                 self.window.show_view(self.scene[f"Code{i}"].codeView)
@@ -558,6 +586,7 @@ class Room(arcade.View):
         self.scene.get_sprite_list("Player").update_animation()
         self.scene.get_sprite_list("Life").update_animation()
         self.scene.get_sprite_list("Key").update_animation()
+        self.scene.get_sprite_list("Help").update_animation()
         for k in self.scene["Key"]:
             if k.game.canPass == True:
                 k.visible = False
@@ -619,7 +648,10 @@ class Room(arcade.View):
             sounds.getlife1.play()
 
             life.kill()
-         
+        
+        for help in arcade.check_for_collision_with_list(self.player,self.scene["Help"]):
+            globalVars.HELPS += 1
+            help.kill()
         
         
         if self.holes and not self.bridges:

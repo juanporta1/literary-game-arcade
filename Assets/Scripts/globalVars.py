@@ -15,3 +15,5 @@ MUSIC = MUSIC.play()
 MUSIC.stop()
 
 CW_INDEXS = []
+
+HELPS = 0

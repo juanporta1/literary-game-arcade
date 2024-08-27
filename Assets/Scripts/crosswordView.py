@@ -31,6 +31,12 @@ class CrosswordView(arcade.View):
         self.font_size = 16
         self.principalFontSize = 30
         self.spacesFontSize = 16
+        self.help = arcade.SpriteSolidColor(len("AYUDA")*self.principalFontSize+10,self.principalFontSize+10,arcade.color.DEEP_RUBY)
+        self.help.center_x = self.window.width / 2
+        self.help.center_y = self.window.height * .1
+        self.help.textColor =  arcade.color.WHITE
+        self.helpSpriteList = arcade.SpriteList()
+        self.helpSpriteList.append(self.help)
         self.word: str = file["word"]
         self.crossWords: list[str] = file["crosswords"]
         
@@ -76,6 +82,7 @@ class CrosswordView(arcade.View):
             sprite.word = self.crossWords[i]
             sprite.isMaked = False
             sprite.letterColor = arcade.color.WHITE
+            sprite.font = self.principalFontSize
             sprite.time = 0
             if random.randint(0,1):
                 sprite.hide = True
@@ -107,6 +114,9 @@ class CrosswordView(arcade.View):
         arcade.start_render()
         self.clear()
         l = 0
+        self.help.draw()
+        arcade.draw_text(f"Ayudas Actuales: {globalVars.HELPS}",self.window.width,self.window.height,font_name="Retro Gaming",font_size=20,anchor_x="right",anchor_y="top")
+        arcade.draw_text("AYUDA",self.help.center_x,self.help.center_y,self.help.textColor,self.principalFontSize,anchor_x="center",anchor_y="center",font_name="Retro Gaming")
         arcade.draw_text("COMPLETA EL CRUCIGRAMA ARRASTRANDO CADA UNA DE LAS ETIQUETAS A SU RESPECTIVA LETRA",self.window.width/2,0,font_name="Retro Gaming",font_size=15,anchor_x="center",anchor_y="bottom")
         arcade.draw_text(f"Oportunidades: {self.op}/{self.startOp}",10,self.window.height,font_name="Retro Gaming",font_size=20,anchor_x="left",anchor_y="top")
         for s in self.principalSpriteList:
@@ -124,9 +134,9 @@ class CrosswordView(arcade.View):
 
                 x += self.spacesFontSize + 20
             if not s.hide:    
-                arcade.draw_text(f"{self.letters[l]}",s.center_x,s.center_y,font_name="Retro Gaming",font_size=self.principalFontSize,anchor_x="center",anchor_y="center",color=s.letterColor)
+                arcade.draw_text(f"{self.letters[l]}",s.center_x,s.center_y,font_name="Retro Gaming",font_size=s.font,anchor_x="center",anchor_y="center",color=s.letterColor)
             else:         
-                arcade.draw_text(f"?",s.center_x,s.center_y,font_name="Retro Gaming",font_size=self.principalFontSize,anchor_x="center",anchor_y="center",color=s.letterColor)
+                arcade.draw_text(f"?",s.center_x,s.center_y,font_name="Retro Gaming",font_size=s.font,anchor_x="center",anchor_y="center",color=s.letterColor)
 
             l+=1
 
@@ -163,6 +173,12 @@ class CrosswordView(arcade.View):
                         
                     s.center_x += dx
                     s.center_y += dy
+        if arcade.get_sprites_at_point((x,y),self.helpSpriteList):
+            for s in arcade.get_sprites_at_point((x,y),self.helpSpriteList):
+                s.color = arcade.color.RED_BROWN
+        else:
+            for s in self.helpSpriteList:
+                s.color = arcade.color.DEEP_RUBY
             
     def on_update(self, delta_time: float):
         if self.init == 0:
@@ -180,7 +196,15 @@ class CrosswordView(arcade.View):
                 self.window.show_view(self.gameView)
             self.alpha = 255 * (self.time / 3)
         
-        
+        for mW in self.wordsSpriteList:
+            for s in self.principalSpriteList:
+                if mW.isCatched and not s.isMaked and arcade.check_for_collision(mW, s):
+                    s.letterColor = arcade.color.DARK_GRAY
+                    s.font = 40
+                elif not s.isMaked and mW.isCatched:
+                    s.letterColor = arcade.color.WHITE
+                    s.font = self.principalFontSize
+            
         list = []
         for s in self.principalSpriteList:
             list.append(s.isMaked)

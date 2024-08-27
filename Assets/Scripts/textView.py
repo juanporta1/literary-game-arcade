@@ -51,7 +51,7 @@ class TextView(arcade.View):
             if self.canPass:
                 pressKey = arcade.gui.UILabel(text="PRESIONE CUALQUIER TECLA PARA CONTINUAR",font_name="Retro Gaming", font_size=15)
             else: 
-                pressKey = arcade.gui.UILabel(text=" ",font_size=15,font_name="Retro Gaming")
+                pressKey = arcade.gui.UILabel(text="PRESIONE CUALQUIER TECLA PARA ADELANTAR",font_size=10,font_name="Retro Gaming")
 
         
             gui = arcade.gui.UIManager()
