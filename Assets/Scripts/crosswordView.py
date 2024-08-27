@@ -31,14 +31,17 @@ class CrosswordView(arcade.View):
         self.font_size = 16
         self.principalFontSize = 30
         self.spacesFontSize = 16
-        self.help = arcade.SpriteSolidColor(len("AYUDA")*self.principalFontSize+10,self.principalFontSize+10,arcade.color.DEEP_RUBY)
+        self.help = arcade.SpriteSolidColor(len("AYUDA")*self.principalFontSize+10,self.principalFontSize+10,arcade.color.BLUE_SAPPHIRE)
         self.help.center_x = self.window.width / 2
         self.help.center_y = self.window.height * .1
         self.help.textColor =  arcade.color.WHITE
+        self.help.font = 20
+        self.help.pressed = False
         self.helpSpriteList = arcade.SpriteList()
         self.helpSpriteList.append(self.help)
         self.word: str = file["word"]
         self.crossWords: list[str] = file["crosswords"]
+        self.usedHelp = False
         
         for i in range(len(self.crossWords)):
             
@@ -114,9 +117,9 @@ class CrosswordView(arcade.View):
         arcade.start_render()
         self.clear()
         l = 0
-        self.help.draw()
+        # self.help.draw()
         arcade.draw_text(f"Ayudas Actuales: {globalVars.HELPS}",self.window.width,self.window.height,font_name="Retro Gaming",font_size=20,anchor_x="right",anchor_y="top")
-        arcade.draw_text("AYUDA",self.help.center_x,self.help.center_y,self.help.textColor,self.principalFontSize,anchor_x="center",anchor_y="center",font_name="Retro Gaming")
+        arcade.draw_text("AYUDA",self.help.center_x,self.help.center_y,self.help.textColor,self.help.font,anchor_x="center",anchor_y="center",font_name="Retro Gaming")
         arcade.draw_text("COMPLETA EL CRUCIGRAMA ARRASTRANDO CADA UNA DE LAS ETIQUETAS A SU RESPECTIVA LETRA",self.window.width/2,0,font_name="Retro Gaming",font_size=15,anchor_x="center",anchor_y="bottom")
         arcade.draw_text(f"Oportunidades: {self.op}/{self.startOp}",10,self.window.height,font_name="Retro Gaming",font_size=20,anchor_x="left",anchor_y="top")
         for s in self.principalSpriteList:
@@ -153,11 +156,31 @@ class CrosswordView(arcade.View):
                     break
             except:
                 pass
+        if arcade.get_sprites_at_point((x,y),self.helpSpriteList):
+            for s in arcade.get_sprites_at_point((x,y),self.helpSpriteList):
+                s.textColor = arcade.color.BLUE_SAPPHIRE
+                s.font = 17
+                s.pressed = True
+        else:
+            for s in self.helpSpriteList:
+                s.textColor = arcade.color.WHITE
+                s.font = 20
     def on_mouse_release(self, x: int, y: int, button: int, modifiers: int):
         if self.op != 0:
             for s in self.wordsSpriteList:
                 s.isCatched = False
-            
+        for s in self.helpSpriteList:
+            s.pressed = False
+        if arcade.get_sprites_at_point((x,y),self.helpSpriteList):
+            for s in arcade.get_sprites_at_point((x,y),self.helpSpriteList):
+                if not s.pressed:
+                    s.textColor = arcade.color.BLUE_BELL
+                    s.font = 22
+        else:
+            for s in self.helpSpriteList:
+                if not s.pressed:    
+                    s.textColor = arcade.color.WHITE
+                    s.font = 20
     def on_mouse_motion(self, x: int, y: int, dx: int, dy: int):
         
         if self.op != 0:
@@ -175,10 +198,14 @@ class CrosswordView(arcade.View):
                     s.center_y += dy
         if arcade.get_sprites_at_point((x,y),self.helpSpriteList):
             for s in arcade.get_sprites_at_point((x,y),self.helpSpriteList):
-                s.color = arcade.color.RED_BROWN
+                if not s.pressed:
+                    s.textColor = arcade.color.GRAY
+                    s.font = 22
         else:
             for s in self.helpSpriteList:
-                s.color = arcade.color.DEEP_RUBY
+                if not s.pressed:    
+                    s.textColor = arcade.color.WHITE
+                    s.font = 20
             
     def on_update(self, delta_time: float):
         if self.init == 0:
