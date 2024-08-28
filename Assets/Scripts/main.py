@@ -1,12 +1,16 @@
 import arcade
 from Menu import MenuView   
 from Game import Game
- 
+import globalVars
 
 
 class Window(arcade.Window):
+    global globalVars
     def __init__(self,width,height,title):
         super().__init__(width,height,title)
+        globalVars.ACTUAL_WIDTH = self.width
+        globalVars.ACTUAL_HEIGHT = self.height
+
 
 if __name__ == '__main__':
     

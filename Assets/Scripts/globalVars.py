@@ -4,6 +4,11 @@ import random
 import pygame
 import arcade
 
+DEFAULT_WIDTH = 1280
+DEFAULT_HEIGHT = 720
+ACTUAL_WIDTH = 1280
+ACTUAL_HEIGHT = 720
+
 LAST_VIEW = None
 
 LIFES = 3

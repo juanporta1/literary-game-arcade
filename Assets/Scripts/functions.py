@@ -1,5 +1,5 @@
 import arcade
-
+import globalVars
 def createAnimationList(rute, quantity):
         list = []
         for i in range(quantity):
@@ -13,4 +13,8 @@ def reverseCreateAnimationList(rute,quantity):
         image  = arcade.load_texture(f"{rute}{i}.png")
         list.append(image)
     return list
+
+def scale(n):
+    global globalVars
+    return int((n*globalVars.ACTUAL_WIDTH) / globalVars.DEFAULT_WIDTH)
 
