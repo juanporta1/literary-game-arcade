@@ -1,17 +1,18 @@
 import arcade
-from functions import scale
+from functions import scaleInt,scaleFloat
 
-TWENTY = scale(20)
-TWENTYFOUR = scale(24)
-FORTY = scale(40)
-FOURTEEN = scale(14)
-TEN = scale(10)
-TWENTYTWO = scale(22)
-SIXTEEN = scale(16)
-THIRTY = scale(30)
-FIFTY = scale(50)
-SIX = scale(6)
-FIFTEEN = scale(15)
-ONEHUNDRED = scale(100)
-ONE = scale(1)
+TWENTY = scaleInt(20)
+TWENTYFOUR = scaleInt(24)
+FORTY = scaleInt(40)
+FOURTEEN = scaleInt(14)
+TEN = scaleInt(10)
+TWENTYTWO = scaleInt(22)
+SIXTEEN = scaleInt(16)
+THIRTY = scaleInt(30)
+FIFTY = scaleInt(50)
+SIX = scaleInt(6)
+FIFTEEN = scaleInt(15)
+ONEHUNDRED = scaleInt(100)
+ONE = scaleInt(1)
+THIRTYFIVE = scaleInt(35)
 

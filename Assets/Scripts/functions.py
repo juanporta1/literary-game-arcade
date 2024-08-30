@@ -14,7 +14,10 @@ def reverseCreateAnimationList(rute,quantity):
         list.append(image)
     return list
 
-def scale(n):
+def scaleInt(n):
     global globalVars
     return int((n*globalVars.ACTUAL_WIDTH) / globalVars.DEFAULT_WIDTH)
 
+def scaleFloat(n):
+    global globalVars
+    return (n*globalVars.ACTUAL_WIDTH) / globalVars.DEFAULT_WIDTH
