@@ -4,6 +4,7 @@ from copy import copy
 import sounds
 import arcade.color
 import globalVars
+from textView import TextView
 from constants import *
 class CrosswordView(arcade.View):
     global globalVars
@@ -29,21 +30,15 @@ class CrosswordView(arcade.View):
         self.canPass = False
         self.time = 1
         self.init = 1
-        self.font_size = SIXTEEN
-        self.principalFontSize = THIRTY
-        self.spacesFontSize = SIXTEEN
-        self.help = arcade.SpriteSolidColor(len("AYUDA")*self.principalFontSize+TEN,self.principalFontSize+TEN,arcade.color.BLUE_SAPPHIRE)
-        self.help.center_x = self.window.width / 2
-        self.help.center_y = self.window.height * .1
-        self.help.textColor =  arcade.color.WHITE
-        self.help.font = TWENTY
-        self.help.pressed = False
-        self.helpSpriteList = arcade.SpriteList()
-        self.helpSpriteList.append(self.help)
+        self.font_size = FOURTEEN
+        self.principalFontSize = TWENTYEIGHT
+        self.spacesFontSize = FOURTEEN
         self.word: str = file["word"]
         self.crossWords: list[str] = file["crosswords"]
+        self.references = file["references"]
         self.usedHelp = False
-        
+        self.actualReference = None
+        self.referenceTime = 0
         for i in range(len(self.crossWords)):
             
             self.crossWords[i] = self.crossWords[i].upper()
@@ -86,6 +81,7 @@ class CrosswordView(arcade.View):
             sprite.word = self.crossWords[i]
             sprite.isMaked = False
             sprite.letterColor = arcade.color.WHITE
+            sprite.reference = TextView(self.window,self.references[i],self,type=2)
             sprite.font = self.principalFontSize
             sprite.time = 0
             if random.randint(0,1):
@@ -108,21 +104,21 @@ class CrosswordView(arcade.View):
     def on_show(self):
         self.init = 0    
     def on_hide_view(self):
-        canPass = self.canPass
-        gameView = self.gameView
-        self.__init__(self.window,self.file)
-        self.gameView = gameView
-        self.canPass = canPass   
+        if not isinstance(globalVars.LAST_VIEW,TextView): 
+            canPass = self.canPass
+            gameView = self.gameView
+            self.__init__(self.window,self.file)
+            self.gameView = gameView
+            self.canPass = canPass   
          
     
     def on_draw(self):
         arcade.start_render()
         self.clear()
         l = 0
-        # self.help.draw()
-        arcade.draw_text(f"Ayudas Actuales: {globalVars.HELPS}",self.window.width,self.window.height,font_name="Retro Gaming",font_size=TWENTY,anchor_x="right",anchor_y="top")
-        arcade.draw_text("AYUDA",self.help.center_x,self.help.center_y,self.help.textColor,self.help.font,anchor_x="center",anchor_y="center",font_name="Retro Gaming")
-        arcade.draw_text("COMPLETA EL CRUCIGRAMA ARRASTRANDO CADA UNA DE LAS ETIQUETAS A SU RESPECTIVA LETRA",self.window.width/2,0,font_name="Retro Gaming",font_size=FIFTEEN,anchor_x="center",anchor_y="bottom")
+        
+        arcade.draw_text(f"TOCA LAS LETRAS PARA VER SU REFERENCIA",self.window.width/2,TEN+3,arcade.color.WHITE,TEN,anchor_x="center",anchor_y="bottom",font_name="Retro Gaming")
+        arcade.draw_text("COMPLETA EL CRUCIGRAMA ARRASTRANDO CADA UNA DE LAS ETIQUETAS A SU RESPECTIVA LETRA",self.window.width/2,0,font_name="Retro Gaming",font_size=TEN,anchor_x="center",anchor_y="bottom")
         arcade.draw_text(f"Oportunidades: {self.op}/{self.startOp}",TEN,self.window.height,font_name="Retro Gaming",font_size=TWENTY,anchor_x="left",anchor_y="top")
         for s in self.principalSpriteList:
             
@@ -158,31 +154,15 @@ class CrosswordView(arcade.View):
                     break
             except:
                 pass
-        if arcade.get_sprites_at_point((x,y),self.helpSpriteList):
-            for s in arcade.get_sprites_at_point((x,y),self.helpSpriteList):
-                s.textColor = arcade.color.BLUE_SAPPHIRE
-                s.font = SIXTEEN
-                s.pressed = True
-        else:
-            for s in self.helpSpriteList:
-                s.textColor = arcade.color.WHITE
-                s.font = TWENTY
+        if arcade.get_sprites_at_point((x,y),self.principalSpriteList):
+            for s in arcade.get_sprites_at_point((x,y),self.principalSpriteList):
+                self.init = 3
+                self.actualReference = s.reference
     def on_mouse_release(self, x: int, y: int, button: int, modifiers: int):
         if self.op != 0:
             for s in self.wordsSpriteList:
                 s.isCatched = False
-        for s in self.helpSpriteList:
-            s.pressed = False
-        if arcade.get_sprites_at_point((x,y),self.helpSpriteList):
-            for s in arcade.get_sprites_at_point((x,y),self.helpSpriteList):
-                if not s.pressed:
-                    s.textColor = arcade.color.BLUE_BELL
-                    s.font = TWENTYTWO
-        else:
-            for s in self.helpSpriteList:
-                if not s.pressed:    
-                    s.textColor = arcade.color.WHITE
-                    s.font = TWENTY
+        
     def on_mouse_motion(self, x: int, y: int, dx: int, dy: int):
         
         if self.op != 0:
@@ -198,16 +178,7 @@ class CrosswordView(arcade.View):
                         
                     s.center_x += dx
                     s.center_y += dy
-        if arcade.get_sprites_at_point((x,y),self.helpSpriteList):
-            for s in arcade.get_sprites_at_point((x,y),self.helpSpriteList):
-                if not s.pressed:
-                    s.textColor = arcade.color.GRAY
-                    s.font = TWENTYTWO
-        else:
-            for s in self.helpSpriteList:
-                if not s.pressed:    
-                    s.textColor = arcade.color.WHITE
-                    s.font = TWENTY
+        
             
     def on_update(self, delta_time: float):
         if self.init == 0:
@@ -222,9 +193,18 @@ class CrosswordView(arcade.View):
                 self.time = 1
                 self.alpha = 255
                 self.init = 1
+                globalVars.LAST_VIEW = self
                 self.window.show_view(self.gameView)
             self.alpha = 255 * (self.time / 3)
-        
+        if self.init == 3:
+            self.time += delta_time
+            if self.time >= 1:
+                self.time = 1
+                self.alpha = 255
+                self.init = 1
+                globalVars.LAST_VIEW = self.actualReference
+                self.window.show_view(self.actualReference)
+            self.alpha = 255 * (self.time / 1)
         for mW in self.wordsSpriteList:
             for s in self.principalSpriteList:
                 if mW.isCatched and not s.isMaked and arcade.check_for_collision(mW, s):

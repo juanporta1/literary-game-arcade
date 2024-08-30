@@ -15,4 +15,5 @@ FIFTEEN = scaleInt(15)
 ONEHUNDRED = scaleInt(100)
 ONE = scaleInt(1)
 THIRTYFIVE = scaleInt(35)
+TWENTYEIGHT = scaleInt(28)
 
