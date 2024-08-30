@@ -163,7 +163,7 @@ class TextView(arcade.View):
         if self.type == 2:
             self.currentText = self.text
             self.label = self.makeText()
-            if self.currentTime >= 4:
+            if self.currentTime >= 1.5:
                 self.canPass = True
                 
                 

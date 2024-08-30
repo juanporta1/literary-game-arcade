@@ -17,3 +17,6 @@ ONE = scaleInt(1)
 THIRTYFIVE = scaleInt(35)
 TWENTYEIGHT = scaleInt(28)
 
+F_ONE = scaleFloat(1)
+F_TWO = scaleFloat(1)
+

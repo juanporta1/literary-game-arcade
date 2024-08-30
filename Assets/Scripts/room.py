@@ -1,6 +1,7 @@
 import arcade
 import arcade.gui
 import arcade.key
+from constants import *
 from Player import Player
 import random
 from crosswordView import CrosswordView
@@ -50,7 +51,7 @@ class Help(arcade.Sprite):
         self.time = 0
         self.animationIndex = 0
         self.spriteList = functions.createAnimationList("Assets/Sprites/Star/tile",13)
-        self.scale = 1.3
+        self.scale = functions.scaleFloat(1.3)
     
     def update_animation(self, delta_time: float = 1 / 60):
         self.time += delta_time
@@ -109,11 +110,11 @@ class Room(arcade.View):
         notes = jsonData["notes"]
         rocks = jsonData["rocks"]
         helps = jsonData["helps"]
-        self.playerCamera = arcade.Camera(1280,720)
-        self.guiCamera = arcade.Camera(1280,720)
-        self.map = arcade.load_tilemap(jsonData["setup"]["tilemap"])
+        self.playerCamera = arcade.Camera(globalVars.ACTUAL_WIDTH,globalVars.ACTUAL_HEIGHT)
+        self.guiCamera = arcade.Camera(globalVars.ACTUAL_WIDTH,globalVars.ACTUAL_HEIGHT)
+        self.map = arcade.load_tilemap(jsonData["setup"]["tilemap"],scaling=F_ONE)
         self.scene = arcade.Scene.from_tilemap(self.map)
-        self.player = Player(jsonData["setup"]["playerX"],jsonData["setup"]["playerY"],jsonData["setup"]["playerScale"])
+        self.player = Player(functions.scaleInt(jsonData["setup"]["playerX"]),functions.scaleInt(jsonData["setup"]["playerY"]),functions.scaleFloat(jsonData["setup"]["playerScale"]))
         self.scene.add_sprite_list("Player")
         self.scene.add_sprite("Player", self.player)
         self.player.center_x = self.x
@@ -140,7 +141,7 @@ class Room(arcade.View):
                     data = f.read()
                 questions = json.loads(data)
                 qm = QuestionMenu(self.window,questions,game,menu,key["qm"]["op"],key["qm"]["qq"])
-                newKey = Key(x=key["x"], y=key["y"],game=qm)
+                newKey = Key(x=functions.scaleInt(key["x"]), y=functions.scaleInt(key["y"]),game=qm)
                 newKey.game.gameView = self
                 self.scene.add_sprite("Key",newKey)
             elif key["type"] == 2:
@@ -154,32 +155,32 @@ class Room(arcade.View):
                     i = random.randint(0,len(words)-1)
                 globalVars.CW_INDEXS.append(i)
                 qm = CrosswordView(window,words[str(i)],key["cw"]["op"])
-                newKey = Key(x=key["x"],y=key["y"],game=qm)
+                newKey = Key(x=functions.scaleInt(key["x"]),y=functions.scaleInt(key["y"]),game=qm)
                 newKey.game.gameView = self
                 self.scene.add_sprite("Key",newKey)
             elif key["type"] == 3:
                 hm = HangmanView(self.window,key["hm"]["words"],key["hm"]["op"])
-                newKey = Key(x=key["x"],y=key["y"],game=hm)
+                newKey = Key(x=functions.scaleInt(key["x"]),y=functions.scaleInt(key["y"]),game=hm)
                 newKey.game.gameView = self
                 self.scene.add_sprite("Key",newKey)
                 
         for life in lifes:
-            sprite = Life(x= life["x"],y=life["y"])
+            sprite = Life(x= functions.scaleInt(life["x"]),y=functions.scaleInt(life["y"]))
             self.scene.add_sprite("Life",sprite)
         
         for note in notes:
-            nt = Note(note["x"],note["y"],self.window,note["text"],self)
+            nt = Note(functions.scaleInt(note["x"]),functions.scaleInt(note["y"]),self.window,note["text"],self)
             self.scene.add_sprite("Note",nt)
         self.rockEngines = []
         
         for rock in rocks:
-            r = arcade.Sprite(f"Assets/Sprites/DecoCastle/rocks/rock{random.randint(3,5)}.png",center_x=rock["x"],center_y=rock["y"],scale=1)
+            r = arcade.Sprite(f"Assets/Sprites/DecoCastle/rocks/rock{random.randint(3,5)}.png",center_x=functions.scaleInt(rock["x"]),center_y=functions.scaleInt(rock["y"]),scale=F_ONE)
             self.scene.add_sprite("Rock",r)
             self.rockEngines.append(arcade.PhysicsEnginePlatformer(r,self.scene["Wall"],0))
             self.catchedRock = [False,r]
         
         for help in helps:
-            h = Help(help["x"],help["y"])
+            h = Help(functions.scaleInt(help["x"]),functions.scaleInt(help["y"]))
             self.scene.add_sprite("Help",h)
         
         self.shadowTexts = ["Está demasiado oscuro, primero deberías encender las luces.","Conociendo los peligros de este castillo, creo que no es seguro caminar a oscuras.","Está demasiado oscuro para continuar, encuentra la forma de iluminar el camino.","Es demasiado oscuro para avanzar, deberías encontrar la forma de iluminar el lugar primero."]
@@ -188,8 +189,8 @@ class Room(arcade.View):
         self.holeTexts = ["Has caído en un pozo por descuido, un paso en falso te ha costado caro.","Has caído en un pozo, la prisa te jugó una mala pasada.","Te has tropezado y caído en un pozo, un error torpe en el momento equivocado.","Has caído en un pozo, un pequeño desliz y aquí estás.","Has caído en un pozo, un paso en falso fue todo lo que necesitó.","Te has caído en un pozo, un error tonto que te costó caro.","Has caído en un pozo, un tropiezo que no viste venir."]
         self.menu = menu
         self.game = game
-        self.speed = 4
-        self.jump = 25
+        self.speed = functions.scaleInt(4)
+        self.jump = functions.scaleInt(25)
         self.init = 1
         self.time = .75
         self.alpha = 255
@@ -322,34 +323,34 @@ class Room(arcade.View):
             if k.game.canPass:
                 i+=1
         l = len(self.scene.get_sprite_list("Key"))
-        arcade.draw_text(f"Llaves del Nivel: {i}/{l}",self.window.width,self.window.height,font_name="Retro Gaming",font_size=20,anchor_x="right",anchor_y="top")
-        arcade.draw_text(f"Ayudas Actuales: {globalVars.HELPS}",self.window.width,self.window.height-20,font_name="Retro Gaming",font_size=20,anchor_x="right",anchor_y="top")
+        arcade.draw_text(f"Llaves del Nivel: {i}/{l}",self.window.width,self.window.height,font_name="Retro Gaming",font_size=TWENTY,anchor_x="right",anchor_y="top")
+        arcade.draw_text(f"Ayudas Actuales: {globalVars.HELPS}",self.window.width,self.window.height-TWENTY,font_name="Retro Gaming",font_size=TWENTY,anchor_x="right",anchor_y="top")
         for i in range(1,len(self.moveWalls)+1):
             
                 if arcade.check_for_collision_with_list(self.player, self.scene[f"MoveWallKey{i}"]) and self.scene[f"MoveWallKey{i}"].visible:
-                    arcade.draw_text("PRESIONA E",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
+                    arcade.draw_text("PRESIONA E",self.window.width/2,ONEHUNDRED,font_name="Retro Gaming",font_size=SIXTEEN,anchor_x="center")
                     break
             
-        x = 10    
+        x = TEN    
         for codeDoor in self.codeDoors:
             if arcade.check_for_collision_with_list(self.player,self.scene[f"{codeDoor}A"]) or arcade.check_for_collision_with_list(self.player,self.scene[f"{codeDoor}B"]):
                 if self.scene[codeDoor].visible:
-                    arcade.draw_text("PRESIONA E PARA INGRESAR EL CODIGO",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
+                    arcade.draw_text("PRESIONA E PARA INGRESAR EL CODIGO",self.window.width/2,TWENTY,font_name="Retro Gaming",font_size=SIXTEEN,anchor_x="center")
                 else:
-                    arcade.draw_text("PRESIONA E",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
+                    arcade.draw_text("PRESIONA E",self.window.width/2,ONEHUNDRED,font_name="Retro Gaming",font_size=SIXTEEN,anchor_x="center")
         for i in range(1,len(self.codeDoors)+1):
             if arcade.check_for_collision_with_list(self.player,self.scene[f"Code{i}"]):
-                arcade.draw_text("PRESIONA E",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
+                arcade.draw_text("PRESIONA E",self.window.width/2,ONEHUNDRED,font_name="Retro Gaming",font_size=SIXTEEN,anchor_x="center")
         for i in range(globalVars.TOTAL_LIFES + globalVars.APPEND_LIFES):
             if i <= globalVars.LIFES - 1:
-                arcade.draw_lrwh_rectangle_textured(x,650,64,64,self.fillHeart)
+                arcade.draw_lrwh_rectangle_textured(x,functions.scaleFloat(650),functions.scaleFloat(64),functions.scaleFloat(64),self.fillHeart)
             else:
-                arcade.draw_lrwh_rectangle_textured(x,650,64,64,self.emptyHeart)
-            x += 64
+                arcade.draw_lrwh_rectangle_textured(x,functions.scaleFloat(650),functions.scaleFloat(64),functions.scaleFloat(64),self.emptyHeart)
+            x += scaleFloat(64)
         
         for i in range(1,len(self.shadows)+1):
                 if arcade.check_for_collision_with_list(self.player,self.scene[f"UnShadow{i}"]) and self.scene[f"Shadow{i}"].visible:
-                    arcade.draw_text("PRESIONA E",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
+                    arcade.draw_text("PRESIONA E",self.window.width/2,ONEHUNDRED,font_name="Retro Gaming",font_size=SIXTEEN,anchor_x="center")
         
         for key in arcade.check_for_collision_with_list(self.player,self.scene["Key"]):
             if key.game.canPass == False:
@@ -360,22 +361,22 @@ class Room(arcade.View):
                 if self.scene[f"ManualBridge{i}"].visible:
                     pass
                 else:
-                    arcade.draw_text("PRESIONA E PARA ACTIVAR",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
+                    arcade.draw_text("PRESIONA E PARA ACTIVAR",self.window.width/2,ONEHUNDRED,font_name="Retro Gaming",font_size=SIXTEEN,anchor_x="center")
                     
         if arcade.check_for_collision_with_list(self.player,self.scene["Note"]):
-            arcade.draw_text("PRESIONA E PARA LEER",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
+            arcade.draw_text("PRESIONA E PARA LEER",self.window.width/2,ONEHUNDRED,font_name="Retro Gaming",font_size=SIXTEEN,anchor_x="center")
 
         if arcade.check_for_collision_with_list(self.player,self.scene["Rock"]):
             if self.catchedRock[0]:
                 pass
             else:
-                arcade.draw_text("MANTEN ESPACIO PARA EMPUJAR",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
+                arcade.draw_text("MANTEN ESPACIO PARA EMPUJAR",self.window.width/2,ONEHUNDRED,font_name="Retro Gaming",font_size=SIXTEEN,anchor_x="center")
         
         for i in self.rockDoors:
             if (arcade.check_for_collision_with_list(self.player,self.scene[f"{i}A"]) or arcade.check_for_collision_with_list(self.player,self.scene[f"{i}B"])) and self.scene[f"{i}"].visible == False:
-                arcade.draw_text("PRESIONA E",self.window.width/2,100,font_name="Retro Gaming",font_size=16,anchor_x="center")
+                arcade.draw_text("PRESIONA E",self.window.width/2,ONEHUNDRED,font_name="Retro Gaming",font_size=SIXTEEN,anchor_x="center")
         
-        arcade.draw_text("Moverse: W/A/S/D",self.window.width * .1,10,font_name="Retro Gaming",anchor_x="center",font_size=16)
+        arcade.draw_text("Moverse: W/A/S/D",self.window.width * .1,TEN,font_name="Retro Gaming",anchor_x="center",font_size=SIXTEEN)
         
         arcade.draw_rectangle_filled(self.window.width/2, self.window.height/2,self.window.width,self.window.height,(0,0,0,self.alpha))
         
@@ -711,7 +712,6 @@ class Room(arcade.View):
                                 break
                         if haveTouch:      
                             if arcade.check_for_collision_with_list(self.player,self.scene[bridge]) and self.scene[bridge].visible:
-                                print("Toca con puente")
                                 continue
                             elif arcade.check_for_collision_with_list(self.player,self.scene[floor]):
                                 sounds.fall1.play()
@@ -733,16 +733,16 @@ class Room(arcade.View):
             if arcade.check_for_collision_with_list(self.player,self.scene[f"Shadow{i}"]) and self.scene[f"Shadow{i}"].visible and not self.showShadowView:
                 s = arcade.check_for_collision_with_list(self.player,self.scene[f"Shadow{i}"])[0]
                 
-                if arcade.get_sprites_at_point((s.center_x+64,s.center_y),self.scene[f"Shadow{i}"]) or arcade.get_sprites_at_point((s.center_x+64,s.center_y),self.scene["Wall"]): self.right = False
+                if arcade.get_sprites_at_point((s.center_x+scaleInt(64),s.center_y),self.scene[f"Shadow{i}"]) or arcade.get_sprites_at_point((s.center_x+scaleInt(64),s.center_y),self.scene["Wall"]): self.right = False
                 else: self.right = True
                 
-                if arcade.get_sprites_at_point((s.center_x-64,s.center_y),self.scene[f"Shadow{i}"]) or arcade.get_sprites_at_point((s.center_x-64,s.center_y),self.scene["Wall"]): self.left = False
+                if arcade.get_sprites_at_point((s.center_x-scaleInt(64),s.center_y),self.scene[f"Shadow{i}"]) or arcade.get_sprites_at_point((s.center_x-scaleInt(64),s.center_y),self.scene["Wall"]): self.left = False
                 else: self.left = True
                 
-                if arcade.get_sprites_at_point((s.center_x,s.center_y+64),self.scene[f"Shadow{i}"]) or arcade.get_sprites_at_point((s.center_x,s.center_y+64),self.scene["Wall"]): self.up = False
+                if arcade.get_sprites_at_point((s.center_x,s.center_y+scaleInt(64)),self.scene[f"Shadow{i}"]) or arcade.get_sprites_at_point((s.center_x,s.center_y+scaleInt(64)),self.scene["Wall"]): self.up = False
                 else: self.up = True
                 
-                if arcade.get_sprites_at_point((s.center_x,s.center_y-64),self.scene[f"Shadow{i}"]) or arcade.get_sprites_at_point((s.center_x,s.center_y-64),self.scene["Wall"]): self.down = False
+                if arcade.get_sprites_at_point((s.center_x,s.center_y-scaleInt(64)),self.scene[f"Shadow{i}"]) or arcade.get_sprites_at_point((s.center_x,s.center_y-scaleInt(64)),self.scene["Wall"]): self.down = False
                 else: self.down = True 
                     
                 self.showShadowView = True
@@ -802,59 +802,59 @@ class Room(arcade.View):
                     
                     for s in self.scene[f"MoveWall{i}"]:
                         for sprite in arcade.get_sprites_at_exact_point((s.center_x,s.center_y),self.scene["Wall"]):
-                            sprite.center_x -= 1    
-                        s.center_x -= 1
+                            sprite.center_x -= F_ONE    
+                        s.center_x -= F_ONE
                          
-                    self.scene[f"MoveWall{i}"].rightCenterX -= 1
+                    self.scene[f"MoveWall{i}"].rightCenterX -= F_ONE
             
             
                 if self.scene[f"MoveWallKey{i}"].visible == False and self.scene[f"MoveWall{i}"].startRightCenterX != self.scene[f"MoveWall{i}"].leftCenterX and self.scene[f"MoveWall{i}"].side == "right":
                     
                     for s in self.scene[f"MoveWall{i}"]:
                         for sprite in arcade.get_sprites_at_exact_point((s.center_x,s.center_y),self.scene["Wall"]):
-                            sprite.center_x += 1
+                            sprite.center_x += F_ONE
   
-                        s.center_x += 1
+                        s.center_x += F_ONE
                          
-                    self.scene[f"MoveWall{i}"].leftCenterX += 1
+                    self.scene[f"MoveWall{i}"].leftCenterX += F_ONE
                 if self.scene[f"MoveWallKey{i}"].visible == False and self.scene[f"MoveWall{i}"].startLeftCenterX != self.scene[f"MoveWall{i}"].rightCenterX and self.scene[f"MoveWall{i}"].side == "left":
                     
                     for s in self.scene[f"MoveWall{i}"]:
                         for sprite in arcade.get_sprites_at_exact_point((s.center_x,s.center_y),self.scene["Wall"]):
-                            sprite.center_x -= 1    
-                        s.center_x -= 1
+                            sprite.center_x -= F_ONE    
+                        s.center_x -= F_ONE
                          
-                    self.scene[f"MoveWall{i}"].rightCenterX -= 1
+                    self.scene[f"MoveWall{i}"].rightCenterX -= F_ONE
             
             
                 if self.scene[f"MoveWallKey{i}"].visible == False and self.scene[f"MoveWall{i}"].startRightCenterX != self.scene[f"MoveWall{i}"].leftCenterX and self.scene[f"MoveWall{i}"].side == "right":
                     
                     for s in self.scene[f"MoveWall{i}"]:
                         for sprite in arcade.get_sprites_at_exact_point((s.center_x,s.center_y),self.scene["Wall"]):
-                            sprite.center_x += 1
+                            sprite.center_x += F_ONE
   
-                        s.center_x += 1
+                        s.center_x += F_ONE
                          
-                    self.scene[f"MoveWall{i}"].leftCenterX += 1
+                    self.scene[f"MoveWall{i}"].leftCenterX += F_ONE
                 if self.scene[f"MoveWallKey{i}"].visible == False and self.scene[f"MoveWall{i}"].startBottomCenterY != self.scene[f"MoveWall{i}"].topCenterY and self.scene[f"MoveWall{i}"].side == "bottom":
                     
                     for s in self.scene[f"MoveWall{i}"]:
                         for sprite in arcade.get_sprites_at_exact_point((s.center_x,s.center_y),self.scene["Wall"]):
-                            sprite.center_y -= 1    
-                        s.center_y -= 1
+                            sprite.center_y -= F_ONE    
+                        s.center_y -= F_ONE
                          
-                    self.scene[f"MoveWall{i}"].topCenterY -= 1
+                    self.scene[f"MoveWall{i}"].topCenterY -= F_ONE
             
             
                 if self.scene[f"MoveWallKey{i}"].visible == False and self.scene[f"MoveWall{i}"].startTopCenterY != self.scene[f"MoveWall{i}"].bottomCenterY and self.scene[f"MoveWall{i}"].side == "top":
                     
                     for s in self.scene[f"MoveWall{i}"]:
                         for sprite in arcade.get_sprites_at_exact_point((s.center_x,s.center_y),self.scene["Wall"]):
-                            sprite.center_y += 1
+                            sprite.center_y += F_ONE
   
-                        s.center_y += 1
+                        s.center_y += F_ONE
                          
-                    self.scene[f"MoveWall{i}"].bottomCenterY += 1
+                    self.scene[f"MoveWall{i}"].bottomCenterY += F_ONE
         
         if arcade.check_for_collision_with_list(self.player,self.scene["Door"]) and not self.scene["Door"].visible:
             self.init = 3

@@ -156,8 +156,14 @@ class CrosswordView(arcade.View):
                 pass
         if arcade.get_sprites_at_point((x,y),self.principalSpriteList):
             for s in arcade.get_sprites_at_point((x,y),self.principalSpriteList):
+                s.letterColor = arcade.color.GHOST_WHITE
+                s.font = TWENTY
                 self.init = 3
                 self.actualReference = s.reference
+        else:
+            for s in self.principalSpriteList:
+                s.letterColor = arcade.color.WHITE
+                s.font = self.principalFontSize
     def on_mouse_release(self, x: int, y: int, button: int, modifiers: int):
         if self.op != 0:
             for s in self.wordsSpriteList:
@@ -179,7 +185,14 @@ class CrosswordView(arcade.View):
                     s.center_x += dx
                     s.center_y += dy
         
-            
+        if arcade.get_sprites_at_point((x,y),self.principalSpriteList):
+            for s in arcade.get_sprites_at_point((x,y),self.principalSpriteList):
+                s.font = TWENTYFOUR
+                s.letterColor = arcade.color.GRAY
+        else:
+            for s in self.principalSpriteList:
+                s.font = self.principalFontSize
+                s.letterColor = arcade.color.WHITE
     def on_update(self, delta_time: float):
         if self.init == 0:
             self.time -= delta_time
