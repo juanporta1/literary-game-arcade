@@ -8,6 +8,7 @@ from controlMenu import ControlMenu
 import globalVars
 from constants import *
 import sounds
+from configView import ConfigurationView
 class Button(arcade.SpriteSolidColor):
     def __init__(self, text,fontSize,left,center_y,function,nextView = None):
         width = fontSize * len(text) + 10
@@ -36,12 +37,15 @@ class MenuView(arcade.View):
         self.nextView = None
         self.gameView = Game(window,self)
         self.controlView = ControlMenu(self.window,self)
+        self.configView = ConfigurationView(window,self)
         self.buttonList = arcade.SpriteList()
         self.play = Button("Jugar",self.fontSize,FIFTY,window.height*.6,self.inPressPlay,self.gameView)
         self.control = Button("Controles",self.fontSize,FIFTY,window.height*.5,self.inPressControl,self.controlView)
+        self.config= Button("Configuración",self.fontSize,FIFTY,self.window.height*.4,self.inPressConfiguration)
         self.exit = Button("Salir",self.fontSize,FIFTY,window.height*.4,self.inPressExit)
         self.buttonList.append(self.play)
         self.buttonList.append(self.control)
+        
         self.buttonList.append(self.exit)
         
     def on_draw(self):
@@ -85,7 +89,8 @@ class MenuView(arcade.View):
             for b in self.buttonList:
                 b.pressed = False
     
-        
+    def inPressConfiguration(self):
+        self.window.show_view(self.configView)
     def inPressControl(self):
         self.init = 2
         self.nextView = self.controlView
@@ -103,9 +108,11 @@ class MenuView(arcade.View):
         self.buttonList = arcade.SpriteList()
         self.play = Button("Jugar",self.fontSize,FIFTY,self.window.height*.6,self.inPressPlay,self.gameView)
         self.control = Button("Controles",self.fontSize,FIFTY,self.window.height*.5,self.inPressControl,self.controlView)
-        self.exit = Button("Salir",self.fontSize,FIFTY,self.window.height*.4,self.inPressExit)
+        self.config= Button("Configuración",self.fontSize,FIFTY,self.window.height*.4,self.inPressConfiguration)
+        self.exit = Button("Salir",self.fontSize,FIFTY,self.window.height*.3,self.inPressExit)
         self.buttonList.append(self.play)
         self.buttonList.append(self.control)
+        self.buttonList.append(self.config)
         self.buttonList.append(self.exit)
         if globalVars.LAST_VIEW != None:
             self.init = 0
