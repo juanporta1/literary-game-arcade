@@ -6,8 +6,8 @@ import globalVars
 
 class Window(arcade.Window):
     global globalVars
-    def __init__(self,width,height,title):
-        super().__init__(width,height,title)
+    def __init__(self,width,height,title,fullscreen = False):
+        super().__init__(width,height,title,fullscreen=fullscreen)
         globalVars.ACTUAL_WIDTH = self.width
         globalVars.ACTUAL_HEIGHT = self.height
 
