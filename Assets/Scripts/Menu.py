@@ -109,10 +109,10 @@ class MenuView(arcade.View):
         self.play = Button("Jugar",self.fontSize,FIFTY,self.window.height*.6,self.inPressPlay,self.gameView)
         self.control = Button("Controles",self.fontSize,FIFTY,self.window.height*.5,self.inPressControl,self.controlView)
         self.config= Button("Configuración",self.fontSize,FIFTY,self.window.height*.4,self.inPressConfiguration)
-        self.exit = Button("Salir",self.fontSize,FIFTY,self.window.height*.3,self.inPressExit)
+        self.exit = Button("Salir",self.fontSize,FIFTY,self.window.height*.4,self.inPressExit)
         self.buttonList.append(self.play)
         self.buttonList.append(self.control)
-        self.buttonList.append(self.config)
+        
         self.buttonList.append(self.exit)
         if globalVars.LAST_VIEW != None:
             self.init = 0
