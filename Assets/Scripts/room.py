@@ -17,7 +17,7 @@ import functions
 from codeInput import CodeInput
 from math import *
 class Note(arcade.Sprite):
-    def __init__(self, x,y,window,text,nextView,bg="Assets/Backgrounds/note1.jpeg",filename="Assets/Sprites/Notes/closeNote.png",scale = 1):
+    def __init__(self, x,y,window,text,nextView,bg,filename="Assets/Sprites/Notes/closeNote.png",scale = 1):
         super().__init__(filename, scale, center_x = x, center_y = y)
         self.view = TextView(window,text,nextView,bg=bg,type=2,style={ "font_name": "Morris Roman","bg_color": None,"bg_color_pressed": None,"border_color": None,"font_size": 25 ,"font_color":arcade.color.BLACK,"font_color_pressed":arcade.color.BLACK},width=800)
         self.set_hit_box(((-60,-60),(20,20),(-20,20),(60,-60)))
@@ -169,7 +169,7 @@ class Room(arcade.View):
             self.scene.add_sprite("Life",sprite)
         
         for note in notes:
-            nt = Note(functions.scaleInt(note["x"]),functions.scaleInt(note["y"]),self.window,note["text"],self)
+            nt = Note(functions.scaleInt(note["x"]),functions.scaleInt(note["y"]),self.window,note["text"],self,f"Assets/Backgrounds/note{random.randint(1,3)}.jpg")
             self.scene.add_sprite("Note",nt)
         self.rockEngines = []
         
@@ -217,7 +217,7 @@ class Room(arcade.View):
         for i in range(1,len(self.codeDoors)+1):
             code = random.randint(1000,9999)
             self.scene[f"CodeDoor{i}"].input = CodeInput(self.window,self,code)
-            self.scene[f"Code{i}"].codeView = TextView(self.window,f"{code}",self,bg="Assets/Backgrounds/note1.jpeg",type=2,style={ "font_name": "Morris Roman","bg_color": None,"bg_color_pressed": None,"border_color": None,"font_size": 75 ,"font_color":arcade.color.BLACK,"font_color_pressed":arcade.color.BLACK})
+            self.scene[f"Code{i}"].codeView = TextView(self.window,f"{code}",self,bg=f"Assets/Backgrounds/note{random.randint(1,3)}.jpg",type=2,style={ "font_name": "Morris Roman","bg_color": None,"bg_color_pressed": None,"border_color": None,"font_size": 75 ,"font_color":arcade.color.BLACK,"font_color_pressed":arcade.color.BLACK})
 
         for i in self.moveWalls:
             self.scene[i].leftCenterX = 0

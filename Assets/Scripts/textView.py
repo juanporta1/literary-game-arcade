@@ -5,7 +5,7 @@ import sounds
 
 
 class TextView(arcade.View):
-    def __init__(self, window: arcade.Window, text: str,nextView: arcade.View,style = {
+    def __init__(self, window: arcade.Window, text: str,nextView: arcade.View = None,style = {
         "font_name": "Retro Gaming",
         "bg_color": None,
         "bg_color_pressed": None,
@@ -75,7 +75,7 @@ class TextView(arcade.View):
             gui = arcade.gui.UIManager()
             box = arcade.gui.UIBoxLayout()
 
-            label = arcade.gui.UIFlatButton(text=self.currentText, style= self.style,width=self.width,height=self.height)
+            label = arcade.gui.UIFlatButton(text=self.currentText, style= self.style,width=self.width,height=self.height,y = self.window.height*.3)
             box.add(label.with_space_around(0,0,10,0))
             box.add(pressKey)
             gui.add(arcade.gui.UIAnchorWidget(

@@ -42,10 +42,19 @@
     ],
     "notes":[
         {
+            "x": 500,
+            "y":500,
+            "text":"Esta es una nota que da unaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaa aaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaa aaaaaaaaaaaaa aaaaaaaaaaaaaaaa aaaaaaaaaaaaaaa aaaaaaaaaaaaaa aaaaaaaaaaaaa aa pista, y es una prueba para ver como funciona"
+        },
+        {
+            "x": 400,
+            "y":500,
+            "text":"Esta es una nota que da una pista, y es una prueba para ver como funciona"
+        },
+        {
             "x": 300,
             "y":500,
-            "text":"Esta es una nota que da una pista, y es una prueba para ver como funciona",
-            "bg":"Backgrounds/black.jpg"
+            "text":"Esta es una nota que da una pista, y es una prueba para ver como funciona"
         }
     ],
     "rocks":[
