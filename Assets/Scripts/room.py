@@ -154,12 +154,21 @@ class Room(arcade.View):
                 while globalVars.CW_INDEXS.count(i):
                     i = random.randint(0,len(words)-1)
                 globalVars.CW_INDEXS.append(i)
-                qm = CrosswordView(window,words[str(i)],key["cw"]["op"])
+                qm = CrosswordView(window,words[str(i)],5)
                 newKey = Key(x=functions.scaleInt(key["x"]),y=functions.scaleInt(key["y"]),game=qm)
                 newKey.game.gameView = self
                 self.scene.add_sprite("Key",newKey)
             elif key["type"] == 3:
-                hm = HangmanView(self.window,key["hm"]["words"],key["hm"]["op"])
+                with open("Assets\Scripts\questionsFiles\hagman.json","r",encoding="utf-8") as f:
+                    data = f.read()
+                words = json.loads(data)
+                if len(globalVars.HM_INDEXS) == len(words):
+                    globalVars.HM_INDEXS = []
+                i = random.randint(0,len(words)-1)
+                while globalVars.HM_INDEXS.count(i):
+                    i = random.randint(0,len(words)-1)
+                globalVars.HM_INDEXS.append(i)    
+                hm = HangmanView(self.window,words[str(i)]["word"],5,words[str(i)]["hint"])
                 newKey = Key(x=functions.scaleInt(key["x"]),y=functions.scaleInt(key["y"]),game=hm)
                 newKey.game.gameView = self
                 self.scene.add_sprite("Key",newKey)

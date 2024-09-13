@@ -1,17 +1,110 @@
 {
-    "0": {
-        "word": "BORGES",
-        "crosswords": ["Biblioteca de Babel", "Otras inquisiciones", "Realidades", "Guía de Jerusalén", "Espejo y la máscara", "Sur"],
-        "references":["Esto es una referencia","Esto es una referencia","Esto es una referencia","Esto es una referencia","Esto es una referencia","Esto es una referencia"]
+    "0":{
+        "word":"HARRY",
+        "crosswords":["Hogwarts","Reliquias", "Potter", "Voldemort", "Gryffindor" ],
+        "references": ["Escuela de magia donde asistía Harry Potter", "Objetos que la muerte le dio a los tres hermanos en el famoso cuento: Los tres magos", "Apellido del protagonista de la saga escrita por JK. Rowling", "Nombre del villano al que todos llamaban: Aquel que no debe ser nombrado", "Casa a la que pertenecian Harry Potter y sus amigos"] 
     },
     "1": {
-        "word": "NERUDA",
-        "crosswords": ["Isla Negra", "Estación invierno", "Residencia en la tierra", "Un canto general", "Desnuda", "Alturas de Macchu Picchu"],
-        "references":["Esto es una referencia","Esto es una referencia","Esto es una referencia","Esto es una referencia","Esto es una referencia","Esto es una referencia"]
+        "word":"MESTIZO",
+        "crosswords": ["Semidiós", "Griega", "Cronos", "Annabeth", "Poseidón", "Zeus", "Grover"],
+        "references":["Condición de un hijo de un Dios y un mortal", "Mitología en la que se basa la saga de Percy Jackson", "Titan del tiempo, rey de los titanes", "Amiga de Percy, hija de Atenea", "Padre de Percy, Dios del mar", "Dios del cielo", "Mejor amigo de Percy"]
     },
-    "2": {
-        "word": "CORTAZAR",
-        "crosswords": ["Casa tomada", "Ocupación", "Rayuela", "Tango", "Axolotl", "Zoológico", "Aurora", "Rayuela"],
-        "references":["Esto es una referencia","Esto es una referencia","Esto es una referencia","Esto es una referencia","Esto es una referencia","Esto es una referencia","Esto es una referencia","Esto es una referencia"]
+    "2":{
+        "word": "AUSTEN",
+        "crosswords": ["Darcy", "Orgullo", "Sensación", "Bennet", "Emma", "Fanny"],
+        "references": ["Apellido del personaje principal masculino en 'Orgullo y Prejuicio'", "Primera palabra del título de una de sus obras más famosas","Primera palabra del título de otra famosa obra suya que trata sobre las hermanas Dashwood", "Apellido de la familia protagonista en 'Orgullo y Prejuicio'","Nombre de la protagonista de otra de sus novelas", "Nombre de la protagonista del libro 'Mansfield Park'"]
+    },
+    "3":{
+        "word": "OSCAR",
+        "crosswords": ["Dorian", "Salomé", "Canterville", "Irlanda", "Retrato"],
+        "references": ["Nombre del protagonista en una de sus novelas más famosas","Nombre de una tragedia de un acto escrita por Oscar Wilde","Nombre de la mansión embrujada donde vivía un fantasma","Pais donde nació Oscar Wilde","Primera palabra del título de su famosa novela sobre Dorian Gray"]
+    },
+    "4": {
+        "word": "POTTER",
+        "crosswords": ["Espejo", "Escoba", "Tio","Muerte", "Hermione", "Reductor"],
+        "references": ["Objeto donde Harry ve por primera vez a sus padres","Objeto mágico que Harry usa para volar","Relación familiar de Vernon con Harry","Le dio las reliquias a los tres hermanos","Amiga de Harry","Encantamiento que reduce objetos"]
+    },
+    "5": {
+        "word": "RON",
+        "crosswords": ["Severus", "Rojo", "Nagini"],
+        "references": ["Nombre del profesor de pociones","Color del cabello del mejor amigo de Harry Potter","Serpiente de Voldemort"]
+    },
+    "6": {
+        "word": "HERMIONE",
+        "crosswords": ["Hogwarts", "Potter", "Ron", "Encantamiento","Sucia","Patronum", "Oclumancia", "Inteligencia"],
+        "references": ["Escuela donde estudia","Apellido de uno de sus mejores amigos","Mejor amigo de Hermione","Hechizo que usa frecuentemente","Draco malfoy le decia 'Sangre ...'","Hechizo para invocar un guardián","Técnica para proteger la mente","Caracteristica de Hermione"]
+    },
+    "7": {
+        "word": "CERVANTES",
+        "crosswords": ["Rocinante","Quijote", "Triste",  "Ventura", "Antonia", "Sanchica", "Toboso", "Encomienda", "Escudero"],
+        "references": ["Nombre del caballo de Don Quijote","Título del obra más aclamada de Cervantes, 'Don...'","¿Como es la figura de El Caballero Don Quijote?","Nombre del aventurero","Sobrina de Don Quijote","Hija de Sancho Panza","Lugar donde reside Dulcinea","Misión que acepta Don Quijote","Acompañante de Don Quijote"
+        ]
+    },
+    "8": {
+        "word": "MARQUEZ",
+        "crosswords": ["Macondo", "Realismo", "Arcadio", "Quesada", "Ulises", "Cien", "Zorro"],
+        "references": ["Lugar ficticio donde transcurren varias de sus novelas","Corriente literaria en la que se destaca","Personaje de 'Cien años de soledad'","Apellido de Gonzalo en 'El coronel no tiene quien le escriba'","Tema central en 'El amor en los tiempos del cólera'","Apodo del personaje Ulises en 'Cien años de soledad'","Elemento que García Márquez mezcla con la realidad"]
+    },
+    "9": {
+        "word": "DARCY",
+        "crosswords": ["Dinero", "Amor", "Orgulloso", "Hechizado", "York"],
+        "references": ["Uno de los conflictos de 'Orgullo y Prejuicio'","Lo que finalmente siente por Elizabeth Bennet","Una característica de Mr. Darcy","Como se sentía Mr. Darcy con respecto a Elizabeth","Región de Inglaterra donde reside"]
+    },
+    "10": {
+        "word": "BENNET",
+        "crosswords": ["Bingley", "Elizabeth", "Netherfield", "Novio", "Catherine", "Charlotte"],
+        "references": ["Amigo de Mr. Darcy","Protagonista de 'Orgullo y Prejuicio'","Lugar donde vive Mr. Bingley","Algo que busca la Sra. Bennet para sus hijas","Tia de Mr. Darcy","Mejor amiga de Elizabeth"]
+    },
+    "11": {
+        "word": "PERCY",
+        "crosswords": ["Riptide", "Estigia","Grover", "Cíclope", "Tyson"],
+        "references": ["Nombre de la espada de Percy","Río mítico que cruza el inframundo","Amigo de Percy","Criatura mitológica que aparece en la serie","Medio-hermano de Percy"]
+    },
+    "12": {
+        "word": "ANNABETH",
+        "crosswords": ["Atenea", "Dionisio","Navegación", "Grecia", "Batalla", "Ejército", "Tridente", "Hércules"],
+        "references": ["Madre de Annabeth","Dios del Vino","Elemento del mar que conecta a los personajes","Lugar donde nace la mitologia griega","Conflicto en muchas aventuras","Grupo de soldados míticos","Arma del dios Poseidón","Héroe mitológico mencionado en la serie"]
+    },"13": {
+        "word": "NARNIA",
+        "crosswords": ["Aslan", "Reina", "Unicornio", "Susan","Caspian", "Armadura"],
+        "references": ["León que representa la bondad","Personaje que gobierna en Narnia"," Criatura mágica en 'Las crónicas de Narnia'","Nombre de una de las protagonistas","Nombre de un Principe","Equipo que usan los héroes en batalla"]
+    },
+    "14": {
+        "word": "PIERRE",
+        "crosswords": ["Príncipe", "Invasión", "Ejército", "Rusia", "Estrella", "Reino"],
+        "references": ["Título de uno de los personajes","Evento que ocurre en 'Guerra y paz'","Grupo militar en la novela","País donde transcurre la historia","Símbolo de honor","Lo que Napoleón intenta conquistar"]
+    },
+    "15": {
+        "word": "ANNA",
+        "crosswords": ["Amor", "Niño", "Noche", "Amante"],
+        "references": ["Tema central en 'Anna Karenina'","Alguien que juega un papel importante en la vida de Anna","Momento en que ocurre la tragedia","El vínculo prohibido de la novela"]
+    },
+    "16": {
+        "word": "VIRGINIA",
+        "crosswords": ["Vida", "Inteligencia", "Río", "Género", "Ideas", "Nieve", "Isabel", "Dalloway"],
+        "references": ["Tema central en sus obras","Cualidad que caracteriza a sus personajes","Elemento natural importante en su vida","Tipo de literatura que exploraba","Lo que cambia en la mente de sus personajes","Tema recurrente en sus ensayos","Personaje mencionado en 'La señora Dalloway'", "Apellido de la protagonista en una de sus obras"]
+    },
+    "17": {
+        "word": "EMILI",
+        "crosswords": ["Espectro", "Montaña", "Ideal", "Lluvia", "Infancia"],
+        "references": ["Elemento sobrenatural en 'Cumbres borrascosas'","Entorno geográfico importante","Aquello que los personajes persiguen","Clima que refleja emociones","Recuerdos que vuelven en la novela"]
+    },
+    "18": {
+        "word": "JANE",
+        "crosswords": ["Justicia", "Amor", "Negro", "Emoción"],
+        "references": ["Valor central en la vida de la protagonista de Jane Eyre","Lo que busca Jane en su relación","Color del vestido de boda de Jane","Lo que siente a lo largo de la novela"]
+    },
+    "19": {
+        "word": "DICKENS",
+        "crosswords": ["David", "Ignorancia", "Comunidad", "Karma", "Escuela", "Navidad", "Sikes"],
+        "references": ["Protagonista de 'David Copperfield'","Tema importante en sus novelas","Conjunto social en sus obras","Destino en la vida de los personajes","Lugar central en la vida de los niños","Celebración en 'Un cuento de Navidad'","Villano en 'Oliver Twist'"]
+    },
+    "20": {
+        "word": "DON",
+        "crosswords": ["Dulcinea", "Obsesión", "Noche"],
+        "references": ["El amor imposible de Don Quijote","Lo que siente por las aventuras","Momento de reflexión en su vida"]
+
     }
 }
+        
+    

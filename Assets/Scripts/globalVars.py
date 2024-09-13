@@ -20,5 +20,5 @@ MUSIC = MUSIC.play()
 MUSIC.stop()
 
 CW_INDEXS = []
-
+HM_INDEXS = []
 HELPS = 0

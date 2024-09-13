@@ -1,7 +1,8 @@
 import sounds
 import arcade
 import globalVars
-
+from textView import TextView
+import random
 class Letter(arcade.SpriteSolidColor):
     def __init__(self, color,font,x,y,letter,isIn):
         super().__init__(font, font, color)
@@ -16,9 +17,12 @@ class Letter(arcade.SpriteSolidColor):
 
 class HangmanView(arcade.View):
     global globalVars
-    def __init__(self, window: arcade.Window,word:str,op = 5):
+    def __init__(self, window: arcade.Window,word:str,op,help):
         super().__init__(window)
         self.word = word
+        print(word)
+        self.help = help
+        self.helpView = TextView(window,help[random.randint(0, len(help)-1)],self,type=2)
         self.canPass = False
         self.gameView = None
         self.op = op
@@ -26,14 +30,23 @@ class HangmanView(arcade.View):
         self.letters = []
         for l in self.word:
             self.letters.append(l.upper())
-        self.discoveredLetters = ["_" for i in range(len(self.letters))]
+        self.discoveredLetters = []
+        for l in self.word:
+            if not l == " ":
+                self.discoveredLetters.append("_")
+            else:
+                self.discoveredLetters.append(" ")
         self.l = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ"
         self.fontSize = 30
         self.lettersSpriteList: arcade.SpriteList[Letter] = arcade.SpriteList()
         totalWidth = len(self.l) * (self.fontSize + 10)
         x = (self.window.width - totalWidth)/2
         width = totalWidth / len(self.l)
-        
+        self.btList = arcade.SpriteList()
+        self.bt = arcade.SpriteSolidColor(len("AYUDA")*self.fontSize,self.fontSize,arcade.color.WHITE)
+        self.bt.center_x = self.window.width/2
+        self.bt.center_y = self.window.height*.4
+        self.btList.append(self.bt)
         for l in self.l:
             if self.letters.count(l):
                 isIn = True
@@ -45,8 +58,14 @@ class HangmanView(arcade.View):
     def setup(self):
         self.letters = []
         for l in self.word:
+            
             self.letters.append(l.upper())
-        self.discoveredLetters = ["_" for i in range(len(self.letters))]
+        self.discoveredLetters = []
+        for l in self.word:
+            if not l == " ":
+                self.discoveredLetters.append("_")
+            else:
+                self.discoveredLetters.append(" ")
         self.lettersSpriteList: arcade.SpriteList[Letter] = arcade.SpriteList()
         totalWidth = len(self.l) * (self.fontSize + 10)
         x = (self.window.width - totalWidth)/2
@@ -63,8 +82,9 @@ class HangmanView(arcade.View):
     def on_draw(self):
         arcade.start_render()
         self.clear()
+        arcade.draw_text(f"Oportunidades: {self.op}",0,self.window.height,font_name="Retro Gaming",font_size=20,anchor_x="left",anchor_y="top")
+        arcade.draw_text("AYUDA",self.bt.center_x,self.bt.center_y,self.bt.color,self.fontSize,font_name="Retro Gaming",anchor_x="center",anchor_y="center")
         arcade.draw_text("DESCUBRE LA PALABRA ANTES DE QUE SE TE ACABEN LAS OPORTUNIDADES",self.window.width/2,0,font_name="Retro Gaming",font_size=20,anchor_x="center",anchor_y="bottom")
-        arcade.draw_text(f"Oportunidades: {self.op}/{self.startOp}",self.window.width/2,self.window.height,font_name="Retro Gaming",font_size=24,anchor_x="center",anchor_y="top")
         totalWidth = len(self.discoveredLetters) * (50 + 20)
         x = (self.window.width - totalWidth) / 2
         width = totalWidth / len(self.discoveredLetters)
@@ -81,6 +101,7 @@ class HangmanView(arcade.View):
                     arcade.draw_text("/",l.center_x,l.center_y,arcade.color.RED_DEVIL,30,anchor_x="center",anchor_y="center",font_name="Retro Gaming")
                 else:
                     arcade.draw_text(l.letter,l.center_x,l.center_y,l.color,l.font,anchor_x="center",anchor_y="center",font_name="Retro Gaming")
+                    
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         
         for b in arcade.get_sprites_at_point((x,y),self.lettersSpriteList):
@@ -110,7 +131,11 @@ class HangmanView(arcade.View):
                         self.op = self.startOp
                         self.canPass = False
                         self.setup()
-                        self.window.show_view(self.gameView)         
+                        self.window.show_view(self.gameView) 
+                        
+        for b in self.btList:
+            if arcade.get_sprites_at_point((x,y),self.btList):
+                self.window.show_view(self.helpView)        
     def on_mouse_motion(self, x: int, y: int, dx: int, dy: int):
         if arcade.get_sprites_at_point((x,y),self.lettersSpriteList):
 
@@ -123,4 +148,9 @@ class HangmanView(arcade.View):
                 if not b.isTouched:
                     b.color = arcade.color.WHITE
                     b.font = 30
+        for b in self.btList:
+            if arcade.get_sprites_at_point((x,y),self.btList):
+                self.bt.color = arcade.color.GRAY
+            else:
+                self.bt.color = arcade.color.WHITE
         
