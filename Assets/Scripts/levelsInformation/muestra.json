@@ -1,0 +1,61 @@
+{
+    "keys":[    
+        {
+            
+            "x": 100,
+            "y": 300,
+            "type": 1,
+            "qm": {
+                "questions":"Assets/Scripts/questionsFiles/level1Q.json",
+                "op":5, 
+                "qq":3
+            }
+        },
+        {
+            "x": 600,
+            "y": 500,
+            "type": 2
+        },
+        {
+            "x":600,
+            "y":900,
+            "type":3,
+            "hm":{
+                "words":"CORTAZAR",
+                "op": 5
+            }
+        }
+    ],
+    "lifes":[
+        {
+            "x":100,
+            "y":500
+        }
+    ],
+    "notes":[
+        {
+            "x": 500,
+            "y":500,
+            "text":"Esta es una nota que da unaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaa aaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaa aaaaaaaaaaaaa aaaaaaaaaaaaaaaa aaaaaaaaaaaaaaa aaaaaaaaaaaaaa aaaaaaaaaaaaa aa pista, y es una prueba para ver como funciona"
+        }
+    ],
+    "rocks":[
+        {
+            "x":500,
+            "y":950
+        }
+    ],
+    "helps":[
+        {
+            "x":500,
+            "y":1000
+        }
+    ],
+    "setup":{
+        "playerX":500,
+        "playerY":800,
+        "playerScale": 2.5,
+        "tilemap": "Assets/Levels/proofLevel.json"
+    }
+
+}

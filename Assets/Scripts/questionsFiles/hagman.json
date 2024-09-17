@@ -1,0 +1,75 @@
+
+{
+    "0": {
+        "word":"HARRY POTTER",
+        "hint":["Protagonista de la saga escrita por JK Rowling"]
+    },
+    "1": {
+        "word": "DON QUIJOTE",
+        "hint": ["Título de la novela de Cervantes"]
+    },
+    "2": {
+        "word": "CUMBRES BORRASCOSAS",
+        "hint": ["Título de la novela de Emily Brontë"]
+    },
+    "3": {
+        "word": "GATSBY",
+        "hint": ["Título de la novela de F. Scott Fitzgerald"]
+    },
+    "4": {
+        "word": "MOBY DICK",
+        "hint": ["Título de la novela de Herman Melville"]
+    },
+    "5": {
+        "word": "ORGULLO Y PREJUICIO",
+        "hint": ["Título de la novela de Jane Austen"]
+    },
+    "6": {
+        "word": "ANA KARENINA",
+        "hint": ["Título de la novela de Tolstoy"]
+    },
+    "7": {
+        "word": "EL PRINCIPITO",
+        "hint": ["Título del libro de Antoine de Saint-Exupéry"]
+    },
+    "8": {
+        "word": "EL HOBBIT",
+        "hint": ["Título de la novela de J.R.R. Tolkien"]
+    },
+    "9": {
+        "word": "JANE EYRE",
+        "hint": ["Título de la novela de Charlotte Brontë"]
+    },
+    "10": {
+        "word": "DORIAN GRAY",
+        "hint": ["Título de la novela de Oscar Wilde"]
+    },
+    "11": {
+        "word": "LOS MISERABLES",
+        "hint": ["Título de la novela de Victor Hugo"]
+    },
+    "12": {
+        "word": "ROBIN HOOD",
+        "hint": ["Famoso héroe inglés conocido por robar a los ricos y dar a los pobres"]
+    },
+    "13": {
+        "word": "JULIETA",
+        "hint": ["Protagonista de la obra de Shakespeare 'Romeo y Julieta'"]
+    },
+    "14": {
+        "word": "DRÁCULA",
+        "hint": ["Famoso vampiro creado por Bram Stoker"]
+    },
+    "15": {
+        "word": "SHERLOCK HOLMES",
+        "hint": ["Detective creado por Arthur Conan Doyle"]
+    },
+    "16": {
+        "word": "HERCULES",
+        "hint": ["Héroe mitológico griego conocido por sus doce trabajos"]
+    },
+    "17": {
+        "word": "JAMES BOND",
+        "hint": ["Agente secreto creado por Ian Fleming"]
+    }
+}

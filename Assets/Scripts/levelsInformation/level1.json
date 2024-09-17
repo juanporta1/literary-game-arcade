@@ -1,74 +1,121 @@
 {
-    "keys":[    
+    "setup":{
+        "playerX":50,
+        "playerY":2200,
+        "tilemap":"Assets/Levels/level1.json"
+    },
+    "keys":[   
         {
-            
-            "x": 100,
-            "y": 300,
-            "type": 1,
-            "qm": {
-                "questions":"Assets/Scripts/questionsFiles/level1Q.json",
-                "op":5, 
-                "qq":3
-            }
+           "x":2386,
+           "y":1676,
+           "type":2
         },
         {
-            "x": 600,
-            "y": 500,
-            "type": 2,
-            "cw": {
-                "words":"Assets/Scripts/questionsFiles/crosswords.json",
-                "op":5
-            }
-        },
-        {
-            "x":600,
-            "y":900,
-            "type":3,
-            "hm":{
-                "words":"CORTAZAR",
-                "op": 5
-            }
-        }
+            "x":2172,
+            "y":1256,
+            "type":2
+         },
+         {
+            "x":2208,
+            "y":208,
+            "type":3
+         }   
     ],
     "lifes":[
         {
-            "x":100,
-            "y":500
-        },
-        {
-            "x":200,
-            "y":500
+            "x":118,
+            "y":1700
         }
     ],
     "notes":[
         {
-            "x": 300,
-            "y":500,
-            "text":"Esta es una nota que da una pista, y es una prueba para ver como funciona",
-            "bg":"Backgrounds/black.jpg"
+            "x":474,
+            "y":2216,
+            "text":"Hola nuevo aventurero, desconozco la razón por la que aquí estás, es un lugar muy peligroso, y deberias correr hacia tu casa. Pero si no lo haces, he dejado muchas notas como esta a lo largo del camino, espero que te sean de ayuda."
+        },
+        {
+            "x":1370,
+            "y":2284,
+            "text":"Que extraña esta biblioteca sola aquí, capaz puedas encontrar algo de interes dentro."
+        },
+        {
+            "x":1826,
+            "y":2288,
+            "text":"Esta puerta tiene muchas cerraduras, posiblemente puedas ir a la siguiente habitación a travez de ella y así encontrar todos los secretos de este maldito castillo."
+        },
+        {
+            "x":1466,
+            "y":2080,
+            "text":"¡Ten cuidado!, este castillo es algo antiguo y ademas de tener trampas, esta bastante destruido. ¡Mira por donde caminas!"
+        },
+        {
+            "x":1346,
+            "y":1588,
+            "text":"Mira, una puerta.¿Te está pidiendo un código? Quizas el código que encontraste en la biblioteca solitaria podria servirte, quizas no."
+        },
+        {
+            "x":2200,
+            "y":1576,
+            "text":"Otra puerta con codigo, verifica si alguno de los códigos que hayas encontrado te sirve con esta. Y mira, dentro hay otra llave. Debes encontrar ese código."
+        },
+        {
+            "x":1470,
+            "y":1856,
+            "text":"En este castillo ademas de encontrar trampas, encontrarás puertas que deberán activarse con algún mecanismo introduciendo un código o quizas moviendo algo pesado. ¡No dejes pasar nada!"
+        },
+        {
+            "x":642,
+            "y":1776,
+            "text":"¡Cuidado!¡Otro pozo!, Pero mira, esta vez hay un puente, trata de cruzar sobre él."
+        },
+        {
+            "x":118,
+            "y":1788,
+            "text":"Eso es o era, no sé si ya lo has utilizado, un Cristal De Vida, te darán otra oportunidad si es que fallas. Siempre que los veas, ¡Agárralos!"
+        },
+        {
+            "x":2370,
+            "y":1790,
+            "text":"Mira, eso es una llave, necesitas agarrar todas para pasar a la siguiente habitacion, esas puertas tienen demasiadas cerraduras."
+        },
+        {
+            "x":405,
+            "y":622,
+            "text":"Que habitacion mas grande... y vacia."
+        },
+        {
+            "x":1501,
+            "y":138,
+            "text":"Una biblioteca bastante grande, será dificil, pero puede que encuentres aqui algun código."
+        },
+        {
+            "x":157,
+            "y":238,
+            "text":"A ese mago le gustaban mucho los libros, ten eso en cuenta."
+        },
+        {
+            "x":2048,
+            "y":1172,
+            "text":"Procura no saltarte nada, en cualquier lugar puede haber una pista escondida"
+        },
+        {
+            "x":2336,
+            "y":208,
+            "text":"Esa es la última llave, ve a ver si la puerta del comienzo ya esta abierta y... ¡Mira eso! Como brilla."
+        },
+        {
+            "x":2383,
+            "y":120,
+            "text":"Eso podria sernos de AYUDA, tómalo."
         }
     ],
     "rocks":[
-        {
-            "x":500,
-            "y":950
-        },
-        {
-            "x":600,
-            "y":950
-        }
+        
     ],
     "helps":[
         {
-            "x":500,
-            "y":1000
+            "x":2483,
+            "y":112
         }
-    ],
-    "setup":{
-        "playerX":500,
-        "playerY":800,
-        "playerScale": 2.5,
-        "tilemap": "Assets/Levels/proofLevel.json"
-    }
-
+    ]
 }

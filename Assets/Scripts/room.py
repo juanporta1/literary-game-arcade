@@ -17,7 +17,7 @@ import functions
 from codeInput import CodeInput
 from math import *
 class Note(arcade.Sprite):
-    def __init__(self, x,y,window,text,nextView,bg="Assets/Backgrounds/note1.jpeg",filename="Assets/Sprites/Notes/closeNote.png",scale = 1):
+    def __init__(self, x,y,window,text,nextView,bg,filename="Assets/Sprites/Notes/closeNote.png",scale = 1):
         super().__init__(filename, scale, center_x = x, center_y = y)
         self.view = TextView(window,text,nextView,bg=bg,type=2,style={ "font_name": "Morris Roman","bg_color": None,"bg_color_pressed": None,"border_color": None,"font_size": 25 ,"font_color":arcade.color.BLACK,"font_color_pressed":arcade.color.BLACK},width=800)
         self.set_hit_box(((-60,-60),(20,20),(-20,20),(60,-60)))
@@ -100,7 +100,7 @@ class Room(arcade.View):
     
     def __init__(self,window,menu,game,jsonFile, nextRoom = None):
         super().__init__(window)
-        with open(jsonFile,"r") as file:
+        with open(jsonFile,"r",encoding="utf-8") as file:
             data = file.read()
         jsonData = json.loads(data)
         self.x = jsonData["setup"]["playerX"]
@@ -114,7 +114,7 @@ class Room(arcade.View):
         self.guiCamera = arcade.Camera(globalVars.ACTUAL_WIDTH,globalVars.ACTUAL_HEIGHT)
         self.map = arcade.load_tilemap(jsonData["setup"]["tilemap"],scaling=F_ONE)
         self.scene = arcade.Scene.from_tilemap(self.map)
-        self.player = Player(functions.scaleInt(jsonData["setup"]["playerX"]),functions.scaleInt(jsonData["setup"]["playerY"]),functions.scaleFloat(jsonData["setup"]["playerScale"]))
+        self.player = Player(functions.scaleInt(jsonData["setup"]["playerX"]),functions.scaleInt(jsonData["setup"]["playerY"]),functions.scaleFloat(2.5))
         self.scene.add_sprite_list("Player")
         self.scene.add_sprite("Player", self.player)
         self.player.center_x = self.x
@@ -145,7 +145,7 @@ class Room(arcade.View):
                 newKey.game.gameView = self
                 self.scene.add_sprite("Key",newKey)
             elif key["type"] == 2:
-                with open(key["cw"]["words"],"r",encoding="utf-8") as f:
+                with open("Assets/Scripts/questionsFiles/crosswords.json","r",encoding="utf-8") as f:
                     data = f.read()
                 words = json.loads(data)
                 if len(globalVars.CW_INDEXS) == len(words):
@@ -154,12 +154,21 @@ class Room(arcade.View):
                 while globalVars.CW_INDEXS.count(i):
                     i = random.randint(0,len(words)-1)
                 globalVars.CW_INDEXS.append(i)
-                qm = CrosswordView(window,words[str(i)],key["cw"]["op"])
+                qm = CrosswordView(window,words[str(i)],5)
                 newKey = Key(x=functions.scaleInt(key["x"]),y=functions.scaleInt(key["y"]),game=qm)
                 newKey.game.gameView = self
                 self.scene.add_sprite("Key",newKey)
             elif key["type"] == 3:
-                hm = HangmanView(self.window,key["hm"]["words"],key["hm"]["op"])
+                with open("Assets\Scripts\questionsFiles\hagman.json","r",encoding="utf-8") as f:
+                    data = f.read()
+                words = json.loads(data)
+                if len(globalVars.HM_INDEXS) == len(words):
+                    globalVars.HM_INDEXS = []
+                i = random.randint(0,len(words)-1)
+                while globalVars.HM_INDEXS.count(i):
+                    i = random.randint(0,len(words)-1)
+                globalVars.HM_INDEXS.append(i)    
+                hm = HangmanView(self.window,words[str(i)]["word"],5,words[str(i)]["hint"])
                 newKey = Key(x=functions.scaleInt(key["x"]),y=functions.scaleInt(key["y"]),game=hm)
                 newKey.game.gameView = self
                 self.scene.add_sprite("Key",newKey)
@@ -169,10 +178,10 @@ class Room(arcade.View):
             self.scene.add_sprite("Life",sprite)
         
         for note in notes:
-            nt = Note(functions.scaleInt(note["x"]),functions.scaleInt(note["y"]),self.window,note["text"],self)
+            nt = Note(functions.scaleInt(note["x"]),functions.scaleInt(note["y"]),self.window,note["text"],self,f"Assets/Backgrounds/note{random.randint(1,3)}.jpg")
             self.scene.add_sprite("Note",nt)
         self.rockEngines = []
-        
+        self.catchedRock = []
         for rock in rocks:
             r = arcade.Sprite(f"Assets/Sprites/DecoCastle/rocks/rock{random.randint(3,5)}.png",center_x=functions.scaleInt(rock["x"]),center_y=functions.scaleInt(rock["y"]),scale=F_ONE)
             self.scene.add_sprite("Rock",r)
@@ -217,7 +226,7 @@ class Room(arcade.View):
         for i in range(1,len(self.codeDoors)+1):
             code = random.randint(1000,9999)
             self.scene[f"CodeDoor{i}"].input = CodeInput(self.window,self,code)
-            self.scene[f"Code{i}"].codeView = TextView(self.window,f"{code}",self,bg="Assets/Backgrounds/note1.jpeg",type=2,style={ "font_name": "Morris Roman","bg_color": None,"bg_color_pressed": None,"border_color": None,"font_size": 75 ,"font_color":arcade.color.BLACK,"font_color_pressed":arcade.color.BLACK})
+            self.scene[f"Code{i}"].codeView = TextView(self.window,f"{code}",self,bg=f"Assets/Backgrounds/note{random.randint(1,3)}.jpg",type=2,style={ "font_name": "Morris Roman","bg_color": None,"bg_color_pressed": None,"border_color": None,"font_size": 75 ,"font_color":arcade.color.BLACK,"font_color_pressed":arcade.color.BLACK})
 
         for i in self.moveWalls:
             self.scene[i].leftCenterX = 0
@@ -367,10 +376,11 @@ class Room(arcade.View):
             arcade.draw_text("PRESIONA E PARA LEER",self.window.width/2,ONEHUNDRED,font_name="Retro Gaming",font_size=SIXTEEN,anchor_x="center")
 
         if arcade.check_for_collision_with_list(self.player,self.scene["Rock"]):
-            if self.catchedRock[0]:
-                pass
-            else:
-                arcade.draw_text("MANTEN ESPACIO PARA EMPUJAR",self.window.width/2,ONEHUNDRED,font_name="Retro Gaming",font_size=SIXTEEN,anchor_x="center")
+            if len(self.catchedRock):
+                if self.catchedRock[0]:
+                    pass
+                else:
+                    arcade.draw_text("MANTEN ESPACIO PARA EMPUJAR",self.window.width/2,ONEHUNDRED,font_name="Retro Gaming",font_size=SIXTEEN,anchor_x="center")
         
         for i in self.rockDoors:
             if (arcade.check_for_collision_with_list(self.player,self.scene[f"{i}A"]) or arcade.check_for_collision_with_list(self.player,self.scene[f"{i}B"])) and self.scene[f"{i}"].visible == False:
@@ -382,10 +392,11 @@ class Room(arcade.View):
         
         
     def update_player_velocity(self):
-        if self.catchedRock[0]:
-            self.speed = 2
-        else:
-            self.speed = 4
+        if len(self.catchedRock):
+            if self.catchedRock[0]:
+                self.speed = 2
+            else:
+                self.speed = 4
         
         if self.player.moveUp and not self.player.moveDown:
             self.player.change_y = self.speed
@@ -400,17 +411,17 @@ class Room(arcade.View):
             self.player.change_x = self.speed
         if (not self.player.moveLeft and not self.player.moveRight) or (self.player.moveLeft and self.player.moveRight):
             self.player.change_x = 0
+        if len(self.catchedRock):        
+            if self.catchedRock[0]:
+                if not self.rockSound.get_busy():
+                    self.rockSound = sounds.rocks[random.randint(0,len(sounds.rocks)-1)].play()
+                
+                self.catchedRock[1].change_x = self.player.change_x
+                self.catchedRock[1].change_y = self.player.change_y
+            else:
+                self.catchedRock[1].change_x = 0
+                self.catchedRock[1].change_y = 0       
             
-        if self.catchedRock[0]:
-            if not self.rockSound.get_busy():
-                self.rockSound = sounds.rocks[random.randint(0,len(sounds.rocks)-1)].play()
-            
-            self.catchedRock[1].change_x = self.player.change_x
-            self.catchedRock[1].change_y = self.player.change_y
-        else:
-            self.catchedRock[1].change_x = 0
-            self.catchedRock[1].change_y = 0       
-        
     def on_key_press(self, key: int, modifiers: int):
         if self.player.center_x >= 0 and self.player.center_y >= 0 and not self.player.wasDeath and not self.touchShadow:
             if key == arcade.key.A:
@@ -489,11 +500,12 @@ class Room(arcade.View):
                     self.scene[f"Shadow{i}"].visible = False  
                     
             for rock in arcade.check_for_collision_with_list(self.player,self.scene["Rock"]):
-                if key == arcade.key.SPACE and not self.catchedRock[0]:
-                    
-                    self.catchedRock = [True,rock]
-                    self.rockSound = sounds.rocks[random.randint(0,len(sounds.rocks)-1)].play()
-                    break
+                if len(self.catchedRock):
+                    if key == arcade.key.SPACE and not self.catchedRock[0]:
+                        
+                        self.catchedRock = [True,rock]
+                        self.rockSound = sounds.rocks[random.randint(0,len(sounds.rocks)-1)].play()
+                        break
             for i in self.rockDoors:
                 if arcade.check_for_collision_with_list(self.player,self.scene[f"{i}A"]) and key == arcade.key.E and self.scene[f"{i}"].visible == False and not self.isInRockDoor:  
                     
@@ -556,12 +568,12 @@ class Room(arcade.View):
             self.player.moveUp = False
         if key == arcade.key.S or self.player.wasDeath:
             self.player.moveDown = False
-            
-        if key == arcade.key.SPACE and self.catchedRock[0]:
-            self.catchedRock = [False,self.catchedRock[1]]
-            for i in range(1, len(self.rockDoors)+1):
-                if arcade.check_for_collision_with_list(self.catchedRock[1],self.scene[f"RockDoorKey{i}"]):
-                    sounds.mechanism.play()
+        if len(self.catchedRock):    
+            if key == arcade.key.SPACE and self.catchedRock[0]:
+                self.catchedRock = [False,self.catchedRock[1]]
+                for i in range(1, len(self.rockDoors)+1):
+                    if arcade.check_for_collision_with_list(self.catchedRock[1],self.scene[f"RockDoorKey{i}"]):
+                        sounds.mechanism.play()
         
     def checkKeys(self):
         allPasses = []
@@ -786,16 +798,17 @@ class Room(arcade.View):
         
         for i in range(1,len(self.rockDoors)+1):
             for rock in self.scene["Rock"]:
-                if arcade.check_for_collision_with_list(rock,self.scene[f"RockDoorKey{i}"]) and not self.catchedRock[0]:
-                    rock.center_x = self.scene[f"RockDoorKey{i}"][0].center_x
-                    rock.center_y = self.scene[f"RockDoorKey{i}"][0].center_y
-                    self.scene[f"RockDoor{i}"].visible = False
-                    self.scene[f"RockDoorKey{i}"].visible = False
-                    break
-                elif self.catchedRock[1] == rock and arcade.check_for_collision_with_list(rock,self.scene[f"RockDoorKey{i}"]):
-                    self.scene[f"RockDoor{i}"].visible = True
-                    self.scene[f"RockDoorKey{i}"].visible = True
-        
+                if len(self.catchedRock):
+                    if arcade.check_for_collision_with_list(rock,self.scene[f"RockDoorKey{i}"]) and not self.catchedRock[0]:
+                        rock.center_x = self.scene[f"RockDoorKey{i}"][0].center_x
+                        rock.center_y = self.scene[f"RockDoorKey{i}"][0].center_y
+                        self.scene[f"RockDoor{i}"].visible = False
+                        self.scene[f"RockDoorKey{i}"].visible = False
+                        break
+                    elif self.catchedRock[1] == rock and arcade.check_for_collision_with_list(rock,self.scene[f"RockDoorKey{i}"]):
+                        self.scene[f"RockDoor{i}"].visible = True
+                        self.scene[f"RockDoorKey{i}"].visible = True
+            
         for i in range(1,len(self.moveWalls)+1):
             
                 if self.scene[f"MoveWallKey{i}"].visible == False and self.scene[f"MoveWall{i}"].startLeftCenterX != self.scene[f"MoveWall{i}"].rightCenterX and self.scene[f"MoveWall{i}"].side == "left":
@@ -858,7 +871,7 @@ class Room(arcade.View):
         
         if arcade.check_for_collision_with_list(self.player,self.scene["Door"]) and not self.scene["Door"].visible:
             self.init = 3
-        
+        print((self.player.center_x,self.player.center_y))
             
     
     

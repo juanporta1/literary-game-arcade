@@ -73,6 +73,8 @@ class CrosswordView(arcade.View):
         diff = self.window.height - height
         y = diff / 2 + height
         height /= len(self.letters)        
+        print(self.indexs)
+        print(self.word)
         for i in range(len(self.letters)):
             sprite = arcade.SpriteSolidColor(self.principalFontSize + FIFTY,self.principalFontSize,arcade.color.AERO_BLUE)
             sprite.center_x = self.window.width / 2
@@ -99,7 +101,6 @@ class CrosswordView(arcade.View):
             sprite.startX = copy(sprite.center_x)
             sprite.startY = copy(sprite.center_y)
             y -= self.font_size + THIRTY 
-            print(sprite.center_x,sprite.center_y)
         
     def on_show(self):
         self.init = 0    
