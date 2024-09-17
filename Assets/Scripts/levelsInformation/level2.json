@@ -1,0 +1,64 @@
+{
+    "keys":[   
+        {
+            "x":2332,
+            "y":2112,
+            "type":3
+        },
+        {
+            "x":2455,
+            "y":175,
+            "type":3
+        }       
+    ],
+    "lifes":[
+        {
+            "x":2292,
+            "y":1664    
+        }
+    ],
+    "notes":[
+        {
+            "x":956,
+            "y":1107,
+            "text":"Ese pasillo esta demasiado oscuro, enciende las luces primero. Había leído en un libro que el gran mago ponía para encender sus luces en antorchas magicas, busca alguna sin fuego e intenta accionarla."
+        },
+        {
+            "x":2207,
+            "y":1227,
+            "text":"Mira esa roca, tal vez puedas moeverla a algún lado y activar una mecanismo... a algún lado como esa placa de presion, intenta llevarla allí."
+        },
+        {
+            "x":495,
+            "y":1099,
+            "text":"¡Muy bien! Conseguiste encender las luces. Ahi adelante hay una de esas puertas código, habrá que buscarlo."
+        },
+        {
+            "x":308,
+            "y":1584,
+            "text":"Una habitación aparentemente vacía. No creo que el mago haya querido proteger una habitación sin nada, deberías investigar."
+        }
+    ],
+    "rocks":[
+        {
+            "x":1968,
+            "y":1123
+        },
+        {
+            "x":660,
+            "y":1560
+        }
+    ],
+    "helps":[
+        {
+            "x":132,
+            "y":2131
+        }
+    ],
+    "setup":{
+        "playerX":1500,
+        "playerY":1500,
+        "tilemap": "Assets/Levels/level2.json"
+    }
+
+}

@@ -873,6 +873,3 @@ class Room(arcade.View):
             self.init = 3
         print((self.player.center_x,self.player.center_y))
             
-    
-    
-        

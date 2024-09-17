@@ -26,6 +26,7 @@ class HangmanView(arcade.View):
         self.canPass = False
         self.gameView = None
         self.op = op
+        self.canUseHelp = False
         self.startOp = op
         self.letters = []
         for l in self.word:
@@ -85,6 +86,7 @@ class HangmanView(arcade.View):
         arcade.draw_text(f"Oportunidades: {self.op}",0,self.window.height,font_name="Retro Gaming",font_size=20,anchor_x="left",anchor_y="top")
         arcade.draw_text("AYUDA",self.bt.center_x,self.bt.center_y,self.bt.color,self.fontSize,font_name="Retro Gaming",anchor_x="center",anchor_y="center")
         arcade.draw_text("DESCUBRE LA PALABRA ANTES DE QUE SE TE ACABEN LAS OPORTUNIDADES",self.window.width/2,0,font_name="Retro Gaming",font_size=20,anchor_x="center",anchor_y="bottom")
+        arcade.draw_text(f"Ayudas Disponibles: {globalVars.HELPS}",self.window.width,self.window.height,font_size=self.fontSize,font_name="Retro Gaming",anchor_x="right",anchor_y="top")
         totalWidth = len(self.discoveredLetters) * (50 + 20)
         x = (self.window.width - totalWidth) / 2
         width = totalWidth / len(self.discoveredLetters)
@@ -134,8 +136,12 @@ class HangmanView(arcade.View):
                         self.window.show_view(self.gameView) 
                         
         for b in self.btList:
-            if arcade.get_sprites_at_point((x,y),self.btList):
+            if arcade.get_sprites_at_point((x,y),self.btList) and self.canUseHelp:
                 self.window.show_view(self.helpView)        
+            elif arcade.get_sprites_at_point((x,y),self.btList) and not self.canUseHelp and globalVars.HELPS > 0:
+                globalVars.HELPS -= 1
+                self.canUseHelp = True
+                self.window.show_view(self.helpView)
     def on_mouse_motion(self, x: int, y: int, dx: int, dy: int):
         if arcade.get_sprites_at_point((x,y),self.lettersSpriteList):
 
