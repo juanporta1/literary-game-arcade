@@ -1,0 +1,55 @@
+{
+    
+    "setup":{
+        "playerX":2272,
+        "playerY":234,
+        "tilemap": "Assets/Levels/level3.json"
+    },
+    "keys":[   
+        {
+            "x":733,
+            "y":943,
+            "type":2
+        },
+        {
+            "x":97,
+            "y":246,
+            "type":3
+        }
+    ],
+    "lifes":[
+        {
+            "x":1645,
+            "y":574
+        },
+        {
+            "x":2427,
+            "y":1078
+        },
+        {
+            "x":389,
+            "y":1742
+        }
+    ],
+    "notes":[
+        {
+            "x":2272,
+            "y":170,
+            "text":"Te encuentras en el calabozo, fue construido para realizar horribles cosas, pero además para que los prisioneros no puedan escapar, me han contado que aquí comenzaron a implementar los famosos Pisos Falsos. Ten cuidado por donde caminas."
+        },
+        {
+            "x":2239,
+            "y":1479,
+            "text":"He leído en algun lado que el mago Alden fue pionero en los muros movedizos, tal vez deberías estar atento a mecanismos ocultos... como palancas..."
+        }
+    ],
+    "rocks":[
+    ],
+    "helps":[
+        {
+            "x":1649,
+            "y":486
+        }
+    ]
+
+}

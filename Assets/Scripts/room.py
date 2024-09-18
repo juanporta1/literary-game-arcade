@@ -494,69 +494,69 @@ class Room(arcade.View):
             elif (arcade.check_for_collision_with_list(self.player,self.scene[f"{codeDoor}A"]) or arcade.check_for_collision_with_list(self.player,self.scene[f"{codeDoor}B"])) and self.scene[f"{codeDoor}"].visible and key == arcade.key.E:
                 self.window.show_view(self.scene[codeDoor].input)
             
-            for i in range(1,len(self.shadows)+1):
-                if arcade.check_for_collision_with_list(self.player,self.scene[f"UnShadow{i}"]) and key == arcade.key.E and self.scene[f"Shadow{i}"].visible:
-                    self.scene[f"UnShadow{i}"].visible = False
-                    self.scene[f"Shadow{i}"].visible = False  
+        for i in range(1,len(self.shadows)+1):
+            if arcade.check_for_collision_with_list(self.player,self.scene[f"UnShadow{i}"]) and key == arcade.key.E and self.scene[f"Shadow{i}"].visible:
+                self.scene[f"UnShadow{i}"].visible = False
+                self.scene[f"Shadow{i}"].visible = False  
+                
+        for rock in arcade.check_for_collision_with_list(self.player,self.scene["Rock"]):
+            if len(self.catchedRock):
+                if key == arcade.key.SPACE and not self.catchedRock[0]:
                     
-            for rock in arcade.check_for_collision_with_list(self.player,self.scene["Rock"]):
-                if len(self.catchedRock):
-                    if key == arcade.key.SPACE and not self.catchedRock[0]:
-                        
-                        self.catchedRock = [True,rock]
-                        self.rockSound = sounds.rocks[random.randint(0,len(sounds.rocks)-1)].play()
-                        break
-            for i in self.rockDoors:
-                if arcade.check_for_collision_with_list(self.player,self.scene[f"{i}A"]) and key == arcade.key.E and self.scene[f"{i}"].visible == False and not self.isInRockDoor:  
-                    
-                    codeB = self.scene[f"{i}B"]
-                    x = 0
-                    y = 0
-                    for sprite in codeB:
-                        x += sprite.center_x                    
-                        y += sprite.center_y
-                    
-                    promX = trunc(x/len(codeB))
-                    promY = trunc(y/len(codeB))
-                    self.player.center_x = promX
-                    self.player.center_y = promY
-                    self.isInRockDoor = True
+                    self.catchedRock = [True,rock]
+                    self.rockSound = sounds.rocks[random.randint(0,len(sounds.rocks)-1)].play()
+                    break
+        for i in self.rockDoors:
+            if arcade.check_for_collision_with_list(self.player,self.scene[f"{i}A"]) and key == arcade.key.E and self.scene[f"{i}"].visible == False and not self.isInRockDoor:  
+                
+                codeB = self.scene[f"{i}B"]
+                x = 0
+                y = 0
+                for sprite in codeB:
+                    x += sprite.center_x                    
+                    y += sprite.center_y
+                
+                promX = trunc(x/len(codeB))
+                promY = trunc(y/len(codeB))
+                self.player.center_x = promX
+                self.player.center_y = promY
+                self.isInRockDoor = True
 
-                elif arcade.check_for_collision_with_list(self.player,self.scene[f"{i}B"]) and key == arcade.key.E and self.scene[f"{i}"].visible == False and not self.isInRockDoor: 
+            elif arcade.check_for_collision_with_list(self.player,self.scene[f"{i}B"]) and key == arcade.key.E and self.scene[f"{i}"].visible == False and not self.isInRockDoor: 
+                
+                codeA = self.scene[f"{i}A"]
+                x = 0
+                y = 0
+                for sprite in codeA:
+                    x += sprite.center_x                    
+                    y += sprite.center_y
+                
+                promX = trunc(x/len(codeA))
+                promY = trunc(y/len(codeA))
+                self.player.center_x = promX
+                self.player.center_y = promY
+                self.isInRockDoor = True
+        for i in range(1,len(self.moveWalls)+1):
+            
+            if arcade.check_for_collision_with_list(self.player,self.scene[f"MoveWallKey{i}"]) and self.scene[f"MoveWallKey{i}"].visible and key == arcade.key.E:
+                self.scene[f"MoveWallKey{i}"].visible = False
+                if self.scene[f"MoveWall{i}"].leftCenterX != 0:
+                    for s in self.scene[f"SideMoveWall{i}"]:
+                        if s.center_x == self.scene[f"MoveWall{i}"].rightCenterX:
+                            self.scene[f"MoveWall{i}"].side = "right"
+                            break
+                        elif s.center_x == self.scene[f"MoveWall{i}"].leftCenterX:
+                            self.scene[f"MoveWall{i}"].side = "left"
+                            break
+                else:
+                    for s in self.scene[f"SideMoveWall{i}"]:
+                        if s.center_y == self.scene[f"MoveWall{i}"].topCenterY:
+                            self.scene[f"MoveWall{i}"].side = "top"
+                            break
+                        elif s.center_y == self.scene[f"MoveWall{i}"].bottomCenterY:
+                            self.scene[f"MoveWall{i}"].side = "bottom"
+                            break
                     
-                    codeA = self.scene[f"{i}A"]
-                    x = 0
-                    y = 0
-                    for sprite in codeA:
-                        x += sprite.center_x                    
-                        y += sprite.center_y
-                    
-                    promX = trunc(x/len(codeA))
-                    promY = trunc(y/len(codeA))
-                    self.player.center_x = promX
-                    self.player.center_y = promY
-                    self.isInRockDoor = True
-                for i in range(1,len(self.moveWalls)+1):
-                    
-                    if arcade.check_for_collision_with_list(self.player,self.scene[f"MoveWallKey{i}"]) and self.scene[f"MoveWallKey{i}"].visible and key == arcade.key.E:
-                        self.scene[f"MoveWallKey{i}"].visible = False
-                        if self.scene[f"MoveWall{i}"].leftCenterX != 0:
-                            for s in self.scene[f"SideMoveWall{i}"]:
-                                if s.center_x == self.scene[f"MoveWall{i}"].rightCenterX:
-                                    self.scene[f"MoveWall{i}"].side = "right"
-                                    break
-                                elif s.center_x == self.scene[f"MoveWall{i}"].leftCenterX:
-                                    self.scene[f"MoveWall{i}"].side = "left"
-                                    break
-                        else:
-                            for s in self.scene[f"SideMoveWall{i}"]:
-                                if s.center_y == self.scene[f"MoveWall{i}"].topCenterY:
-                                    self.scene[f"MoveWall{i}"].side = "top"
-                                    break
-                                elif s.center_y == self.scene[f"MoveWall{i}"].bottomCenterY:
-                                    self.scene[f"MoveWall{i}"].side = "bottom"
-                                    break
-                            
                     
                     
     def on_key_release(self, key: int, modifiers: int):
@@ -664,6 +664,7 @@ class Room(arcade.View):
         
         for help in arcade.check_for_collision_with_list(self.player,self.scene["Help"]):
             globalVars.HELPS += 1
+            sounds.getlife1.play()
             help.kill()
         
         

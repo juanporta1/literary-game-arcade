@@ -26,7 +26,7 @@ class Game(arcade.View):
         
         self.afterThird = TextView(self.window,'El tercer libro contiene un mapa antiguo del castillo. En una biblioteca oculta, descubres una pintura de un hombre cuya imagen permanece inmutable mientras él envejece en secreto. La imagen te sugiere que la verdadera esencia y el conocimiento permanecen ocultos a simple vista. Con esta reflexión, avanzas hacia la siguiente etapa del enigma.',bg="Assets/Backgrounds/doriangray.jpg")
         
-        self.thirdLevel = Room(self.window,menu,self,"Assets/Scripts/levelsInformation/level1.json")
+        self.thirdLevel = Room(self.window,menu,self,"Assets/Scripts/levelsInformation/level3.json")
         
         self.afterSecond = TextView(self.window,'El segundo libro revela pistas sobre un antiguo hechizo perdido. Mientras avanzas, encuentras una piedra con una inscripción que alude a un hobbit que enfrentó grandes desafíos y halló coraje en su travesía. La mención de este pequeño héroe te recuerda que a veces, el valor más grande proviene de los lugares más inesperados. Continúas con renovada determinación.',bg="Assets/Backgrounds/hobbitrock.png")
         
@@ -39,7 +39,7 @@ class Game(arcade.View):
         self.firstTextTwo = TextView(self.window,'Hace poco, encontraste un mapa antiguo en una librería polvorienta, que indicaba la ubicación del castillo perdido. En el rincón de la librería, te llamó la atención un libro con una ilustración de un caballero de triste figura, un símbolo de alguien que parecía haber sido olvidado por el tiempo. Intrigado por la promesa de conocimiento y misterio, te aventuraste a explorar los antiguos salones del castillo. Sabes que superar este desafío no solo te dará acceso a sabiduría prohibida, sino que también resolverá un enigma que ha perdurado durante siglos.',bg="Assets/Backgrounds/bookmap.jpg")
         self.firstTextOne = TextView(self.window,'Te encuentras en el Castillo de Arcanum, un lugar antiguo y lleno de misterio. Hace siglos, el mago Alden escondió en este castillo los libros más valiosos de la literatura. Para preservar su conocimiento, creó un desafío: solo quien pudiera encontrar los libros y responder las preguntas literarias podría acceder a su sabiduría.',bg="Assets/Backgrounds/hallway.jpeg")
         
-        self.views = [self.secondLevel]
+        self.views = [self.thirdLevel]
         for i in range(len(self.views)-1):
         
             self.views[i].nextView = self.views[i+1]
