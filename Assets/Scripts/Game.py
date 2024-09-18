@@ -22,7 +22,7 @@ class Game(arcade.View):
         
         self.afterFourth = TextView(self.window,'El cuarto libro habla de un artefacto poderoso escondido en el castillo, uno que puede alterar la realidad misma. Encuentras una sala decorada con símbolos mágicos que evocan el poder de una varita que desafió al mal más oscuro. La atmósfera en la sala te recuerda que el poder, cuando se usa sabiamente, puede transformar el mundo. Sientes que el final está cerca.',bg="Assets/Backgrounds/harrypotter.jpg")
         
-        self.fourthLevel = Room(self.window,menu,self,"Assets/Scripts/levelsInformation/level1.json",self.afterFourth)
+        self.fourthLevel = Room(self.window,menu,self,"Assets/Scripts/levelsInformation/level4.json",self.afterFourth)
         
         self.afterThird = TextView(self.window,'El tercer libro contiene un mapa antiguo del castillo. En una biblioteca oculta, descubres una pintura de un hombre cuya imagen permanece inmutable mientras él envejece en secreto. La imagen te sugiere que la verdadera esencia y el conocimiento permanecen ocultos a simple vista. Con esta reflexión, avanzas hacia la siguiente etapa del enigma.',bg="Assets/Backgrounds/doriangray.jpg")
         

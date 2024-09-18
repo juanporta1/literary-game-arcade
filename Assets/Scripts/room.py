@@ -539,6 +539,7 @@ class Room(arcade.View):
         for i in range(1,len(self.moveWalls)+1):
             
             if arcade.check_for_collision_with_list(self.player,self.scene[f"MoveWallKey{i}"]) and self.scene[f"MoveWallKey{i}"].visible and key == arcade.key.E:
+                sounds.movewall.play()
                 self.scene[f"MoveWallKey{i}"].visible = False
                 if self.scene[f"MoveWall{i}"].leftCenterX != 0:
                     for s in self.scene[f"SideMoveWall{i}"]:
