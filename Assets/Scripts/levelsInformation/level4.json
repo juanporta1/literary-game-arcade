@@ -1,0 +1,66 @@
+{
+    
+    "setup":{
+        "playerX":2276,
+        "playerY":1776,
+        "tilemap": "Assets/Levels/level4.json"
+    },
+    "keys":[   
+        {
+            "x":923,
+            "y":564,
+            "type":3
+        },
+        {
+            "x":136,
+            "y":2191,
+            "type":2
+        }
+    ],
+    "lifes":[
+    ],
+    "notes":[
+        {
+            "x":2140,
+            "y":1684,
+            "text":"Escucha, en esta habitación se encuentran ciertos mecanismo que te permitiran acceder a lugares inaccesibles...Mecanismos como puentes que pueden ser activados. Mira en todas partes... Hasta en el fondo de los Cofres."
+        },
+        {
+            "x":680,
+            "y":1586,
+            "text":"Esta puerta esta cerrada pero parece poder abrirse de alguna manera ¿Pero cómo? Intenta utilizar todo lo que has aprendido hasta ahora."
+        },
+        {
+            "x":1557,
+            "y":223,
+            "text":"Esas son muchas placas de presión, la pregunta ahora es: ¿Cuál es la verdadera?"
+        },
+        {
+            "x":372,
+            "y":619,
+            "text":"Hay demasiados Cofres. Espera... ¿Cofres?"
+        },
+        {
+            "x":1492,
+            "y":2196,
+            "text":"Puedes ver la puerta detras de ese muro, ahora hay que averiguar como hacer que se mueva."
+        }
+    ],
+    "rocks":[
+        {
+            "x":2332,
+            "y":366
+        },
+        {
+            "x":2148,
+            "y":551
+        },
+        {
+            "x":2456,
+            "y":619
+        }
+    ],
+    "helps":[
+    ]
+
+}

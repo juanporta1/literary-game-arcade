@@ -1,0 +1,54 @@
+{   
+    "setup":{
+        "playerX":226,
+        "playerY":2288,
+        "tilemap": "Assets/Levels/level5.json"
+    },
+    "keys":[    
+        {
+            "x":2176,
+            "y":264,
+            "type":2
+        },     
+        {
+            "x":2300,
+            "y":264,
+            "type":2
+        },
+        {
+            "x":2432,
+            "y":264,
+            "type":2
+        }
+    ],
+    "lifes":[
+        {
+            "x":557,
+            "y":1214
+        },
+        {
+            "x":673,
+            "y":1214 
+        }
+    ],
+    "notes":[
+        {
+            "x":422,
+            "y":2216,
+            "text":"Viajero, hasta aquí llego yo. No tendrás más notas mías a partir de aquí. Mi anciano cuerpo no lo soporta más. Nada mas déjame ayudarte una última vez. Recordemos: El mago escondia sus codigos en libros, en cofres algunos mecanismos muy importantes, las rocas pueden activar placas de presión. Recuerda todo eso y espero que encuentres lo que buscas. Suerte Viajero, espero que sea más que la mía."
+        }
+    ],
+    "rocks":[
+        {
+            "x":2314,
+            "y":1856
+        }
+    ],
+    "helps":[
+        {
+            "x":469,
+            "y":1214
+        }
+    ]
+
+}

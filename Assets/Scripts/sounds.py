@@ -62,3 +62,5 @@ select = Sound("Sounds/select.mp3")
 beep1 = Sound("Sounds/beep1.mp3")
 
 key1 = Sound("Sounds/key1.mp3")
+
+movewall = Sound("Sounds/movewall.mp3")

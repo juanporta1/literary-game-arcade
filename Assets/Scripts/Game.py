@@ -18,15 +18,15 @@ class Game(arcade.View):
         self.lastTextTwo = TextView(self.window,'Mientras sostienes el pergamino, un eco del pasado resuena en la sala: "El conocimiento es poder, pero solo en manos de los justos. No olvides las enseñanzas del caballero de la triste figura, el hobbit valiente, el retrato que desafía el tiempo y la varita mágica. Cada historia te ha mostrado que la valentía, el coraje, la autenticidad y el poder del conocimiento son esenciales para iluminar la oscuridad y guiar a otros hacia la verdad. La lectura abre puertas a mundos desconocidos y a una sabiduría profunda." Con el pergamino en mano, sabes que tu misión apenas comienza.',bg="Assets/Backgrounds/book2.jpg")
         
         self.lastTextOne = TextView(self.window,'Has recorrido el castillo, encontrando los libros ocultos y respondiendo cada pregunta con éxito. Al final del último desafío, un haz de luz ilumina la sala y aparece un mensaje: "Eres digno del conocimiento de Alden. Usa esta sabiduría con honor y responsabilidad." El castillo empieza a desvanecerse, revelando un pergamino antiguo que había estado escondido. En él, encuentras el verdadero propósito del desafío: Alden buscaba un guardián digno de su conocimiento, alguien que pudiera preservar y compartir la sabiduría con el mundo.',bg="Assets/Backgrounds/book1.jpg")
-        self.fifthLevel = Room(self.window,menu,self,"Assets/Scripts/levelsInformation/level1.json")
+        self.fifthLevel = Room(self.window,menu,self,"Assets/Scripts/levelsInformation/level5.json")
         
         self.afterFourth = TextView(self.window,'El cuarto libro habla de un artefacto poderoso escondido en el castillo, uno que puede alterar la realidad misma. Encuentras una sala decorada con símbolos mágicos que evocan el poder de una varita que desafió al mal más oscuro. La atmósfera en la sala te recuerda que el poder, cuando se usa sabiamente, puede transformar el mundo. Sientes que el final está cerca.',bg="Assets/Backgrounds/harrypotter.jpg")
         
-        self.fourthLevel = Room(self.window,menu,self,"Assets/Scripts/levelsInformation/level1.json",self.afterFourth)
+        self.fourthLevel = Room(self.window,menu,self,"Assets/Scripts/levelsInformation/level4.json",self.afterFourth)
         
         self.afterThird = TextView(self.window,'El tercer libro contiene un mapa antiguo del castillo. En una biblioteca oculta, descubres una pintura de un hombre cuya imagen permanece inmutable mientras él envejece en secreto. La imagen te sugiere que la verdadera esencia y el conocimiento permanecen ocultos a simple vista. Con esta reflexión, avanzas hacia la siguiente etapa del enigma.',bg="Assets/Backgrounds/doriangray.jpg")
         
-        self.thirdLevel = Room(self.window,menu,self,"Assets/Scripts/levelsInformation/level1.json")
+        self.thirdLevel = Room(self.window,menu,self,"Assets/Scripts/levelsInformation/level3.json")
         
         self.afterSecond = TextView(self.window,'El segundo libro revela pistas sobre un antiguo hechizo perdido. Mientras avanzas, encuentras una piedra con una inscripción que alude a un hobbit que enfrentó grandes desafíos y halló coraje en su travesía. La mención de este pequeño héroe te recuerda que a veces, el valor más grande proviene de los lugares más inesperados. Continúas con renovada determinación.',bg="Assets/Backgrounds/hobbitrock.png")
         

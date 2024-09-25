@@ -87,11 +87,11 @@ class HangmanView(arcade.View):
         arcade.draw_text("AYUDA",self.bt.center_x,self.bt.center_y,self.bt.color,self.fontSize,font_name="Retro Gaming",anchor_x="center",anchor_y="center")
         arcade.draw_text("DESCUBRE LA PALABRA ANTES DE QUE SE TE ACABEN LAS OPORTUNIDADES",self.window.width/2,0,font_name="Retro Gaming",font_size=20,anchor_x="center",anchor_y="bottom")
         arcade.draw_text(f"Ayudas Disponibles: {globalVars.HELPS}",self.window.width,self.window.height,font_size=self.fontSize,font_name="Retro Gaming",anchor_x="right",anchor_y="top")
-        totalWidth = len(self.discoveredLetters) * (50 + 20)
+        totalWidth = len(self.discoveredLetters) * (42 + 10)
         x = (self.window.width - totalWidth) / 2
         width = totalWidth / len(self.discoveredLetters)
         for l in self.discoveredLetters:
-            arcade.draw_text(l,x,self.window.height*.6,font_name="Retro Gaming",font_size= 50,anchor_x="center",anchor_y="center")
+            arcade.draw_text(l,x,self.window.height*.6,font_name="Retro Gaming",font_size= 42,anchor_x="center",anchor_y="center")
             x += width
             
         for l in self.lettersSpriteList:
