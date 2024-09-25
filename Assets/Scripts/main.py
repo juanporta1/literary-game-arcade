@@ -14,7 +14,7 @@ class Window(arcade.Window):
 
 if __name__ == '__main__':
     
-    window = Window(1280,720,"Habia una vez...")
+    window = Window(1280,720,"Habia una vez...",True)
     menu = MenuView(window)
     
     window.show_view(menu)
